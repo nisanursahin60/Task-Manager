@@ -11,20 +11,16 @@ import java.net.URL;
 public class Main extends Application {
 
     @Override
-    public void start(Stage stage) throws IOException {
-
-        URL fxmlUrl = Main.class.getResource("/com/example/taskmanager/ManagerPage.fxml");
-
-        if (fxmlUrl == null) {
-            throw new RuntimeException("FXML bulunamadı: /com/example/taskmanager/LoginPage.fxml");
-        }
-
-        FXMLLoader fxmlLoader = new FXMLLoader(fxmlUrl);
-
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+    public void start(Stage stage) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ManagerPage.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
 
         stage.setTitle("Task Manager");
+
         stage.setScene(scene);
+
+        stage.setMaximized(true); // 🔥 BU ÖNEMLİ
+
         stage.show();
     }
 }
