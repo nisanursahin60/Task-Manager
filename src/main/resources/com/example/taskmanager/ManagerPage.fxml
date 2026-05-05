@@ -13,7 +13,7 @@
 <AnchorPane fx:id="anchorPane"
             prefHeight="600.0"
             prefWidth="900.0"
-            stylesheets="@manager.css"
+            stylesheets="@style.css"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.taskmanager.controller.ManagerPageController">

@@ -1,14 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.taskmanager.controller.LoginPageController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://fxml.com/fxml/1" fx:controller="com.example.taskmanager.controller.LoginPageController">
+    <children>
+        <HBox prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
 
+                <!-- SOL PANEL: ŞİRKET LOGOSU (Daha Büyük ve Dolu) -->
+                <VBox alignment="CENTER" prefWidth="380.0" spacing="30.0" styleClass="side-panel">
+                    <children>
+                        <StackPane maxHeight="150.0" maxWidth="150.0">
+                            <children>
+                                <Circle fill="#ffffff1a" radius="75.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="1.5" style="-fx-stroke-dash-array: 10;" />
+                                <Circle fill="#ffffff26" radius="60.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="2.5" />
+                                <Label text="LOGO" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="28.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </StackPane>
+                        <VBox alignment="CENTER" spacing="10.0">
+                            <children>
+                                <Label style="-fx-letter-spacing: 8;" text="CORPORATE" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Label>
+                                <Label style="-fx-letter-spacing: 2;" text="SOLUTIONS" textFill="#c8d6e5" />
+                                <Separator maxWidth="50.0" style="-fx-opacity: 0.3;" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <!-- SAĞ PANEL: GİRİŞ FORMU VE BAŞLIK -->
+                <VBox fx:id="mainPanel" alignment="TOP_CENTER" prefWidth="520.0" spacing="0.0" styleClass="main-panel" HBox.hgrow="ALWAYS">
+                    <children>
+
+                        <!-- Üst Kısım: Büyük Başlık ve Karşılama -->
+                        <VBox alignment="CENTER" spacing="15.0">
+                            <children>
+                                <Label text="TASK MANAGER" style="-fx-font-size: 42px; -fx-text-fill: #141e30;" styleClass="page-title">
+                                    <font>
+                                        <Font name="System Bold" size="42.0" />
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER" spacing="10.0">
+                                    <children>
+                                        <Separator prefWidth="60.0" style="-fx-border-color: #1d4ed8; -fx-border-width: 2 0 0 0;" />
+                                        <Label text="Yönetim Paneline Giriş Yapın" styleClass="page-subtitle">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <Separator prefWidth="60.0" style="-fx-border-color: #1d4ed8; -fx-border-width: 2 0 0 0;" />
+                                    </children>
+                                </HBox>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="60.0" />
+                            </VBox.margin>
+                        </VBox>
+
+                        <Region VBox.vgrow="ALWAYS" />
+
+                        <!-- Orta Kısım: Form Alanı (Daha geniş ve belirgin) -->
+                        <VBox alignment="CENTER" maxWidth="380.0" spacing="30.0" style="-fx-background-color: white; -fx-padding: 40; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 20, 0, 0, 10);">
+                            <children>
+                                <VBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label styleClass="small-text" style="-fx-text-fill: #1f2d3d; -fx-font-weight: bold;" text="Kullanıcı Adı" />
+                                        <TextField fx:id="usernameField" prefHeight="50.0" promptText="Kullanıcı adınızı girin" style="-fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-background-color: #f8fafc;" />
+                                    </children>
+                                </VBox>
+
+                                <VBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label styleClass="small-text" style="-fx-text-fill: #1f2d3d; -fx-font-weight: bold;" text="Şifre" />
+                                        <PasswordField fx:id="passwordField" prefHeight="50.0" promptText="••••••••" style="-fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-background-color: #f8fafc;" />
+                                    </children>
+                                </VBox>
+
+                                <Button fx:id="loginButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" prefHeight="55.0" style="-fx-background-color: #1d4ed8; -fx-background-radius: 12; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(29,78,216,0.3), 15, 0, 0, 5);" text="Sisteme Giriş Yap" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                        </VBox>
+
+                        <Region VBox.vgrow="ALWAYS" />
+
+                        <!-- Alt Kısım: Footer -->
+                        <HBox alignment="CENTER" spacing="20.0">
+                            <children>
+                                <Label styleClass="small-text" style="-fx-opacity: 0.5;" text="Gizlilik Politikası" />
+                                <Circle fill="#cbd5e1" radius="2.0" />
+                                <Label styleClass="small-text" style="-fx-opacity: 0.5;" text="Destek" />
+                                <Circle fill="#cbd5e1" radius="2.0" />
+                                <Label styleClass="small-text" style="-fx-opacity: 0.5;" text="© 2026 TaskManager Pro" />
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="30.0" />
+                            </VBox.margin>
+                        </HBox>
+                    </children>
+                </VBox>
+
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>
