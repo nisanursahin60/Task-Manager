@@ -1,14 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<AnchorPane fx:id="anchorPane"
+            prefHeight="600.0"
+            prefWidth="900.0"
+            stylesheets="@manager.css"
+            xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.taskmanager.controller.ManagerPageController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="com.example.taskmanager.controller.ManagerPageController">
 
+    <children>
+        <HBox AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0"
+              AnchorPane.topAnchor="0">
+
+            <!-- SOL PANEL -->
+            <VBox fx:id="sidePanel" prefWidth="240" spacing="18" styleClass="side-panel">
+
+                <!-- PROFIL -->
+                <HBox spacing="12" styleClass="profile-box">
+                    <StackPane prefHeight="46" prefWidth="46" styleClass="avatar-circle">
+                        <Label text="Y" styleClass="avatar-letter"/>
+                    </StackPane>
+
+                    <VBox spacing="3">
+                        <Label text="Yönetici" styleClass="small-text"/>
+                        <Label fx:id="profilLabel" text="Yönetici Adı" styleClass="profile-name"/>
+                    </VBox>
+                </HBox>
+
+                <Separator styleClass="side-separator"/>
+
+                <!-- ÇALIŞANLAR -->
+                <VBox spacing="8">
+                    <HBox spacing="8" styleClass="menu-item" onMouseClicked="#tumCalisanlariGoster">
+                        <Label fx:id="calisanOk" text="▾" styleClass="arrow"/>
+                        <Label text="Çalışanlar" styleClass="menu-text"/>
+                    </HBox>
+
+                    <VBox fx:id="departmanListesi" spacing="6" styleClass="sub-menu">
+                        <Label text="Muhasebe" styleClass="sub-menu-item" onMouseClicked="#muhasebeGoster"/>
+                        <Label text="Yazılım" styleClass="sub-menu-item" onMouseClicked="#yazilimGoster"/>
+                        <Label text="İnsan Kaynakları" styleClass="sub-menu-item" onMouseClicked="#ikGoster"/>
+                    </VBox>
+                </VBox>
+
+                <!-- ATANAN GÖREVLER -->
+                <HBox spacing="8" styleClass="menu-item" onMouseClicked="#atananGorevleriGoster">
+                    <Label text="📌" styleClass="icon-text"/>
+                    <Label text="Atanan Görevler" styleClass="menu-text"/>
+                </HBox>
+
+                <!-- GÖREV EKLE -->
+                <HBox spacing="8" styleClass="menu-item" onMouseClicked="#gorevEklePaneliAc">
+                    <Label text="+" styleClass="plus-text"/>
+                    <Label text="Görev Ekle" styleClass="menu-text"/>
+                </HBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- ÇIKIŞ -->
+                <HBox spacing="8" styleClass="logout-box" onMouseClicked="#cikisYap">
+                    <Label text="↻" styleClass="logout-icon"/>
+                    <Label text="Çıkış Yap" styleClass="logout-text"/>
+                </HBox>
+
+            </VBox>
+
+            <!-- SAĞ PANEL -->
+            <VBox fx:id="mainPanel" spacing="22" styleClass="main-panel" HBox.hgrow="ALWAYS">
+
+                <!-- ÜST BAŞLIK -->
+                <HBox alignment="TOP_LEFT">
+                    <VBox spacing="6">
+                        <Label fx:id="departmanad" text="Tüm Çalışanlar" styleClass="page-title"/>
+                        <Label text="Çalışan bilgilerini buradan görüntüleyebilirsin."
+                               styleClass="page-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <HBox spacing="6" styleClass="add-task-link" onMouseClicked="#gorevEklePaneliAc">
+                        <Label text="+" styleClass="add-plus"/>
+                        <Label text="Görev Ekle" styleClass="add-text"/>
+                    </HBox>
+                </HBox>
+
+                <!-- ÇALIŞAN KARTLARI -->
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean">
+                    <content>
+                        <TilePane fx:id="calisanKartAlani"
+                                  hgap="18"
+                                  vgap="18"
+                                  prefColumns="3"
+                                  styleClass="card-area"/>
+                    </content>
+                </ScrollPane>
+
+            </VBox>
+
+        </HBox>
+    </children>
 </AnchorPane>

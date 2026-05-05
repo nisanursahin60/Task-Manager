@@ -13,7 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        URL fxmlUrl = Main.class.getResource("/com/example/taskmanager/LoginPage.fxml");
+        URL fxmlUrl = Main.class.getResource("/com/example/taskmanager/ManagerPage.fxml");
 
         if (fxmlUrl == null) {
             throw new RuntimeException("FXML bulunamadı: /com/example/taskmanager/LoginPage.fxml");

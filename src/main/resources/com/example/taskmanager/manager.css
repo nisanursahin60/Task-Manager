@@ -1,0 +1,188 @@
+.root {
+    -fx-font-family: "Segoe UI", "Arial";
+    -fx-background-color: #f4f7fb;
+}
+
+/* SOL PANEL */
+
+.side-panel {
+    -fx-background-color: linear-gradient(to bottom, #243b55, #141e30);
+    -fx-padding: 28 18 22 18;
+}
+
+.profile-box {
+    -fx-alignment: center-left;
+}
+
+.side-separator {
+    -fx-background-color: rgba(255, 255, 255, 0.35);
+}
+
+.small-text {
+    -fx-text-fill: #c8d6e5;
+    -fx-font-size: 12px;
+}
+
+.profile-name {
+    -fx-text-fill: white;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.menu-item {
+    -fx-padding: 10 12;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.13);
+}
+
+.menu-text {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.arrow,
+.icon-text,
+.plus-text {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.sub-menu {
+    -fx-padding: 0 0 0 34;
+}
+
+.sub-menu-item {
+    -fx-text-fill: #d7e3f1;
+    -fx-font-size: 14px;
+    -fx-padding: 7 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.sub-menu-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-text-fill: white;
+}
+
+.logout-box {
+    -fx-padding: 10 12;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.logout-box:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+.logout-text,
+.logout-icon {
+    -fx-text-fill: #ffb7b7;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* SAĞ PANEL */
+
+.main-panel {
+    -fx-background-color: #f4f7fb;
+    -fx-padding: 34 40 30 40;
+}
+
+.page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2d3d;
+}
+
+.page-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7b8a9b;
+}
+
+.add-task-link {
+    -fx-padding: 8 14;
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.add-task-link:hover {
+    -fx-background-color: #eaf4ff;
+}
+
+.add-plus {
+    -fx-text-fill: #1d4ed8;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.add-text {
+    -fx-text-fill: #1d4ed8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.scroll-pane-clean {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-pane-clean > .viewport {
+    -fx-background-color: transparent;
+}
+
+.card-area {
+    -fx-padding: 20 10 10 10;
+}
+
+.employee-card {
+    -fx-pref-width: 170px;
+    -fx-pref-height: 170px;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-padding: 18;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 14, 0, 0, 4);
+}
+
+.employee-card:hover {
+    -fx-translate-y: -3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.16), 18, 0, 0, 6);
+}
+
+.employee-name {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2d3d;
+}
+
+.employee-info {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6b7c8f;
+}
+
+/* AVATAR */
+
+.avatar-circle {
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 50%;
+    -fx-min-width: 52px;
+    -fx-min-height: 52px;
+    -fx-max-width: 52px;
+    -fx-max-height: 52px;
+    -fx-alignment: center;
+}
+
+.avatar-letter {
+    -fx-text-fill: #1d4ed8;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
