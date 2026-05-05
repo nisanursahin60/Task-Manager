@@ -1,14 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<AnchorPane fx:id="anchorPane"
+            prefHeight="600.0"
+            prefWidth="900.0"
+            stylesheets="@manager.css"
+            xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.taskmanager.controller.EmployeePageController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="com.example.taskmanager.controller.EmployeePageController">
 
+    <children>
+        <HBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+            <!-- SOL PANEL (Manager Temasıyla Aynı) -->
+            <VBox fx:id="sidePanel" prefWidth="240" spacing="18" styleClass="side-panel">
+                <HBox spacing="12" styleClass="profile-box">
+                    <StackPane styleClass="avatar-circle">
+                        <Label text="N" styleClass="avatar-letter"/>
+                    </StackPane>
+                    <VBox spacing="3">
+                        <Label text="Çalışan" styleClass="small-text"/>
+                        <Label text="Naz Altınbaş" styleClass="profile-name"/>
+                    </VBox>
+                </HBox>
+
+                <Separator styleClass="side-separator"/>
+
+                <VBox spacing="8">
+                    <HBox spacing="8" styleClass="menu-item" onMouseClicked="#tumGorevleriGoster">
+                        <Label text="▾" styleClass="arrow"/>
+                        <Label text="Görevlerim" styleClass="menu-text"/>
+                    </HBox>
+                    <VBox spacing="6" styleClass="sub-menu">
+                        <Label text="⭐ Önemli" styleClass="sub-menu-item" onMouseClicked="#onemliGorevler"/>
+                        <Label text="⏰ Yaklaşanlar" styleClass="sub-menu-item" onMouseClicked="#sonTarihYaklasanlar"/>
+                        <Label text="🆕 Yeni" styleClass="sub-menu-item" onMouseClicked="#yeniGorevler"/>
+                    </VBox>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="8" styleClass="logout-box" onMouseClicked="#cikisYap">
+                    <Label text="↻" styleClass="logout-icon"/>
+                    <Label text="Çıkış Yap" styleClass="logout-text"/>
+                </HBox>
+            </VBox>
+
+            <!-- SAĞ PANEL -->
+            <VBox fx:id="mainPanel" spacing="22" styleClass="main-panel" HBox.hgrow="ALWAYS">
+                <VBox spacing="6">
+                    <Label fx:id="panelBaslik" text="Tüm Görevlerim" styleClass="page-title"/>
+                    <Label text="Tamamladığın adımları işaretlemeyi unutma." styleClass="page-subtitle"/>
+                </VBox>
+
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean">
+                    <content>
+                        <TilePane fx:id="gorevKartAlani" hgap="20" vgap="20" prefColumns="2" styleClass="card-area">
+                            <children>
+                                <!-- Örnek Görev Kartı -->
+                                <TitledPane animated="true" prefWidth="280.0" text="Otel Ağ Tasarımı | 25.05" styleClass="task-card">
+                                    <content>
+                                        <VBox spacing="10">
+                                            <Label text="Veren: Yönetici" styleClass="small-text" style="-fx-text-fill: #7b8a9b;"/>
+                                            <Separator/>
+                                            <CheckBox text="VLAN Yapılandırması" styleClass="task-check"/>
+                                            <CheckBox text="IP Adresleme" styleClass="task-check"/>
+                                            <CheckBox text="Simülasyon Testi" styleClass="task-check"/>
+                                        </VBox>
+                                    </content>
+                                </TitledPane>
+                            </children>
+                        </TilePane>
+                    </content>
+                </ScrollPane>
+            </VBox>
+        </HBox>
+    </children>
 </AnchorPane>
