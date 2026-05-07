@@ -1,0 +1,241 @@
+package com.example.taskmanager.service;
+
+import com.example.taskmanager.model.User;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * JSON kütüphanesi kullanmadan users.json'ı okuyup parse eden servis.
+ * Manuel string parse ile çalışır.
+ */
+public class UserService {
+
+    // Singleton pattern - Stack ile session yönetimi
+    private static UserService instance;
+
+    // Oturum açan kullanıcıyı takip eden Stack (veri yapısı kullanımı)
+    private final java.util.Stack<User> sessionStack = new java.util.Stack<>();
+
+    // Tüm kullanıcılar LinkedList'te tutulur (veri yapısı kullanımı)
+    private final java.util.LinkedList<User> userList = new java.util.LinkedList<>();
+
+    private UserService() {
+        loadUsers();
+    }
+
+    public static UserService getInstance() {
+        if (instance == null) {
+            instance = new UserService();
+        }
+        return instance;
+    }
+
+    // -------------------------------------------------------
+    // JSON okuma - harici kütüphane olmadan manuel parse
+    // -------------------------------------------------------
+    private void loadUsers() {
+        try {
+            InputStream is = getClass().getResourceAsStream("/com/example/taskmanager/users.json");
+            if (is == null) {
+                System.err.println("HATA: users.json bulunamadı!");
+                return;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line.trim());
+            }
+            reader.close();
+
+            String json = sb.toString();
+            List<User> parsed = parseUsersFromJson(json);
+            userList.addAll(parsed);
+
+            System.out.println("✅ " + userList.size() + " kullanıcı yüklendi.");
+
+        } catch (Exception e) {
+            System.err.println("JSON okuma hatası: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Basit manuel JSON parser - users array'ini okur.
+     * Format: {"users": [ {...}, {...} ]}
+     */
+    private List<User> parseUsersFromJson(String json) {
+        List<User> result = new ArrayList<>();
+
+        // "users" array'ini bul
+        int arrayStart = json.indexOf('[');
+        int arrayEnd = json.lastIndexOf(']');
+        if (arrayStart == -1 || arrayEnd == -1) return result;
+
+        String arrayContent = json.substring(arrayStart + 1, arrayEnd);
+
+        // Her { ... } bloğunu ayır
+        List<String> objects = extractJsonObjects(arrayContent);
+
+        for (String obj : objects) {
+            User user = parseUserObject(obj);
+            if (user != null) {
+                result.add(user);
+            }
+        }
+
+        return result;
+    }
+
+    private List<String> extractJsonObjects(String arrayContent) {
+        List<String> objects = new ArrayList<>();
+        int depth = 0;
+        int start = -1;
+
+        for (int i = 0; i < arrayContent.length(); i++) {
+            char c = arrayContent.charAt(i);
+            if (c == '{') {
+                if (depth == 0) start = i;
+                depth++;
+            } else if (c == '}') {
+                depth--;
+                if (depth == 0 && start != -1) {
+                    objects.add(arrayContent.substring(start, i + 1));
+                    start = -1;
+                }
+            }
+        }
+        return objects;
+    }
+
+    private User parseUserObject(String obj) {
+        try {
+            int id = Integer.parseInt(extractValue(obj, "id"));
+            String username = extractValue(obj, "username");
+            String password = extractValue(obj, "password");
+            String roleStr = extractValue(obj, "role");
+            String fullName = extractValue(obj, "fullName");
+            String department = extractValue(obj, "department");
+
+            User.Role role = "MANAGER".equalsIgnoreCase(roleStr)
+                    ? User.Role.MANAGER
+                    : User.Role.EMPLOYEE;
+
+            return new User(id, username, password, role, fullName, department);
+
+        } catch (Exception e) {
+            System.err.println("Kullanıcı parse hatası: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * JSON objesinden belirli bir key'in değerini çeker.
+     * Hem sayısal hem de string değerleri destekler.
+     */
+    private String extractValue(String obj, String key) {
+        String searchKey = "\"" + key + "\"";
+        int keyIndex = obj.indexOf(searchKey);
+        if (keyIndex == -1) return "";
+
+        int colonIndex = obj.indexOf(':', keyIndex + searchKey.length());
+        if (colonIndex == -1) return "";
+
+        int valueStart = colonIndex + 1;
+        while (valueStart < obj.length() && obj.charAt(valueStart) == ' ') {
+            valueStart++;
+        }
+
+        if (obj.charAt(valueStart) == '"') {
+            // String değer
+            int end = obj.indexOf('"', valueStart + 1);
+            return obj.substring(valueStart + 1, end);
+        } else {
+            // Sayısal değer
+            int end = valueStart;
+            while (end < obj.length() && obj.charAt(end) != ',' && obj.charAt(end) != '}') {
+                end++;
+            }
+            return obj.substring(valueStart, end).trim();
+        }
+    }
+
+    // -------------------------------------------------------
+    // Authentication
+    // -------------------------------------------------------
+
+    /**
+     * Kullanıcı adı ve şifreyle giriş yapar.
+     * Başarılıysa kullanıcıyı session stack'e push eder.
+     */
+    public Optional<User> login(String username, String password) {
+        for (User user : userList) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                // Session stack'e ekle
+                sessionStack.push(user);
+                System.out.println("✅ Giriş başarılı: " + user.getFullName() + " (" + user.getRole() + ")");
+                return Optional.of(user);
+            }
+        }
+        System.out.println("❌ Giriş başarısız: " + username);
+        return Optional.empty();
+    }
+
+    /**
+     * Aktif oturumu kapatır (Stack'ten pop eder).
+     */
+    public void logout() {
+        if (!sessionStack.isEmpty()) {
+            User user = sessionStack.pop();
+            System.out.println("👋 Çıkış yapıldı: " + user.getFullName());
+        }
+    }
+
+    /**
+     * Şu an giriş yapmış kullanıcıyı döner.
+     */
+    public Optional<User> getCurrentUser() {
+        if (!sessionStack.isEmpty()) {
+            return Optional.of(sessionStack.peek());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Tüm çalışanları (EMPLOYEE) LinkedList'ten döner.
+     */
+    public java.util.LinkedList<User> getAllEmployees() {
+        java.util.LinkedList<User> employees = new java.util.LinkedList<>();
+        for (User u : userList) {
+            if (u.getRole() == User.Role.EMPLOYEE) {
+                employees.add(u);
+            }
+        }
+        return employees;
+    }
+
+    /**
+     * Belirli departmana göre çalışanları döner.
+     */
+    public java.util.LinkedList<User> getEmployeesByDepartment(String department) {
+        java.util.LinkedList<User> result = new java.util.LinkedList<>();
+        for (User u : userList) {
+            if (u.getRole() == User.Role.EMPLOYEE &&
+                    u.getDepartment().equalsIgnoreCase(department)) {
+                result.add(u);
+            }
+        }
+        return result;
+    }
+
+    public java.util.LinkedList<User> getAllUsers() {
+        return new java.util.LinkedList<>(userList);
+    }
+}

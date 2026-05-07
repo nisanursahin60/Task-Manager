@@ -1,42 +1,45 @@
 package com.example.taskmanager.controller;
 
+import com.example.taskmanager.model.User;
+import com.example.taskmanager.service.UserService;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.util.LinkedList;
 
 public class ManagerPageController {
 
-    @FXML
-    private AnchorPane anchorPane;
+    @FXML private AnchorPane anchorPane;
+    @FXML private TilePane calisanKartAlani;
+    @FXML private Label calisanOk;
+    @FXML private VBox departmanListesi;
+    @FXML private Label departmanad;
+    @FXML private VBox mainPanel;
+    @FXML private Label profilLabel;
+    @FXML private VBox sidePanel;
 
-    @FXML
-    private TilePane calisanKartAlani;
-
-    @FXML
-    private Label calisanOk;
-
-    @FXML
-    private VBox departmanListesi;
-
-    @FXML
-    private Label departmanad;
-
-    @FXML
-    private VBox mainPanel;
-
-    @FXML
-    private Label profilLabel;
-
-    @FXML
-    private VBox sidePanel;
+    private final UserService userService = UserService.getInstance();
+    private User currentUser;
 
     @FXML
     private void initialize() {
-        profilLabel.setText("Yönetici Adı");
+        // initWithUser çağrılana kadar bekle
+    }
+
+    /**
+     * Login controller'dan çağrılır - kullanıcı bilgisiyle initialize eder.
+     */
+    public void initWithUser(User user) {
+        this.currentUser = user;
+        profilLabel.setText(user.getFullName());
         tumCalisanlariGoster();
     }
 
@@ -45,9 +48,19 @@ public class ManagerPageController {
         departmanad.setText("Tüm Çalışanlar");
         calisanKartAlani.getChildren().clear();
 
-        calisanKartEkle("Ayşe Yılmaz", "Muhasebe");
-        calisanKartEkle("Mehmet Kaya", "Yazılım");
-        calisanKartEkle("Zeynep Demir", "İnsan Kaynakları");
+        // UserService'den LinkedList olarak çek
+        LinkedList<User> employees = userService.getAllEmployees();
+
+        if (employees.isEmpty()) {
+            Label bosLabel = new Label("Henüz çalışan bulunmuyor.");
+            bosLabel.getStyleClass().add("page-subtitle");
+            calisanKartAlani.getChildren().add(bosLabel);
+            return;
+        }
+
+        for (User emp : employees) {
+            calisanKartEkle(emp.getFullName(), emp.getDepartment());
+        }
     }
 
     @FXML
@@ -55,8 +68,10 @@ public class ManagerPageController {
         departmanad.setText("Muhasebe");
         calisanKartAlani.getChildren().clear();
 
-        calisanKartEkle("Ayşe Yılmaz", "Müdür");
-        calisanKartEkle("Ali Koç", "Muhasebe Uzmanı");
+        LinkedList<User> employees = userService.getEmployeesByDepartment("Muhasebe");
+        for (User emp : employees) {
+            calisanKartEkle(emp.getFullName(), "Muhasebe Uzmanı");
+        }
     }
 
     @FXML
@@ -64,8 +79,10 @@ public class ManagerPageController {
         departmanad.setText("Yazılım");
         calisanKartAlani.getChildren().clear();
 
-        calisanKartEkle("Mehmet Kaya", "Yazılım Geliştirici");
-        calisanKartEkle("Elif Arslan", "Frontend Developer");
+        LinkedList<User> employees = userService.getEmployeesByDepartment("Yazılım");
+        for (User emp : employees) {
+            calisanKartEkle(emp.getFullName(), "Yazılım Geliştirici");
+        }
     }
 
     @FXML
@@ -73,8 +90,10 @@ public class ManagerPageController {
         departmanad.setText("İnsan Kaynakları");
         calisanKartAlani.getChildren().clear();
 
-        calisanKartEkle("Zeynep Demir", "İK Müdürü");
-        calisanKartEkle("Burak Şahin", "İK Uzmanı");
+        LinkedList<User> employees = userService.getEmployeesByDepartment("İnsan Kaynakları");
+        for (User emp : employees) {
+            calisanKartEkle(emp.getFullName(), "İK Uzmanı");
+        }
     }
 
     @FXML
@@ -99,7 +118,21 @@ public class ManagerPageController {
 
     @FXML
     private void cikisYap() {
-        System.out.println("Çıkış yapıldı");
+        userService.logout();
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/taskmanager/LoginPage.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) anchorPane.getScene().getWindow();
+
+            stage.setMaximized(false);
+            stage.setScene(scene);
+            stage.setMaximized(true);
+
+        } catch (Exception e) {
+            System.err.println("Çıkış hatası: " + e.getMessage());
+        }
     }
 
     private void calisanKartEkle(String adSoyad, String bilgi) {
@@ -112,7 +145,6 @@ public class ManagerPageController {
 
         Label avatarHarf = new Label(basHarfleriAl(adSoyad));
         avatarHarf.getStyleClass().add("avatar-letter");
-
         avatar.getChildren().add(avatarHarf);
 
         Label isimLabel = new Label(adSoyad);
@@ -122,22 +154,13 @@ public class ManagerPageController {
         bilgiLabel.getStyleClass().add("employee-info");
 
         kart.getChildren().addAll(avatar, isimLabel, bilgiLabel);
-
         calisanKartAlani.getChildren().add(kart);
     }
 
     private String basHarfleriAl(String adSoyad) {
         String[] parcalar = adSoyad.trim().split("\\s+");
-
-        if (parcalar.length == 0) {
-            return "?";
-        }
-
-        if (parcalar.length == 1) {
-            return parcalar[0].substring(0, 1).toUpperCase();
-        }
-
-        return (parcalar[0].substring(0, 1)
-                + parcalar[parcalar.length - 1].substring(0, 1)).toUpperCase();
+        if (parcalar.length == 0) return "?";
+        if (parcalar.length == 1) return parcalar[0].substring(0, 1).toUpperCase();
+        return (parcalar[0].substring(0, 1) + parcalar[parcalar.length - 1].substring(0, 1)).toUpperCase();
     }
 }

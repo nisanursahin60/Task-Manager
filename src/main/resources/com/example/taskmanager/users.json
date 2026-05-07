@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "1234",
+      "role": "MANAGER",
+      "fullName": "Ahmet Yıldız",
+      "department": "Yönetim"
+    },
+    {
+      "id": 2,
+      "username": "ayse",
+      "password": "ayse123",
+      "role": "EMPLOYEE",
+      "fullName": "Ayşe Yılmaz",
+      "department": "Muhasebe"
+    },
+    {
+      "id": 3,
+      "username": "mehmet",
+      "password": "mehmet123",
+      "role": "EMPLOYEE",
+      "fullName": "Mehmet Kaya",
+      "department": "Yazılım"
+    },
+    {
+      "id": 4,
+      "username": "zeynep",
+      "password": "zeynep123",
+      "role": "EMPLOYEE",
+      "fullName": "Zeynep Demir",
+      "department": "İnsan Kaynakları"
+    },
+    {
+      "id": 5,
+      "username": "elif",
+      "password": "elif123",
+      "role": "EMPLOYEE",
+      "fullName": "Elif Arslan",
+      "department": "Yazılım"
+    }
+  ]
+}

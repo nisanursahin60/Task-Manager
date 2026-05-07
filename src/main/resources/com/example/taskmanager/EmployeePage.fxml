@@ -13,25 +13,24 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane fx:id="anchorPane"
-            prefHeight="600.0"
-            prefWidth="900.0"
+            prefHeight="600.0" prefWidth="900.0"
             stylesheets="@style.css"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.taskmanager.controller.EmployeePageController">
-
     <children>
-        <HBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <HBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
 
-            <!-- SOL PANEL (Manager Temasıyla Aynı) -->
+            <!-- SOL PANEL -->
             <VBox fx:id="sidePanel" prefWidth="240" spacing="18" styleClass="side-panel">
                 <HBox spacing="12" styleClass="profile-box">
                     <StackPane styleClass="avatar-circle">
-                        <Label text="N" styleClass="avatar-letter"/>
+                        <Label fx:id="avatarLabel" text="?" styleClass="avatar-letter"/>
                     </StackPane>
                     <VBox spacing="3">
-                        <Label text="Çalışan" styleClass="small-text"/>
-                        <Label text="Naz Altınbaş" styleClass="profile-name"/>
+                        <Label fx:id="profilRolLabel" text="Çalışan" styleClass="small-text"/>
+                        <Label fx:id="profilAdLabel" text="..." styleClass="profile-name"/>
                     </VBox>
                 </HBox>
 
@@ -66,13 +65,16 @@
 
                 <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean">
                     <content>
-                        <TilePane fx:id="gorevKartAlani" hgap="20" vgap="20" prefColumns="2" styleClass="card-area">
+                        <TilePane fx:id="gorevKartAlani" hgap="20" vgap="20"
+                                  prefColumns="2" styleClass="card-area">
                             <children>
-                                <!-- Örnek Görev Kartı -->
-                                <TitledPane animated="true" prefWidth="280.0" text="Otel Ağ Tasarımı | 25.05" styleClass="task-card">
+                                <TitledPane animated="true" prefWidth="280.0"
+                                            text="Otel Ağ Tasarımı | 25.05"
+                                            styleClass="task-card">
                                     <content>
                                         <VBox spacing="10">
-                                            <Label text="Veren: Yönetici" styleClass="small-text" style="-fx-text-fill: #7b8a9b;"/>
+                                            <Label text="Veren: Yönetici" styleClass="small-text"
+                                                   style="-fx-text-fill: #7b8a9b;"/>
                                             <Separator/>
                                             <CheckBox text="VLAN Yapılandırması" styleClass="task-check"/>
                                             <CheckBox text="IP Adresleme" styleClass="task-check"/>
