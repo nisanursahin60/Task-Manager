@@ -108,12 +108,15 @@ public class ManagerPageController {
 
     @FXML
     private void gorevEklePaneliAc() {
-        departmanad.setText("Görev Ekle");
-        calisanKartAlani.getChildren().clear();
-
-        Label bosLabel = new Label("Görev ekleme alanı burada açılacak.");
-        bosLabel.getStyleClass().add("page-subtitle");
-        calisanKartAlani.getChildren().add(bosLabel);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/AddTaskPage.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Yeni Görev Atama");
+            stage.setScene(new Scene(loader.load()));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

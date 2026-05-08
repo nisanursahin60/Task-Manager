@@ -1,0 +1,9 @@
+[  {    "title": "Veri Yapıları Projesi",    "deadline": "2026-06-10",    "manager": "Ahmet Yıldız",    "employees": ["mehmet"],    "steps": ["1. Görev ekleme sayfası oluştur","2. görev sıralamasını yap"]  },
+  {
+    "title": "toplantı",
+    "deadline": "2026-10-09",
+    "manager": "Ahmet Yıldız",
+    "employees": ["mehmet","elif"],
+    "steps": []
+  }
+]

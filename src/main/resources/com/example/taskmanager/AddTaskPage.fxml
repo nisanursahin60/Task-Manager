@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.taskmanager.controller.AddTaskController">
+    <children>
+        <HBox spacing="0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <VBox prefWidth="420.0" spacing="15.0" styleClass="side-panel">
+                    <children>
+                        <Label style="-fx-font-size: 22; -fx-font-weight: bold;" text="GÖREV OLUŞTURUCU" textFill="WHITE" />
+
+                        <VBox spacing="5">
+                            <Label text="Görev Başlığı" styleClass="small-text" />
+                            <TextField fx:id="titleField" prefHeight="35.0" />
+                        </VBox>
+
+                        <VBox spacing="8" VBox.vgrow="ALWAYS">
+                            <Label text="Görev Adımları (Linked List Yapısı)" styleClass="small-text" />
+                            <HBox spacing="10">
+                                <TextField fx:id="stepInputField" promptText="Yeni bir adım yaz..." HBox.hgrow="ALWAYS" />
+                                <Button onAction="#handleAddStep" style="-fx-background-color: #2ecc71;" text="+" textFill="WHITE" />
+                            </HBox>
+                            <ListView fx:id="stepsListView" prefHeight="150.0" style="-fx-background-radius: 10;" />
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Son Teslim Tarihi" styleClass="small-text" />
+                            <DatePicker fx:id="deadlinePicker" maxWidth="1.7976931348623157E308" />
+                        </VBox>
+
+                        <Button onAction="#handleSave" maxWidth="1.7976931348623157E308" prefHeight="45.0" style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-font-weight: bold;" text="EKLE" />
+                    </children>
+                    <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                </VBox>
+
+                <VBox prefWidth="480.0" spacing="15.0" styleClass="main-panel" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="page-title" text="Personel Atama" />
+                        <TreeView fx:id="employeeTreeView" VBox.vgrow="ALWAYS" />
+                    </children>
+                    <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>
