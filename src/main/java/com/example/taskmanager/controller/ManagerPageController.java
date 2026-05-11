@@ -111,5 +111,16 @@ public class ManagerPageController {
     }
 
     @FXML private void atananGorevleriGoster() { departmanad.setText("Atanan Görevler"); calisanKartAlani.getChildren().clear(); }
-    @FXML private void gorevEklePaneliAc() { /* AddTaskPage kodun... */ }
+    @FXML
+    private void gorevEklePaneliAc() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/AddTaskPage.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Yeni Görev Atama");
+            stage.setScene(new Scene(loader.load()));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
