@@ -6,11 +6,11 @@ import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -20,13 +20,24 @@ public class LoginPageController {
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;   // FXML'e eklenecek hata mesajı label'ı
+    @FXML private Label errorLabel;
 
     private final UserService userService = UserService.getInstance();
 
     @FXML
     public void initialize() {
-        // errorLabel opsiyonel - FXML'de yoksa null kalır
+        // Hata mesajını başlangıçta gizle
+        if (errorLabel != null) {
+            errorLabel.setVisible(false);
+        }
+    }
+
+    /**
+     * Kullanıcı adı alanında Enter'a basıldığında şifre alanına odaklanır.
+     */
+    @FXML
+    private void onUsernameEnter() {
+        passwordField.requestFocus();
     }
 
     @FXML
@@ -47,6 +58,7 @@ public class LoginPageController {
         if (result.isEmpty()) {
             showError("Kullanıcı adı veya şifre hatalı!");
             shakeField(usernameField);
+            shakeField(passwordField);
             passwordField.clear();
             return;
         }
@@ -55,16 +67,13 @@ public class LoginPageController {
         navigateToPage(user);
     }
 
-    /**
-     * Role göre doğru sayfaya yönlendirir.
-     */
     private void navigateToPage(User user) {
         try {
             String fxmlFile = user.isManager() ? "ManagerPage.fxml" : "EmployeePage.fxml";
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/example/taskmanager/" + fxmlFile)
             );
+
             Scene scene = new Scene(loader.load());
 
             if (user.isManager()) {
@@ -76,8 +85,6 @@ public class LoginPageController {
             }
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
-
-            // Önce maximize'ı kapat, sahneyi değiştir, sonra tekrar aç
             stage.setMaximized(false);
             stage.setScene(scene);
             stage.setMaximized(true);
@@ -99,7 +106,6 @@ public class LoginPageController {
             errorLabel.setText(message);
             errorLabel.setVisible(true);
 
-            // 3 saniye sonra gizle
             javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(3));
             pause.setOnFinished(e -> errorLabel.setVisible(false));
             pause.play();
@@ -108,9 +114,6 @@ public class LoginPageController {
         }
     }
 
-    /**
-     * Yanlış giriş animasyonu - TextField'ı salla.
-     */
     private void shakeField(javafx.scene.Node node) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(60), node);
         tt.setByX(8);

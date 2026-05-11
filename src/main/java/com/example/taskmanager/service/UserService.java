@@ -16,13 +16,12 @@ import java.util.Optional;
  */
 public class UserService {
 
-    // Singleton pattern - Stack ile session yönetimi
     private static UserService instance;
 
-    // Oturum açan kullanıcıyı takip eden Stack (veri yapısı kullanımı)
+    // Oturum açan kullanıcıyı takip eden Stack
     private final java.util.Stack<User> sessionStack = new java.util.Stack<>();
 
-    // Tüm kullanıcılar LinkedList'te tutulur (veri yapısı kullanımı)
+    // Tüm kullanıcılar LinkedList'te tutulur
     private final java.util.LinkedList<User> userList = new java.util.LinkedList<>();
 
     private UserService() {
@@ -36,9 +35,6 @@ public class UserService {
         return instance;
     }
 
-    // -------------------------------------------------------
-    // JSON okuma - harici kütüphane olmadan manuel parse
-    // -------------------------------------------------------
     private void loadUsers() {
         try {
             InputStream is = getClass().getResourceAsStream("/com/example/taskmanager/users.json");
@@ -67,21 +63,13 @@ public class UserService {
         }
     }
 
-    /**
-     * Basit manuel JSON parser - users array'ini okur.
-     * Format: {"users": [ {...}, {...} ]}
-     */
     private List<User> parseUsersFromJson(String json) {
         List<User> result = new ArrayList<>();
-
-        // "users" array'ini bul
         int arrayStart = json.indexOf('[');
         int arrayEnd = json.lastIndexOf(']');
         if (arrayStart == -1 || arrayEnd == -1) return result;
 
         String arrayContent = json.substring(arrayStart + 1, arrayEnd);
-
-        // Her { ... } bloğunu ayır
         List<String> objects = extractJsonObjects(arrayContent);
 
         for (String obj : objects) {
@@ -90,7 +78,6 @@ public class UserService {
                 result.add(user);
             }
         }
-
         return result;
     }
 
@@ -124,11 +111,18 @@ public class UserService {
             String fullName = extractValue(obj, "fullName");
             String department = extractValue(obj, "department");
 
+            // DÜZELTME: Title bilgisini de okuyoruz
+            String title = extractValue(obj, "title");
+
             User.Role role = "MANAGER".equalsIgnoreCase(roleStr)
                     ? User.Role.MANAGER
                     : User.Role.EMPLOYEE;
 
-            return new User(id, username, password, role, fullName, department);
+            // User nesnesini oluştururken title bilgisini ekliyoruz
+            User user = new User(id, username, password, role, fullName, department);
+            user.setTitle(title);
+
+            return user;
 
         } catch (Exception e) {
             System.err.println("Kullanıcı parse hatası: " + e.getMessage());
@@ -136,10 +130,6 @@ public class UserService {
         }
     }
 
-    /**
-     * JSON objesinden belirli bir key'in değerini çeker.
-     * Hem sayısal hem de string değerleri destekler.
-     */
     private String extractValue(String obj, String key) {
         String searchKey = "\"" + key + "\"";
         int keyIndex = obj.indexOf(searchKey);
@@ -149,57 +139,44 @@ public class UserService {
         if (colonIndex == -1) return "";
 
         int valueStart = colonIndex + 1;
-        while (valueStart < obj.length() && obj.charAt(valueStart) == ' ') {
+        while (valueStart < obj.length() && (obj.charAt(valueStart) == ' ' || obj.charAt(valueStart) == '\t')) {
             valueStart++;
         }
 
-        if (obj.charAt(valueStart) == '"') {
-            // String değer
+        if (valueStart < obj.length() && obj.charAt(valueStart) == '"') {
             int end = obj.indexOf('"', valueStart + 1);
-            return obj.substring(valueStart + 1, end);
+            if (end != -1) return obj.substring(valueStart + 1, end);
         } else {
-            // Sayısal değer
             int end = valueStart;
-            while (end < obj.length() && obj.charAt(end) != ',' && obj.charAt(end) != '}') {
+            while (end < obj.length() && obj.charAt(end) != ',' && obj.charAt(end) != '}' && obj.charAt(end) != ']') {
                 end++;
             }
             return obj.substring(valueStart, end).trim();
         }
+        return "";
     }
 
-    // -------------------------------------------------------
-    // Authentication
-    // -------------------------------------------------------
+    // --- Authentication & Session (Eski Controller kodunu bozmayan kısım) ---
 
-    /**
-     * Kullanıcı adı ve şifreyle giriş yapar.
-     * Başarılıysa kullanıcıyı session stack'e push eder.
-     */
     public Optional<User> login(String username, String password) {
         for (User user : userList) {
             if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                // Session stack'e ekle
                 sessionStack.push(user);
-                System.out.println("✅ Giriş başarılı: " + user.getFullName() + " (" + user.getRole() + ")");
                 return Optional.of(user);
             }
         }
-        System.out.println("❌ Giriş başarısız: " + username);
         return Optional.empty();
     }
 
-    /**
-     * Aktif oturumu kapatır (Stack'ten pop eder).
-     */
     public void logout() {
         if (!sessionStack.isEmpty()) {
-            User user = sessionStack.pop();
-            System.out.println("👋 Çıkış yapıldı: " + user.getFullName());
+            sessionStack.pop();
         }
     }
 
     /**
-     * Şu an giriş yapmış kullanıcıyı döner.
+     * EKRAN GÖRÜNTÜSÜNDEKİ HATAYI ÇÖZEN METOD
+     * Stack'teki en üstteki kullanıcıyı Optional olarak döndürür.
      */
     public Optional<User> getCurrentUser() {
         if (!sessionStack.isEmpty()) {
@@ -208,9 +185,6 @@ public class UserService {
         return Optional.empty();
     }
 
-    /**
-     * Tüm çalışanları (EMPLOYEE) LinkedList'ten döner.
-     */
     public java.util.LinkedList<User> getAllEmployees() {
         java.util.LinkedList<User> employees = new java.util.LinkedList<>();
         for (User u : userList) {
@@ -221,9 +195,6 @@ public class UserService {
         return employees;
     }
 
-    /**
-     * Belirli departmana göre çalışanları döner.
-     */
     public java.util.LinkedList<User> getEmployeesByDepartment(String department) {
         java.util.LinkedList<User> result = new java.util.LinkedList<>();
         for (User u : userList) {

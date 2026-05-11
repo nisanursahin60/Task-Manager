@@ -6,39 +6,269 @@
       "password": "1234",
       "role": "MANAGER",
       "fullName": "Ahmet Yıldız",
-      "department": "Yönetim"
+      "department": "Yönetim",
+      "title": "Genel Müdür"
     },
     {
       "id": 2,
-      "username": "ayse",
-      "password": "ayse123",
-      "role": "EMPLOYEE",
-      "fullName": "Ayşe Yılmaz",
-      "department": "Muhasebe"
-    },
-    {
-      "id": 3,
       "username": "mehmet",
       "password": "mehmet123",
       "role": "EMPLOYEE",
       "fullName": "Mehmet Kaya",
-      "department": "Yazılım"
+      "department": "Yazılım",
+      "title": "Kıdemli Yazılım Geliştirici"
     },
     {
-      "id": 4,
+      "id": 3,
       "username": "zeynep",
       "password": "zeynep123",
       "role": "EMPLOYEE",
       "fullName": "Zeynep Demir",
-      "department": "İnsan Kaynakları"
+      "department": "İnsan Kaynakları",
+      "title": "İK Uzmanı"
+    },
+    {
+      "id": 4,
+      "username": "can",
+      "password": "can123",
+      "role": "EMPLOYEE",
+      "fullName": "Can Karaca",
+      "department": "Pazarlama",
+      "title": "Dijital Pazarlama Uzmanı"
     },
     {
       "id": 5,
+      "username": "ayse",
+      "password": "ayse123",
+      "role": "EMPLOYEE",
+      "fullName": "Ayşe Yılmaz",
+      "department": "Muhasebe",
+      "title": "Muhasebe Uzmanı"
+    },
+    {
+      "id": 6,
+      "username": "emre",
+      "password": "emre123",
+      "role": "EMPLOYEE",
+      "fullName": "Emre Kurt",
+      "department": "Destek",
+      "title": "Teknik Destek Uzmanı"
+    },
+    {
+      "id": 7,
       "username": "elif",
       "password": "elif123",
       "role": "EMPLOYEE",
       "fullName": "Elif Arslan",
-      "department": "Yazılım"
+      "department": "Yazılım",
+      "title": "Yazılım Geliştirici"
+    },
+    {
+      "id": 8,
+      "username": "burak",
+      "password": "burak123",
+      "role": "EMPLOYEE",
+      "fullName": "Burak Şahin",
+      "department": "İnsan Kaynakları",
+      "title": "İK Sorumlusu"
+    },
+    {
+      "id": 9,
+      "username": "selin",
+      "password": "selin123",
+      "role": "EMPLOYEE",
+      "fullName": "Selin Aydın",
+      "department": "Pazarlama",
+      "title": "Sosyal Medya Uzmanı"
+    },
+    {
+      "id": 10,
+      "username": "fatma",
+      "password": "fatma123",
+      "role": "EMPLOYEE",
+      "fullName": "Fatma Çelik",
+      "department": "Muhasebe",
+      "title": "Kıdemli Muhasebeci"
+    },
+    {
+      "id": 11,
+      "username": "derya",
+      "password": "derya123",
+      "role": "EMPLOYEE",
+      "fullName": "Derya Aksoy",
+      "department": "Destek",
+      "title": "Müşteri Destek Temsilcisi"
+    },
+    {
+      "id": 12,
+      "username": "kerem",
+      "password": "kerem123",
+      "role": "EMPLOYEE",
+      "fullName": "Kerem Yıldırım",
+      "department": "Yazılım",
+      "title": "Orta Seviye Yazılım Geliştirici"
+    },
+    {
+      "id": 13,
+      "username": "irem",
+      "password": "irem123",
+      "role": "EMPLOYEE",
+      "fullName": "İrem Koç",
+      "department": "İnsan Kaynakları",
+      "title": "İK Asistanı"
+    },
+    {
+      "id": 14,
+      "username": "ece",
+      "password": "ece123",
+      "role": "EMPLOYEE",
+      "fullName": "Ece Yılmaz",
+      "department": "Pazarlama",
+      "title": "Pazarlama Uzmanı"
+    },
+    {
+      "id": 15,
+      "username": "murat",
+      "password": "murat123",
+      "role": "EMPLOYEE",
+      "fullName": "Murat Özkan",
+      "department": "Muhasebe",
+      "title": "Finans Asistanı"
+    },
+    {
+      "id": 16,
+      "username": "gizem",
+      "password": "gizem123",
+      "role": "EMPLOYEE",
+      "fullName": "Gizem Yıldız",
+      "department": "Destek",
+      "title": "Teknik Destek Uzmanı"
+    },
+    {
+      "id": 17,
+      "username": "buse",
+      "password": "buse123",
+      "role": "EMPLOYEE",
+      "fullName": "Buse Acar",
+      "department": "Yazılım",
+      "title": "Junior Yazılım Geliştirici"
+    },
+    {
+      "id": 18,
+      "username": "onur",
+      "password": "onur123",
+      "role": "EMPLOYEE",
+      "fullName": "Onur Çetin",
+      "department": "İnsan Kaynakları",
+      "title": "Yetenek Kazanım Uzmanı"
+    },
+    {
+      "id": 19,
+      "username": "tolga",
+      "password": "tolga123",
+      "role": "EMPLOYEE",
+      "fullName": "Tolga Akın",
+      "department": "Pazarlama",
+      "title": "Dijital Pazarlama Uzmanı"
+    },
+    {
+      "id": 20,
+      "username": "seda",
+      "password": "seda123",
+      "role": "EMPLOYEE",
+      "fullName": "Seda Kılıç",
+      "department": "Muhasebe",
+      "title": "Muhasebeci"
+    },
+    {
+      "id": 21,
+      "username": "kaan",
+      "password": "kaan123",
+      "role": "EMPLOYEE",
+      "fullName": "Kaan Erdem",
+      "department": "Destek",
+      "title": "Müşteri Destek Uzmanı"
+    },
+    {
+      "id": 22,
+      "username": "berk",
+      "password": "berk123",
+      "role": "EMPLOYEE",
+      "fullName": "Berk Çınar",
+      "department": "Yazılım",
+      "title": "Kıdemli Yazılım Geliştirici"
+    },
+    {
+      "id": 23,
+      "username": "melis",
+      "password": "melis123",
+      "role": "EMPLOYEE",
+      "fullName": "Melis Uçar",
+      "department": "Pazarlama",
+      "title": "Sosyal Medya Uzmanı"
+    },
+    {
+      "id": 24,
+      "username": "alp",
+      "password": "alp123",
+      "role": "EMPLOYEE",
+      "fullName": "Alp Korkmaz",
+      "department": "Destek",
+      "title": "Teknik Destek Uzmanı"
+    },
+    {
+      "id": 25,
+      "username": "naz",
+      "password": "naz123",
+      "role": "EMPLOYEE",
+      "fullName": "Naz Yıldırım",
+      "department": "Muhasebe",
+      "title": "Kıdemli Muhasebeci"
+    },
+    {
+      "id": 26,
+      "username": "umut",
+      "password": "umut123",
+      "role": "EMPLOYEE",
+      "fullName": "Umut Aras",
+      "department": "Yazılım",
+      "title": "Orta Seviye Yazılım Geliştirici"
+    },
+    {
+      "id": 27,
+      "username": "eda",
+      "password": "eda123",
+      "role": "EMPLOYEE",
+      "fullName": "Eda Karahan",
+      "department": "İnsan Kaynakları",
+      "title": "Yetenek Kazanım Uzmanı"
+    },
+    {
+      "id": 28,
+      "username": "cenk",
+      "password": "cenk123",
+      "role": "EMPLOYEE",
+      "fullName": "Cenk Türkmen",
+      "department": "Destek",
+      "title": "Müşteri Destek Temsilcisi"
+    },
+    {
+      "id": 29,
+      "username": "yasemin",
+      "password": "yasemin123",
+      "role": "EMPLOYEE",
+      "fullName": "Yasemin Öztürk",
+      "department": "Pazarlama",
+      "title": "Pazarlama Uzmanı"
+    },
+    {
+      "id": 30,
+      "username": "oguz",
+      "password": "oguz123",
+      "role": "EMPLOYEE",
+      "fullName": "Oğuz Demirtaş",
+      "department": "Muhasebe",
+      "title": "Muhasebeci"
     }
   ]
 }

@@ -92,10 +92,11 @@
                                         <Label styleClass="small-text"
                                                style="-fx-text-fill: #1f2d3d; -fx-font-weight: bold;"
                                                text="Kullanıcı Adı"/>
-                                        <TextField fx:id="usernameField" prefHeight="50.0"
+                                        <TextField fx:id="usernameField"
+                                                   onAction="#onUsernameEnter"
+                                                   prefHeight="50.0"
                                                    promptText="Kullanıcı adınızı girin"
-                                                   style="-fx-background-radius: 12; -fx-border-color: #e2e8f0;
-                                                          -fx-border-radius: 12; -fx-background-color: #f8fafc;"/>
+                                                   style="-fx-background-radius: 12; ..."/>
                                     </children>
                                 </VBox>
 
@@ -104,10 +105,11 @@
                                         <Label styleClass="small-text"
                                                style="-fx-text-fill: #1f2d3d; -fx-font-weight: bold;"
                                                text="Şifre"/>
-                                        <PasswordField fx:id="passwordField" prefHeight="50.0"
+                                        <PasswordField fx:id="passwordField"
+                                                       onAction="#handleLogin"
+                                                       prefHeight="50.0"
                                                        promptText="••••••••"
-                                                       style="-fx-background-radius: 12; -fx-border-color: #e2e8f0;
-                                                              -fx-border-radius: 12; -fx-background-color: #f8fafc;"/>
+                                                       style="-fx-background-radius: 12; ..."/>
                                     </children>
                                 </VBox>
 

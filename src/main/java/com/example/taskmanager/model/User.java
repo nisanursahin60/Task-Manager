@@ -12,6 +12,7 @@ public class User {
     private Role role;
     private String fullName;
     private String department;
+    private String title;
 
     public User() {}
 
@@ -41,6 +42,9 @@ public class User {
 
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
     public boolean isManager() {
         return this.role == Role.MANAGER;

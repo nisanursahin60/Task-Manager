@@ -52,6 +52,8 @@
                         <Label text="Muhasebe" styleClass="sub-menu-item" onMouseClicked="#muhasebeGoster"/>
                         <Label text="Yazılım" styleClass="sub-menu-item" onMouseClicked="#yazilimGoster"/>
                         <Label text="İnsan Kaynakları" styleClass="sub-menu-item" onMouseClicked="#ikGoster"/>
+                        <Label text="Pazarlama" styleClass="sub-menu-item" onMouseClicked="#pazarlamaGoster"/>
+                        <Label text="Destek" styleClass="sub-menu-item" onMouseClicked="#destekGoster"/>
                     </VBox>
                 </VBox>
 
