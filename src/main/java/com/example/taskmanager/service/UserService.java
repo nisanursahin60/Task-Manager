@@ -111,7 +111,7 @@ public class UserService {
             String fullName = extractValue(obj, "fullName");
             String department = extractValue(obj, "department");
 
-            // DÜZELTME: Title bilgisini de okuyoruz
+            // Title bilgisini de okuyoruz
             String title = extractValue(obj, "title");
 
             User.Role role = "MANAGER".equalsIgnoreCase(roleStr)
@@ -156,8 +156,6 @@ public class UserService {
         return "";
     }
 
-    // --- Authentication & Session (Eski Controller kodunu bozmayan kısım) ---
-
     public Optional<User> login(String username, String password) {
         for (User user : userList) {
             if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
@@ -174,10 +172,6 @@ public class UserService {
         }
     }
 
-    /**
-     * EKRAN GÖRÜNTÜSÜNDEKİ HATAYI ÇÖZEN METOD
-     * Stack'teki en üstteki kullanıcıyı Optional olarak döndürür.
-     */
     public Optional<User> getCurrentUser() {
         if (!sessionStack.isEmpty()) {
             return Optional.of(sessionStack.peek());

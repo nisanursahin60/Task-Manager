@@ -15,11 +15,12 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginPage.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
-        stage.setTitle("Task Manager Pro");
+        stage.setTitle("Task Manager");
 
-        // Pencereyi göstermeden önce tam ekran moduna al
-        stage.setMaximized(true);
         stage.setScene(scene);
+
+        stage.setMaximized(true);
+
         stage.show();
     }
 }

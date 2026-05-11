@@ -44,7 +44,6 @@ public class ManagerPageController {
         LinkedList<User> employees = userService.getAllEmployees();
 
         for (User emp : employees) {
-            // Ana ekranda departman görünsün
             calisanKartEkle(emp.getFullName(), emp.getDepartment());
         }
     }
@@ -55,11 +54,7 @@ public class ManagerPageController {
         LinkedList<User> employees = userService.getEmployeesByDepartment(dAd);
 
         for (User emp : employees) {
-            // Title bilgisini al
             String unvan = emp.getTitle();
-
-            // EĞER BURASI BOŞ GELİYORSA: Model veya Service kısmında hata var demektir.
-            // Test etmek için boşsa "Unvan Girilmemiş" yazdırıyoruz.
             if (unvan == null || unvan.trim().isEmpty()) {
                 unvan = "Unvan Bilgisi Yok";
             }
