@@ -63,12 +63,6 @@
                     <Label text="Atanan Görevler" styleClass="menu-text"/>
                 </HBox>
 
-                <!-- GÖREV EKLE -->
-                <HBox spacing="8" styleClass="menu-item" onMouseClicked="#gorevEklePaneliAc">
-                    <Label text="+" styleClass="plus-text"/>
-                    <Label text="Görev Ekle" styleClass="menu-text"/>
-                </HBox>
-
                 <Region VBox.vgrow="ALWAYS"/>
 
                 <!-- ÇIKIŞ -->
