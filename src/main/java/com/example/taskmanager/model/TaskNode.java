@@ -16,7 +16,10 @@ public class TaskNode implements Comparable<TaskNode> {
     private boolean starred = false;
     private List<String> attachedFiles;
     private LocalDateTime createdAt; // En son atanan en başa için
-    private boolean completed = false;
+
+    // Bir görev birden fazla kişiye atanabilir.
+    // O yüzden tamamlanma bilgisi de kişi kişi tutulur.
+    private List<String> completedEmployees = new ArrayList<>();
 
     // Ana constructor (dosyalar + açıklama + createdAt)
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
@@ -30,6 +33,7 @@ public class TaskNode implements Comparable<TaskNode> {
         this.starred = false;
         this.attachedFiles = attachedFiles != null ? attachedFiles : new ArrayList<>();
         this.createdAt = LocalDateTime.now(); // Atama anında zaman damgası
+        this.completedEmployees = new ArrayList<>();
     }
 
     // Geriye dönük uyumluluk constructor'ı
@@ -55,12 +59,14 @@ public class TaskNode implements Comparable<TaskNode> {
     public boolean isStarred()                      { return starred; }
     public List<String> getAttachedFiles()          { return attachedFiles; }
     public LocalDateTime getCreatedAt()             { return createdAt; }
-    public boolean isCompleted() {
-        return completed;
+
+    public List<String> getCompletedEmployees() {
+        return completedEmployees;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    // Bu çalışan bu görevi tamamladı mı?
+    public boolean isCompletedBy(String username) {
+        return completedEmployees != null && completedEmployees.contains(username);
     }
 
     // Setters
@@ -68,4 +74,8 @@ public class TaskNode implements Comparable<TaskNode> {
     public void setStarred(boolean starred)         { this.starred = starred; }
     public void setAttachedFiles(List<String> attachedFiles) { this.attachedFiles = attachedFiles; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public void setCompletedEmployees(List<String> completedEmployees) {
+        this.completedEmployees = completedEmployees;
+    }
 }

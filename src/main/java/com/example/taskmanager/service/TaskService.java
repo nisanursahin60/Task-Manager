@@ -27,13 +27,18 @@ public class TaskService {
     static {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
-                // LocalDate adapter (Arkadaşının eklediği)
+
+                // LocalDate adapter
                 .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
                     @Override
                     public void write(JsonWriter out, LocalDate value) throws IOException {
-                        if (value == null) out.nullValue();
-                        else out.value(value.toString());
+                        if (value == null) {
+                            out.nullValue();
+                        } else {
+                            out.value(value.toString());
+                        }
                     }
+
                     @Override
                     public LocalDate read(JsonReader in) throws IOException {
                         if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
@@ -43,13 +48,18 @@ public class TaskService {
                         return LocalDate.parse(in.nextString());
                     }
                 })
-                // LocalDateTime adapter (Arkadaşının eklediği)
+
+                // LocalDateTime adapter
                 .registerTypeAdapter(LocalDateTime.class, new TypeAdapter<LocalDateTime>() {
                     @Override
                     public void write(JsonWriter out, LocalDateTime value) throws IOException {
-                        if (value == null) out.nullValue();
-                        else out.value(value.toString());
+                        if (value == null) {
+                            out.nullValue();
+                        } else {
+                            out.value(value.toString());
+                        }
                     }
+
                     @Override
                     public LocalDateTime read(JsonReader in) throws IOException {
                         if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
@@ -67,24 +77,32 @@ public class TaskService {
     private static void loadTasksFromJson() {
         try {
             File file = new File(FILE_PATH);
+
             if (!file.exists() || file.length() == 0) {
                 allTasks = new ArrayList<>();
                 return;
             }
 
             Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-            Type taskListType = new TypeToken<ArrayList<TaskNode>>(){}.getType();
+            Type taskListType = new TypeToken<ArrayList<TaskNode>>() {}.getType();
+
             allTasks = gson.fromJson(reader, taskListType);
             reader.close();
 
             if (allTasks != null) {
-                priorityQueue.clear(); // Kuyruğu temizleyip yeniden dolduruyoruz
+                priorityQueue.clear();
 
-                // Arkadaşının eklediği zaman damgası tamamlama mantığı
                 for (int i = 0; i < allTasks.size(); i++) {
                     TaskNode task = allTasks.get(i);
+
+                    // Eski JSON görevlerinde createdAt yoksa varsayılan tarih veriyoruz
                     if (task.getCreatedAt() == null) {
                         task.setCreatedAt(LocalDateTime.of(2026, 1, 1, 0, i));
+                    }
+
+                    // Eski JSON görevlerinde completedEmployees yoksa boş liste veriyoruz
+                    if (task.getCompletedEmployees() == null) {
+                        task.setCompletedEmployees(new ArrayList<>());
                     }
                 }
 
@@ -93,16 +111,21 @@ public class TaskService {
             } else {
                 allTasks = new ArrayList<>();
             }
+
         } catch (Exception e) {
             System.err.println("Görevler yüklenirken hata: " + e.getMessage());
         }
     }
 
     public static void addTask(TaskNode node) {
-        // Yeni görev eklenirken zaman damgası yoksa o anki zamanı ata
         if (node.getCreatedAt() == null) {
             node.setCreatedAt(LocalDateTime.now());
         }
+
+        if (node.getCompletedEmployees() == null) {
+            node.setCompletedEmployees(new ArrayList<>());
+        }
+
         allTasks.add(node);
         priorityQueue.offer(node);
         saveToJson();
@@ -123,83 +146,107 @@ public class TaskService {
     }
 
     /**
-     * Belirli bir çalışana atanmış görevleri döner (Deadline sıralı).
+     * Belirli bir çalışana atanmış ve o çalışan tarafından tamamlanmamış görevleri döner.
+     * Deadline sıralıdır.
      */
     public static PriorityQueue<TaskNode> getTasksForEmployee(String username) {
         PriorityQueue<TaskNode> employeeTasks = new PriorityQueue<>();
+
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
                     && task.getAssignedEmployees().contains(username)
-                    && !task.isCompleted()) {
+                    && !task.isCompletedBy(username)) {
                 employeeTasks.offer(task);
             }
         }
+
         return employeeTasks;
     }
 
     /**
-     * Belirli bir çalışana atanmış görevleri döner (Oluşturulma tarihine göre DESC).
+     * Belirli bir çalışana atanmış ve o çalışan tarafından tamamlanmamış görevleri döner.
+     * Oluşturulma tarihine göre en yeni en üsttedir.
      */
     public static List<TaskNode> getTasksForEmployeeByCreatedAt(String username) {
         List<TaskNode> result = new ArrayList<>();
+
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
                     && task.getAssignedEmployees().contains(username)
-                    && !task.isCompleted()) {
+                    && !task.isCompletedBy(username)) {
                 result.add(task);
             }
         }
-        // En son eklenen en başa (Arkadaşının eklediği sıralama mantığı)
+
         result.sort((a, b) -> {
             if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
             if (a.getCreatedAt() == null) return 1;
             if (b.getCreatedAt() == null) return -1;
             return b.getCreatedAt().compareTo(a.getCreatedAt());
         });
+
         return result;
     }
 
     /**
-     * Çalışanın yıldızlı görevlerini döner.
+     * Çalışanın yıldızlı ve tamamlanmamış görevlerini döner.
      */
     public static PriorityQueue<TaskNode> getStarredTasksForEmployee(String username) {
         PriorityQueue<TaskNode> starred = new PriorityQueue<>();
+
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
                     && task.getAssignedEmployees().contains(username)
-                    && task.isStarred()) {
+                    && task.isStarred()
+                    && !task.isCompletedBy(username)) {
                 starred.offer(task);
             }
         }
+
         return starred;
     }
 
     /**
-     * Senin sistemin için: Yönetici sayfasında tüm görevleri deadline'a göre sıralı döner.
+     * Yönetici sayfası için tüm görevleri deadline'a göre sıralı döner.
      */
     public static PriorityQueue<TaskNode> getPriorityQueue() {
         return priorityQueue;
     }
 
     /**
-     * Senin sistemin için: Tüm görevleri liste olarak döner.
+     * Tüm görevleri liste olarak döner.
      */
     public static List<TaskNode> getAllTasks() {
         return new ArrayList<>(allTasks);
     }
 
-    public static void completeTask(TaskNode node) {
-        node.setCompleted(true);
+    /**
+     * Görevi sadece belirtilen çalışan için tamamlar.
+     * Örneğin görev Mehmet ve Elif'e atanmışsa, sadece Elif tamamladıysa
+     * completedEmployees listesine sadece "elif" eklenir.
+     */
+    public static void completeTask(TaskNode node, String username) {
+        if (node.getCompletedEmployees() == null) {
+            node.setCompletedEmployees(new ArrayList<>());
+        }
+
+        if (!node.getCompletedEmployees().contains(username)) {
+            node.getCompletedEmployees().add(username);
+        }
+
         saveToJson();
     }
 
+    /**
+     * Belirli çalışanın tamamladığı görevleri döner.
+     */
     public static List<TaskNode> getCompletedTasksForEmployee(String username) {
         List<TaskNode> result = new ArrayList<>();
 
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
                     && task.getAssignedEmployees().contains(username)
-                    && task.isCompleted()) {
+                    && task.isCompletedBy(username)) {
                 result.add(task);
             }
         }
