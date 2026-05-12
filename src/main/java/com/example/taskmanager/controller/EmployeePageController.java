@@ -141,6 +141,11 @@ public class EmployeePageController {
         kartlariEkrana(yeniPQ, false);
     }
 
+    @FXML
+    void tamamlananGorevler() {
+        if (panelBaslik != null) panelBaslik.setText("Tamamlanan Görevler");
+    }
+
     // -------------------------------------------------------------------------
     // KARTLARI EKRANA DÖŞE
     // -------------------------------------------------------------------------
