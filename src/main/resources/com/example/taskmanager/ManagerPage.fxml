@@ -27,10 +27,8 @@
               AnchorPane.rightAnchor="0"
               AnchorPane.topAnchor="0">
 
-            <!-- SOL PANEL -->
             <VBox fx:id="sidePanel" prefWidth="240" spacing="18" styleClass="side-panel">
 
-                <!-- PROFIL -->
                 <HBox spacing="12" styleClass="profile-box">
                     <StackPane prefHeight="46" prefWidth="46" styleClass="avatar-circle">
                         <Label text="Y" styleClass="avatar-letter"/>
@@ -68,9 +66,24 @@
                     <Label text="Atanan Görevler" styleClass="menu-text"/>
                 </HBox>
 
+                <HBox spacing="10" styleClass="menu-item" onMouseClicked="#sorulanSorulariGoster" alignment="CENTER_LEFT">
+                    <children>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@images/faq.png" />
+                        </ImageView>
+                        <Label text="Sorulan Sorular" styleClass="menu-text" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="yeniMesajNoktasi" visible="false" managed="true"
+                               style="-fx-background-color: #ef4444;
+                                      -fx-min-width: 8; -fx-min-height: 8;
+                                      -fx-max-width: 8; -fx-max-height: 8;
+                                      -fx-background-radius: 50;">
+                        </Label>
+                    </children>
+                </HBox>
+
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <!-- ÇIKIŞ -->
                 <HBox spacing="8" styleClass="logout-box" onMouseClicked="#cikisYap">
                     <Label text="↻" styleClass="logout-icon"/>
                     <Label text="Çıkış Yap" styleClass="logout-text"/>
@@ -78,20 +91,22 @@
 
             </VBox>
 
-            <!-- SAĞ PANEL -->
             <VBox fx:id="mainPanel" spacing="22" styleClass="main-panel" HBox.hgrow="ALWAYS">
 
-                <HBox alignment="CENTER_LEFT" spacing="15"> <VBox spacing="6">
-                    <Label fx:id="departmanad" text="Tüm Çalışanlar" styleClass="page-title"/>
-                    <Label text="Çalışan bilgilerini buradan görüntüleyebilirsin." styleClass="page-subtitle"/>
-                </VBox>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <VBox spacing="6">
+                        <Label fx:id="departmanad" text="Tüm Çalışanlar" styleClass="page-title"/>
+                        <Label fx:id="sayfaAciklamasi" text="Çalışan bilgilerini buradan görüntüleyebilirsin." styleClass="page-subtitle"/>
+                    </VBox>
 
                     <Region HBox.hgrow="ALWAYS"/>
 
-                    <TextField fx:id="aramaCubugu"
-                               promptText="Çalışan ara..."
-                               styleClass="search-field"
-                               prefWidth="200"/>
+                    <HBox fx:id="aramaAlani" alignment="CENTER_LEFT">
+                        <TextField fx:id="aramaCubugu"
+                                   promptText="Çalışan ara..."
+                                   styleClass="search-field"
+                                   prefWidth="200"/>
+                    </HBox>
 
                     <HBox spacing="6" styleClass="add-task-link" onMouseClicked="#gorevEklePaneliAc">
                         <Label text="+" styleClass="add-plus"/>
@@ -99,7 +114,6 @@
                     </HBox>
                 </HBox>
 
-                <!-- ÇALIŞAN KARTLARI -->
                 <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean" VBox.vgrow="ALWAYS">
                     <content>
                         <StackPane>

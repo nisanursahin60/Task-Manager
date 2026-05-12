@@ -16,6 +16,15 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class TaskService {
+    private static boolean hasNewMessages = false; // Yeni mesaj var mı kontrolü
+
+    public static boolean isHasNewMessages() {
+        return hasNewMessages;
+    }
+
+    public static void setHasNewMessages(boolean value) {
+        hasNewMessages = value;
+    }
 
     private static final String FILE_PATH = "src/main/resources/com/example/taskmanager/tasks.json";
 
@@ -23,6 +32,11 @@ public class TaskService {
     private static PriorityQueue<TaskNode> priorityQueue = new PriorityQueue<>();
 
     private static final Gson gson;
+
+    private static final String MESSAGES_FILE_PATH = "src/main/resources/com/example/taskmanager/messages.json";
+    private static List<TaskMessage> messages = new ArrayList<>();
+
+    // static bloğu içinde veya sınıf yüklendiğinde mesajları dosyadan oku
 
     static {
         gson = new GsonBuilder()
@@ -72,8 +86,43 @@ public class TaskService {
                 .create();
 
         loadTasksFromJson();
+        loadMessagesFromJson();
     }
 
+    private static void saveMessagesToJson() {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(MESSAGES_FILE_PATH), StandardCharsets.UTF_8)) {
+            gson.toJson(messages, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // --- JSON YÜKLEME ---
+    private static void loadMessagesFromJson() {
+        try {
+            File file = new File(MESSAGES_FILE_PATH);
+            if (!file.exists() || file.length() == 0) {
+                messages = new ArrayList<>();
+                return;
+            }
+
+            // Reader'ı try-with-resources ile açıyoruz (otomatik kapanır)
+            try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+                Type listType = new TypeToken<ArrayList<TaskMessage>>() {}.getType();
+                List<TaskMessage> loadedMessages = gson.fromJson(reader, listType);
+
+                if (loadedMessages != null) {
+                    messages = loadedMessages;
+                    // Sadece okunmamış mesaj varsa noktayı yak
+                    hasNewMessages = messages.stream().anyMatch(m -> !m.isRead);
+                }
+            }
+        } catch (Exception e) {
+            // Hata durumunda uygulamanın çökmesini engellemek için sadece hata basıyoruz
+            System.err.println("Mesajlar yüklenirken hata oluştu: " + e.getMessage());
+            messages = new ArrayList<>(); // Liste boş kalsın, null olmasın
+        }
+    }
     private static void loadTasksFromJson() {
         try {
             File file = new File(FILE_PATH);
@@ -259,5 +308,44 @@ public class TaskService {
         });
 
         return result;
+    }
+    // Mesajlar için basit bir iç sınıf veya ayrı dosya
+    public static class TaskMessage {
+        public String sender;
+        public String taskTitle;
+        public String content;
+        public boolean isRead = false;
+        public LocalDateTime timestamp;
+
+        public TaskMessage(String sender, String taskTitle, String content) {
+            this.sender = sender;
+            this.taskTitle = taskTitle;
+            this.content = content;
+            this.timestamp = LocalDateTime.now();
+            this.isRead = false;
+        }
+    }
+
+    public static void markAllMessagesAsRead() {
+        for (TaskMessage msg : messages) {
+            msg.isRead = true;
+        }
+        hasNewMessages = false;
+        saveMessagesToJson(); // JSON dosyasına isRead = true bilgisini yazar
+    }
+
+    public static void addMessage(TaskMessage msg) {
+        messages.add(0, msg);
+        hasNewMessages = true;
+        saveMessagesToJson();
+    }
+
+    public static List<TaskMessage> getMessages() {
+        return messages;
+    }
+
+    public static void removeMessage(TaskMessage msg) {
+        messages.remove(msg);
+        saveMessagesToJson();
     }
 }

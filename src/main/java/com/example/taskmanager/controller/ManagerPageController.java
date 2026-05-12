@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.List;
 
 public class ManagerPageController {
 
@@ -28,18 +29,39 @@ public class ManagerPageController {
     @FXML private Label departmanad;
     @FXML private Label profilLabel;
     @FXML private TextField aramaCubugu;
+    @FXML private Label yeniMesajNoktasi;
+    @FXML private Label sayfaAciklamasi;
+    @FXML private HBox aramaAlani;
 
     private final UserService userService = UserService.getInstance();
     private User currentUser;
 
     @FXML
     public void initialize() {
-        // İlk açılışta çalışanlar listesi görünsün
-        gorunumDegistir(false);
-        // Arama kutusuna her yazı yazıldığında filtreleme yap
-        aramaCubugu.textProperty().addListener((observable, oldValue, newValue) -> {
-            filtreleVeGoster(newValue);
-        });
+        // 1. Mevcut görüntüyü ayarla (Çalışanlar listesi ilk başta görünsün)
+        gorunumDegistir(false, "Çalışan bilgilerini buradan görüntüleyebilirsin.");
+
+        // 2. Arama kutusu dinleyicisi (Eğer kodunda varsa bunu koru)
+        if (aramaCubugu != null) {
+            aramaCubugu.textProperty().addListener((observable, oldValue, newValue) -> {
+                filtreleVeGoster(newValue);
+            });
+        }
+
+        // 3. KIRMIZI NOKTA KONTROLÜ (Yeni eklediğimiz kısım)
+        if (yeniMesajNoktasi != null) {
+            // TaskService'deki hasNewMessages değişkenine göre görünürlüğü ayarla
+            boolean hasNew = TaskService.isHasNewMessages();
+            yeniMesajNoktasi.setVisible(hasNew);
+            yeniMesajNoktasi.setManaged(hasNew);
+        }
+        noktaKontroluYap();
+    }
+
+    private void noktaKontroluYap() {
+        if (yeniMesajNoktasi != null) {
+            yeniMesajNoktasi.setVisible(TaskService.isHasNewMessages());
+        }
     }
 
     private void filtreleVeGoster(String arananKelime) {
@@ -67,7 +89,8 @@ public class ManagerPageController {
      * gorevModu true ise HBox (Sütunlar) görünür, TilePane gizlenir.
      * gorevModu false ise TilePane (Çalışanlar) görünür, HBox gizlenir.
      */
-    private void gorunumDegistir(boolean gorevModu) {
+    private void gorunumDegistir(boolean gorevModu, String aciklamaMetni) {
+        // Panellerin değişimi
         calisanKartAlani.setVisible(!gorevModu);
         calisanKartAlani.setManaged(!gorevModu);
 
@@ -75,12 +98,24 @@ public class ManagerPageController {
             gorevSutunAlani.setVisible(gorevModu);
             gorevSutunAlani.setManaged(gorevModu);
         }
+
+        // Üst kısımdaki yazı değişimi
+        if (sayfaAciklamasi != null) {
+            sayfaAciklamasi.setText(aciklamaMetni);
+        }
+
+        // Arama çubuğunun gizlenmesi (Sadece Çalışanlar modunda görünür)
+        if (aramaAlani != null) {
+            aramaAlani.setVisible(!gorevModu);
+            aramaAlani.setManaged(!gorevModu);
+        }
     }
 
     // --- ÇALIŞAN LİSTELEME (ESKİ DÜZEN) ---
     @FXML
     private void tumCalisanlariGoster() {
-        gorunumDegistir(false);
+        gorunumDegistir(false, "Çalışan bilgilerini buradan görüntüleyebilirsin.");
+        noktaKontroluYap();
         departmanad.setText("Tüm Çalışanlar");
         calisanKartAlani.getChildren().clear();
         LinkedList<User> employees = userService.getAllEmployees();
@@ -90,7 +125,7 @@ public class ManagerPageController {
     }
 
     private void departmanYukle(String dAd) {
-        gorunumDegistir(false);
+        gorunumDegistir(false, dAd + " departmanı çalışanlarını görüntülüyorsun.");
         departmanad.setText(dAd);
         calisanKartAlani.getChildren().clear();
         LinkedList<User> employees = userService.getEmployeesByDepartment(dAd);
@@ -129,7 +164,7 @@ public class ManagerPageController {
     // --- GÖREV LİSTELEME (YENİ SÜTUNLU DÜZEN) ---
     @FXML
     private void atananGorevleriGoster() {
-        gorunumDegistir(true);
+        gorunumDegistir(true, "Şu an sistemde aktif olan tüm görevleri görüntülüyorsun.");
         departmanad.setText("Atanan Görevler");
         gorevSutunAlani.getChildren().clear();
 
@@ -253,4 +288,81 @@ public class ManagerPageController {
             stage.show();
         } catch (Exception e) { e.printStackTrace(); }
     }
-}
+    @FXML
+    private void sorulanSorulariGoster() {
+        gorunumDegistir(true, "Çalışanlardan gelen soruları ve geri bildirimleri yönetebilirsin.");
+        departmanad.setText("Gelen Sorular");
+
+        // JSON içindeki tüm mesajları okundu yap ve kaydet
+        TaskService.markAllMessagesAsRead();
+
+        if (yeniMesajNoktasi != null) {
+            yeniMesajNoktasi.setVisible(false);
+            yeniMesajNoktasi.setManaged(false);
+        }
+        gorevSutunAlani.getChildren().clear();
+        gorevSutunAlani.setSpacing(0); // Tek sütun olacağı için spacing sıfırlanabilir
+
+        // Sütunu enine tam yaymak için
+        VBox anaSutun = new VBox(15);
+        HBox.setHgrow(anaSutun, Priority.ALWAYS); // Enine tam kapla
+        gorevSutunAlani.getChildren().add(anaSutun);
+
+        List<TaskService.TaskMessage> mesajlar = TaskService.getMessages();
+        if (mesajlar.isEmpty()) {
+            anaSutun.getChildren().add(new Label("Henüz bir soru sorulmamış."));
+            return;
+        }
+
+        for (TaskService.TaskMessage msg : mesajlar) {
+            anaSutun.getChildren().add(soruKutusuOlustur(msg));
+        }
+    }
+
+    private VBox soruKutusuOlustur(TaskService.TaskMessage msg) {
+        VBox kutu = new VBox(10);
+        kutu.getStyleClass().add("task-card"); // CSS'indeki task-card stilini kullanır
+        kutu.setMaxWidth(Double.MAX_VALUE);
+        kutu.setStyle("-fx-padding: 20; -fx-background-color: white;");
+
+        // Bilgi Satırı (CSS'indeki employee-info ve employee-name stillerinden esinlenerek)
+        Label info = new Label("GÖNDEREN:  " + msg.sender.toUpperCase() + "     |     GÖREV:  " + msg.taskTitle.toUpperCase());
+        info.getStyleClass().add("page-title"); // CSS'indeki gri alt başlık stili
+        info.setStyle("-fx-font-weight: bold; -fx-font-size: 11px;");
+
+        Separator sep = new Separator();
+        sep.setOpacity(0.2);
+
+        // Mesaj İçeriği
+        Label icerik = new Label(msg.content);
+        icerik.setWrapText(true);
+        icerik.setStyle("-fx-font-size: 13px; -fx-text-fill: #7b8a9b; -fx-padding: 5 0 15 0;");
+
+        // Alt Satır ve Onay Butonu
+        HBox altSatir = new HBox();
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button onayButonu = new Button("ONAY");
+        // Buton stilini senin .add-task-link ve genel buton yapınla uyumlu hale getirdim
+        onayButonu.setStyle("-fx-background-color: #1d4ed8; -fx-text-fill: white; " +
+                "-fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 8 30; " +
+                "-fx-background-radius: 18;");
+
+        onayButonu.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Onay");
+            alert.setHeaderText(null);
+            alert.setContentText("Onayladığınız mesaj sayfadan silinecektir, emin misiniz?");
+
+            if (alert.showAndWait().get() == ButtonType.OK) {
+                TaskService.removeMessage(msg);
+                sorulanSorulariGoster();
+            }
+        });
+
+        altSatir.getChildren().addAll(spacer, onayButonu);
+        kutu.getChildren().addAll(info, sep, icerik, altSatir);
+
+        return kutu;
+    }}

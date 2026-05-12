@@ -1,6 +1,8 @@
 package com.example.taskmanager.controller;
 
 import com.example.taskmanager.model.TaskNode;
+import com.example.taskmanager.service.TaskService;
+import com.example.taskmanager.service.UserService;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -65,16 +67,48 @@ public class TaskDetailPageController {
 
     @FXML
     private void handleSendQuestion() {
-        String question = questionArea.getText().trim();
-        if (question.isEmpty()) return;
+        try {
+            String question = questionArea.getText().trim();
+            if (question.isEmpty()) {
+                return;
+            }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Mesaj Gönderildi");
-        alert.setHeaderText(null);
-        alert.setContentText("Sorunuz yönetici " + currentTask.getManagerName() + "'e başarıyla iletildi.");
-        alert.showAndWait();
+            UserService userService = UserService.getInstance();
 
-        questionArea.clear();
+            // Kullanıcı bilgisini güvenli al
+            String gonderenAdi = userService.getCurrentUser()
+                    .map(user -> user.getFullName())
+                    .orElse("Bilinmeyen Kullanıcı");
+
+            // Görev bilgisini kontrol et (Eğer currentTask null ise buton çalışmaz)
+            if (currentTask == null) {
+                System.err.println("HATA: currentTask nesnesi null!");
+                return;
+            }
+
+            // Mesajı oluştur
+            TaskService.TaskMessage msg = new TaskService.TaskMessage(
+                    gonderenAdi,
+                    currentTask.getTitle(),
+                    question
+            );
+
+            // Mesajı ekle (Bu satırda hata çıkarsa catch bloğuna düşer)
+            TaskService.addMessage(msg);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Başarılı");
+            alert.setHeaderText(null);
+            alert.setContentText("Sorunuz yöneticiye iletildi.");
+            alert.showAndWait();
+
+            questionArea.clear();
+
+        } catch (Exception e) {
+            // Eğer buton çalışmıyorsa konsolda bu hata mesajını göreceksin:
+            System.err.println("Mesaj gönderme sırasında hata oluştu: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private String basHarfleriAl(String adSoyad) {
