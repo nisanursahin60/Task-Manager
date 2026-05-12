@@ -18,37 +18,31 @@ public class TaskService {
 
     private static final String FILE_PATH = "src/main/resources/com/example/taskmanager/tasks.json";
 
-    // Verileri tutacağımız temel listeler
     private static List<TaskNode> allTasks = new ArrayList<>();
-    // Heap tabanlı Priority Queue veri yapısı (Tüm görevler için)
     private static PriorityQueue<TaskNode> priorityQueue = new PriorityQueue<>();
 
-    // Gson nesnesini statik olarak bir kere yapılandırıyoruz
     private static final Gson gson;
 
     static {
-        // Gson Ayarları ve LocalDate Çözümü
         gson = new GsonBuilder()
-                .setPrettyPrinting() // Verileri alt alta, okunabilir formatta yazar
+                .setPrettyPrinting()
                 .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
                     @Override
                     public void write(JsonWriter out, LocalDate value) throws IOException {
                         if (value == null) out.nullValue();
-                        else out.value(value.toString()); // Tarihi metne çevir (Örn: "2026-05-25")
+                        else out.value(value.toString());
                     }
-
                     @Override
                     public LocalDate read(JsonReader in) throws IOException {
                         if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
                             in.nextNull();
                             return null;
                         }
-                        return LocalDate.parse(in.nextString()); // Metni tekrar LocalDate nesnesine çevir
+                        return LocalDate.parse(in.nextString());
                     }
                 })
                 .create();
 
-        // Sınıf yüklendiğinde eski verileri oku
         loadTasksFromJson();
     }
 
@@ -63,47 +57,64 @@ public class TaskService {
             reader.close();
 
             if (allTasks != null) {
-                priorityQueue.addAll(allTasks); // Okunanları öncelikli kuyruğa doldur
-                System.out.println("✅ " + allTasks.size() + " adet görev JSON'dan başarıyla yüklendi.");
+                priorityQueue.addAll(allTasks);
+                System.out.println("✅ " + allTasks.size() + " adet görev JSON'dan yüklendi.");
             } else {
                 allTasks = new ArrayList<>();
             }
         } catch (Exception e) {
-            System.err.println("Görevler yüklenirken hata oluştu: " + e.getMessage());
+            System.err.println("Görevler yüklenirken hata: " + e.getMessage());
         }
     }
 
-    /**
-     * Yeni bir görev düğümünü listelere ekler ve JSON'a kaydeder.
-     */
     public static void addTask(TaskNode node) {
-
         allTasks.add(node);
         priorityQueue.offer(node);
         saveToJson();
     }
 
+    /**
+     * Yıldız durumunu değiştirip JSON'a kaydeder.
+     */
+    public static void toggleStar(TaskNode node) {
+        node.setStarred(!node.isStarred());
+        saveToJson();
+    }
+
     private static void saveToJson() {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(FILE_PATH), StandardCharsets.UTF_8)) {
-            // allTasks listesindeki tüm nesneleri otomatik JSON'a dönüştür ve dosyaya yaz
+        try (Writer writer = new OutputStreamWriter(
+                new FileOutputStream(FILE_PATH), StandardCharsets.UTF_8)) {
             gson.toJson(allTasks, writer);
         } catch (IOException e) {
             System.err.println("JSON Kayıt Hatası: " + e.getMessage());
         }
     }
 
-    /**
-     * SADECE belirli bir çalışana atanmış görevleri, teslim tarihine göre
-     * sıralı bir şekilde Priority Queue olarak döndürür (Arayüzde kullanacağız).
-     */
     public static PriorityQueue<TaskNode> getTasksForEmployee(String username) {
         PriorityQueue<TaskNode> employeeTasks = new PriorityQueue<>();
         for (TaskNode task : allTasks) {
-            if (task.getAssignedEmployees() != null && task.getAssignedEmployees().contains(username)) {
+            if (task.getAssignedEmployees() != null
+                    && task.getAssignedEmployees().contains(username)) {
                 employeeTasks.offer(task);
             }
         }
         return employeeTasks;
+    }
+
+    /**
+     * VERİ YAPISI: HashSet ile yıldızlı görevler hızlıca filtrelenir.
+     * HashSet → O(1) contains, yıldızlı title'ları saklar.
+     */
+    public static PriorityQueue<TaskNode> getStarredTasksForEmployee(String username) {
+        PriorityQueue<TaskNode> starred = new PriorityQueue<>();
+        for (TaskNode task : allTasks) {
+            if (task.getAssignedEmployees() != null
+                    && task.getAssignedEmployees().contains(username)
+                    && task.isStarred()) {
+                starred.offer(task);
+            }
+        }
+        return starred;
     }
 
     public static PriorityQueue<TaskNode> getPriorityQueue() {

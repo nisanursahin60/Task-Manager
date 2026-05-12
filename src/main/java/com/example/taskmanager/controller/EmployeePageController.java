@@ -13,9 +13,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class EmployeePageController {
 
@@ -30,70 +30,191 @@ public class EmployeePageController {
     private final UserService userService = UserService.getInstance();
     private User currentUser;
 
+    /**
+     * VERİ YAPISI 1: STACK — navigasyon geçmişi
+     */
+    private final Stack<String> viewHistory = new Stack<>();
+
+    /**
+     * VERİ YAPISI 2: HASHSET — yıldızlı görev title'larını O(1) ile tutar.
+     * JSON'daki starred=true olan görevler buraya senkronize edilir.
+     * Kart render sırasında "bu görev yıldızlı mı?" kontrolü HashSet.contains() ile yapılır.
+     */
+    private final HashSet<String> starredTitles = new HashSet<>();
+    // HashSet'in yanına
+    private final Stack<TaskNode> starStack = new Stack<>();
+
+    private static final String VIEW_TUM      = "TÜM GÖREVLERİM";
+    private static final String VIEW_YAKLASAN = "Son Tarihi Yaklaşanlar";
+    private static final String VIEW_YILDIZLI = "Yıldızlı Görevler";
+    private static final String VIEW_YENI     = "Yeni Eklenenler";
+
     @FXML
-    public void initialize() {
-    }
+    public void initialize() { }
 
     public void initWithUser(User user) {
         this.currentUser = user;
 
         if (profilAdLabel != null) profilAdLabel.setText(user.getFullName());
-        if (profilRolLabel != null) profilRolLabel.setText(user.getTitle() != null ? user.getTitle() : user.getDepartment());
+        if (profilRolLabel != null) profilRolLabel.setText(
+                user.getTitle() != null ? user.getTitle() : user.getDepartment());
         if (avatarLabel != null) avatarLabel.setText(basHarfleriAl(user.getFullName()));
 
+        syncStarredSet();
         tumGorevleriGoster();
     }
 
+    /**
+     * JSON'daki starred=true görevlerin title'larını HashSet'e yükler.
+     * Her yıldız toggle'ından sonra da çağrılır.
+     */
+    private void syncStarredSet() {
+        starredTitles.clear();
+        PriorityQueue<TaskNode> tum = TaskService.getTasksForEmployee(currentUser.getUsername());
+        for (TaskNode t : tum) {
+            if (t.isStarred()) starredTitles.add(t.getTitle());
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // MENÜ AKSIYONLARI
+    // -------------------------------------------------------------------------
+
     @FXML
     private void tumGorevleriGoster() {
-        if (panelBaslik != null) panelBaslik.setText("Tüm Görevlerim");
-
-        gorevKartAlani.getChildren().clear();
+        viewHistory.push(VIEW_TUM);
+        if (panelBaslik != null) panelBaslik.setText(VIEW_TUM);
 
         PriorityQueue<TaskNode> pq = TaskService.getTasksForEmployee(currentUser.getUsername());
+        kartlariEkrana(pq, false);
+    }
+
+    @FXML
+    private void sonTarihYaklasanlar() {
+        viewHistory.push(VIEW_YAKLASAN);
+        if (panelBaslik != null) panelBaslik.setText(VIEW_YAKLASAN);
+
+        /**
+         * VERİ YAPISI 3: PRIORITYQUEUE (Min-Heap)
+         * Bugünden 14 gün içindeki görevler deadline'a göre sıralı gelir.
+         */
+        PriorityQueue<TaskNode> tumGorevler = TaskService.getTasksForEmployee(currentUser.getUsername());
+        PriorityQueue<TaskNode> yaklasanlar = new PriorityQueue<>();
+
+        LocalDate bugun = LocalDate.now();
+        LocalDate sinir = bugun.plusDays(7);
+
+        for (TaskNode t : tumGorevler) {
+            if (t.getDeadline() != null
+                    && !t.getDeadline().isBefore(bugun)
+                    && !t.getDeadline().isAfter(sinir)) {
+                yaklasanlar.offer(t);
+            }
+        }
+
+        kartlariEkrana(yaklasanlar, true);
+    }
+
+    @FXML
+    private void yildizliGorevler() {
+        viewHistory.push(VIEW_YILDIZLI);
+        if (panelBaslik != null) panelBaslik.setText(VIEW_YILDIZLI);
+
+        // HashSet'teki title'lar zaten güncel — TaskService'den yıldızlıları çek
+        PriorityQueue<TaskNode> starred = TaskService.getStarredTasksForEmployee(currentUser.getUsername());
+        kartlariEkrana(starred, false);
+    }
+
+    @FXML
+    private void yeniGorevler() {
+        viewHistory.push(VIEW_YENI);
+        if (panelBaslik != null) panelBaslik.setText(VIEW_YENI);
+
+        PriorityQueue<TaskNode> tumGorevler = TaskService.getTasksForEmployee(currentUser.getUsername());
+        // Ters sıralı: deadline'ı en uzak olan önce (= en yeni atanmış)
+        PriorityQueue<TaskNode> yeniPQ = new PriorityQueue<>(Comparator.reverseOrder());
+
+        for (TaskNode t : tumGorevler) {
+            yeniPQ.offer(t);
+        }
+
+        kartlariEkrana(yeniPQ, false);
+    }
+
+    // -------------------------------------------------------------------------
+    // KARTLARI EKRANA DÖŞE
+    // -------------------------------------------------------------------------
+
+    /**
+     * VERİ YAPISI 4: LINKEDLIST — sıralı görevleri 3 sütuna dağıtmak için
+     * VERİ YAPISI 5: HASHMAP   — urgency grubu → badge rengi
+     */
+    private void kartlariEkrana(PriorityQueue<TaskNode> pq, boolean urgencyBadge) {
+        gorevKartAlani.getChildren().clear();
 
         if (pq.isEmpty()) {
-            Label bosLabel = new Label("Şu an atanmış bir göreviniz bulunmuyor.");
-            bosLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7b8a9b;");
-            gorevKartAlani.getChildren().add(bosLabel);
+            Label bos = new Label("Bu kategoride görev bulunmuyor.");
+            bos.setStyle("-fx-font-size: 14px; -fx-text-fill: #7b8a9b;");
+            gorevKartAlani.getChildren().add(bos);
             return;
         }
 
+        // HashMap: urgency key → CSS renk kodu
+        HashMap<String, String> urgencyColors = new HashMap<>();
+        urgencyColors.put("KRITIK",   "#dc2626");
+        urgencyColors.put("YAKLASAN", "#dc2626");
+        urgencyColors.put("NORMAL",   "#16a34a");
+
+        // LinkedList: PriorityQueue'dan sırayla çekip sakla
+        LinkedList<TaskNode> siraliGorevler = new LinkedList<>();
+        while (!pq.isEmpty()) {
+            siraliGorevler.addLast(pq.poll());
+        }
 
         VBox sutun1 = new VBox(20);
         VBox sutun2 = new VBox(20);
         VBox sutun3 = new VBox(20);
-
         HBox.setHgrow(sutun1, Priority.ALWAYS);
         HBox.setHgrow(sutun2, Priority.ALWAYS);
         HBox.setHgrow(sutun3, Priority.ALWAYS);
 
-        int sutunSirasi = 0; // Görevleri sırayla sütunlara dağıtmak için sayaç
+        int index = 0;
+        for (TaskNode gorev : siraliGorevler) {
+            String urgencyKey = urgencyHesapla(gorev.getDeadline());
+            String badgeRenk  = urgencyColors.get(urgencyKey);
 
-        while (!pq.isEmpty()) {
-            TaskNode gorev = pq.poll();
-            VBox kart = kartTasarimiOlustur(gorev);
+            VBox kart = kartTasarimiOlustur(gorev, urgencyBadge ? badgeRenk : null, urgencyKey);
 
-            if (sutunSirasi % 3 == 0) {
-                sutun1.getChildren().add(kart);
-            } else if (sutunSirasi % 3 == 1) {
-                sutun2.getChildren().add(kart);
-            } else {
-                sutun3.getChildren().add(kart);
+            switch (index % 3) {
+                case 0 -> sutun1.getChildren().add(kart);
+                case 1 -> sutun2.getChildren().add(kart);
+                case 2 -> sutun3.getChildren().add(kart);
             }
-            sutunSirasi++;
+            index++;
         }
 
         gorevKartAlani.getChildren().addAll(sutun1, sutun2, sutun3);
     }
 
-    private VBox kartTasarimiOlustur(TaskNode gorev) {
+    private String urgencyHesapla(LocalDate deadline) {
+        if (deadline == null) return "NORMAL";
+        long gunFarki = ChronoUnit.DAYS.between(LocalDate.now(), deadline);
+        if (gunFarki <= 0) return "KRITIK";
+        if (gunFarki <= 7) return "YAKLASAN";
+        return "NORMAL";
+    }
+
+    // -------------------------------------------------------------------------
+    // KART TASARIMI
+    // -------------------------------------------------------------------------
+
+    private VBox kartTasarimiOlustur(TaskNode gorev, String badgeRenk, String urgencyKey) {
         VBox kart = new VBox();
         kart.getStyleClass().add("task-card");
         kart.setMaxWidth(Double.MAX_VALUE);
         kart.setMaxHeight(Region.USE_PREF_SIZE);
 
-
+        // --- HEADER ---
         VBox headerContainer = new VBox(8);
         headerContainer.setStyle("-fx-padding: 15; -fx-cursor: hand;");
 
@@ -104,25 +225,65 @@ public class EmployeePageController {
         okIkonu.getStyleClass().add("collapse-icon");
 
         String baslikMetni = gorev.getTitle().toUpperCase();
-        Label baslikLabel = new Label(baslikMetni);
+        Label baslikLabel  = new Label(baslikMetni);
         baslikLabel.getStyleClass().add("task-card-title");
         baslikLabel.setWrapText(false);
 
         javafx.scene.text.Text textNode = new javafx.scene.text.Text(baslikMetni);
-        textNode.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 15));
-        double textGenisligi = textNode.getLayoutBounds().getWidth();
+        textNode.setFont(javafx.scene.text.Font.font(
+                "System", javafx.scene.text.FontWeight.BOLD, 15));
+        double textGenisligi    = textNode.getLayoutBounds().getWidth();
         double maksimumGenislik = 180.0;
-
         if (textGenisligi > maksimumGenislik) {
-            double yeniFontBoyutu = 15.0 * (maksimumGenislik / textGenisligi);
-            yeniFontBoyutu = Math.max(yeniFontBoyutu, 10.5);
-            baslikLabel.setStyle("-fx-font-size: " + yeniFontBoyutu + "px; -fx-padding: 5 0 0 0;");
+            double yeni = Math.max(15.0 * (maksimumGenislik / textGenisligi), 10.5);
+            baslikLabel.setStyle("-fx-font-size: " + yeni + "px; -fx-padding: 5 0 0 0;");
         }
 
         Region baslikSpacer = new Region();
         HBox.setHgrow(baslikSpacer, Priority.ALWAYS);
 
-        baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, baslikSpacer);
+        // --- YILDIZ İKONU ---
+        // HashSet.contains() ile O(1) yıldız kontrolü
+        boolean isStarred  = starredTitles.contains(gorev.getTitle());
+        Label yildizIkonu  = new Label(isStarred ? "★" : "☆");
+        yildizIkonu.setStyle(
+                "-fx-font-size: 18px; -fx-cursor: hand; -fx-text-fill: "
+                        + (isStarred ? "#f59e0b" : "#cbd5e1") + ";");
+
+        yildizIkonu.setOnMouseClicked(e -> {
+            e.consume(); // header collapse tetiklenmesin
+            TaskService.toggleStar(gorev);
+            syncStarredSet(); // HashSet'i güncelle
+
+            boolean nowStarred = starredTitles.contains(gorev.getTitle());
+            yildizIkonu.setText(nowStarred ? "★" : "☆");
+            yildizIkonu.setStyle(
+                    "-fx-font-size: 18px; -fx-cursor: hand; -fx-text-fill: "
+                            + (nowStarred ? "#f59e0b" : "#cbd5e1") + ";");
+        });
+
+        if (badgeRenk != null) {
+            // Kalan gün hesapla
+            long kalanGun = ChronoUnit.DAYS.between(LocalDate.now(), gorev.getDeadline());
+            String kalanGunMetin;
+            if (kalanGun < 0) {
+                kalanGunMetin = Math.abs(kalanGun) + " gün geçti";
+            } else if (kalanGun == 0) {
+                kalanGunMetin = "Bugün son gün!";
+            } else {
+                kalanGunMetin = kalanGun + " gün kaldı";
+            }
+
+            Label badge = new Label(kalanGunMetin);
+            badge.setStyle(
+                    "-fx-background-color: " + badgeRenk + "22;" +
+                            "-fx-text-fill: "        + badgeRenk + ";" +
+                            "-fx-font-size: 10px; -fx-font-weight: bold;" +
+                            "-fx-background-radius: 6; -fx-padding: 2 6;");
+            baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, baslikSpacer, badge, yildizIkonu);
+        } else {
+            baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, baslikSpacer, yildizIkonu);
+        }
 
         HBox altBilgiSatiri = new HBox();
         altBilgiSatiri.setAlignment(Pos.CENTER_LEFT);
@@ -134,12 +295,16 @@ public class EmployeePageController {
         Region headerSpacer = new Region();
         HBox.setHgrow(headerSpacer, Priority.ALWAYS);
 
+        // YENİ
+        String deadlineRenk = "#1d4ed8";
         Label anaDeadline = new Label(gorev.getDeadline().toString());
-        anaDeadline.setStyle("-fx-font-weight: bold; -fx-text-fill: #1d4ed8; -fx-font-size: 12px;");
+        anaDeadline.setStyle("-fx-font-weight: bold; -fx-text-fill: " + deadlineRenk +
+                "; -fx-font-size: 12px;");
 
         altBilgiSatiri.getChildren().addAll(atayanLabel, headerSpacer, anaDeadline);
         headerContainer.getChildren().addAll(baslikSatiri, altBilgiSatiri);
 
+        // --- BODY (başlangıçta KAPALI) ---
         VBox bodyContent = new VBox(12);
         bodyContent.setStyle("-fx-padding: 0 15 15 15;");
         bodyContent.setVisible(false);
@@ -149,7 +314,8 @@ public class EmployeePageController {
         HBox progTextSatiri = new HBox();
         Label progLabel = new Label("İlerleme");
         progLabel.getStyleClass().add("small-text");
-        Region progSpacer = new Region(); HBox.setHgrow(progSpacer, Priority.ALWAYS);
+        Region progSpacer = new Region();
+        HBox.setHgrow(progSpacer, Priority.ALWAYS);
         Label yuzdeLabel = new Label("%0");
         yuzdeLabel.getStyleClass().add("progress-text");
         progTextSatiri.getChildren().addAll(progLabel, progSpacer, yuzdeLabel);
@@ -170,11 +336,11 @@ public class EmployeePageController {
         List<CheckBox> cbs = new ArrayList<>();
 
         for (String stepRaw : gorev.getSteps()) {
-            String[] parts = stepRaw.split("\\|");
-            String adimMetni = parts[0].trim();
+            String[] parts    = stepRaw.split("\\|");
+            String adimMetni  = parts[0].trim();
             String adimTarihi = (parts.length > 1) ? parts[1].trim() : "";
 
-            boolean isDep = adimMetni.startsWith("[DEPENDENT]");
+            boolean isDep     = adimMetni.startsWith("[DEPENDENT]");
             String temizMetin = isDep ? adimMetni.replace("[DEPENDENT]", "") : adimMetni;
 
             HBox adimSatiri = new HBox(5);
@@ -186,7 +352,8 @@ public class EmployeePageController {
             cb.setMaxWidth(160);
             cbs.add(cb);
 
-            Region stepSpacer = new Region(); HBox.setHgrow(stepSpacer, Priority.ALWAYS);
+            Region stepSpacer = new Region();
+            HBox.setHgrow(stepSpacer, Priority.ALWAYS);
             Label stepDate = new Label(adimTarihi);
             stepDate.getStyleClass().add("step-deadline");
 
@@ -204,10 +371,10 @@ public class EmployeePageController {
             double p = (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
             pb.setProgress(p);
             yuzdeLabel.setText("%" + Math.round(p * 100));
-
             int idx = cbs.indexOf(c);
-            if(c.isSelected() && idx + 1 < cbs.size() && gorev.getSteps().get(idx+1).contains("[DEPENDENT]")) {
-                cbs.get(idx+1).setDisable(false);
+            if (c.isSelected() && idx + 1 < cbs.size()
+                    && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
+                cbs.get(idx + 1).setDisable(false);
             }
         }));
 
@@ -223,49 +390,45 @@ public class EmployeePageController {
         bodyContent.getChildren().addAll(progBox, s1, detayLink, s2, adimlarScroll);
 
         headerContainer.setOnMouseClicked(e -> {
-            if (bodyContent.isVisible()) {
-                bodyContent.setVisible(false);
-                bodyContent.setManaged(false);
-                okIkonu.setText("▶");
-            } else {
-                bodyContent.setVisible(true);
-                bodyContent.setManaged(true);
-                okIkonu.setText("▼");
-            }
+            boolean acik = bodyContent.isVisible();
+            bodyContent.setVisible(!acik);
+            bodyContent.setManaged(!acik);
+            okIkonu.setText(acik ? "▶" : "▼");
         });
 
         kart.getChildren().addAll(headerContainer, bodyContent);
         return kart;
     }
 
+    // -------------------------------------------------------------------------
+    // YARDIMCI METODLAR
+    // -------------------------------------------------------------------------
+
     private void modalAc(TaskNode gorev) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/TaskDetailPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/taskmanager/TaskDetailPage.fxml"));
             Parent root = loader.load();
-
             TaskDetailPageController controller = loader.getController();
             controller.setTaskDetails(gorev);
-
             Stage stage = new Stage();
             stage.setTitle("Görev Detayları");
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
         } catch (Exception ex) {
-            System.err.println("Modal açılırken hata oluştu: " + ex.getMessage());
+            System.err.println("Modal açılırken hata: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
-    @FXML private void onemliGorevler() { if (panelBaslik != null) panelBaslik.setText("Önemli Görevler"); }
-    @FXML private void sonTarihYaklasanlar() { if (panelBaslik != null) panelBaslik.setText("Son Tarihi Yaklaşanlar"); }
-    @FXML private void yeniGorevler() { if (panelBaslik != null) panelBaslik.setText("Yeni Eklenenler"); }
-
     @FXML
     private void cikisYap() {
         userService.logout();
+        viewHistory.clear();
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/LoginPage.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/taskmanager/LoginPage.fxml"));
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) anchorPane.getScene().getWindow();
             stage.setScene(scene);
@@ -275,9 +438,10 @@ public class EmployeePageController {
     }
 
     private String basHarfleriAl(String adSoyad) {
-        if(adSoyad == null || adSoyad.trim().isEmpty()) return "?";
+        if (adSoyad == null || adSoyad.trim().isEmpty()) return "?";
         String[] parcalar = adSoyad.trim().split("\\s+");
         if (parcalar.length == 1) return parcalar[0].substring(0, 1).toUpperCase();
-        return (parcalar[0].substring(0, 1) + parcalar[parcalar.length - 1].substring(0, 1)).toUpperCase();
+        return (parcalar[0].substring(0, 1) +
+                parcalar[parcalar.length - 1].substring(0, 1)).toUpperCase();
     }
 }

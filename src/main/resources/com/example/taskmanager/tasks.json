@@ -1,148 +1,158 @@
 [
   {
     "title": "OTEL AĞ TASARIMI",
-    "deadline": "2026-05-25",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif"
-    ],
-    "description": "Otel projesi için ağ altyapısının Packet Tracer üzerinde simüle edilmesi, VLAN atamalarının ve IP yönlendirmelerinin yapılması.",
     "steps": [
       "VLAN Yapılandırması|20.05.2026",
       "IP Adresleme|22.05.2026",
       "[DEPENDENT]Simülasyon Testi|25.05.2026"
-    ]
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-05-25",
+    "managerName": "Ahmet Yıldız",
+    "description": "Otel projesi için ağ altyapısının Packet Tracer üzerinde simüle edilmesi, VLAN atamalarının ve IP yönlendirmelerinin yapılması.",
+    "starred": false
   },
   {
     "title": "VERİTABANI OPTİMİZASYONU",
-    "deadline": "2026-06-15",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif",
-      "mehmet"
-    ],
-    "description": "Müşteri verilerinin tutulduğu tabloların indekslenmesi ve sistem sorgularının hızlandırılması işlemleri.",
     "steps": [
       "Mevcut sorguların analizi|10.06.2026",
       "Tablo indekslemelerinin yapılması|12.06.2026",
       "[DEPENDENT]Performans testlerinin uygulanması|14.06.2026"
-    ]
-  },
-  {
-    "title": "API ENTEGRASYONU",
-    "deadline": "2026-05-18",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif",
-      "zeynep"
     ],
-    "description": "Üçüncü parti hava durumu ve döviz kurları API'lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
-    "steps": [
-      "API anahtarlarının alınması|15.05.2026",
-      "Bağlantı kodlarının yazılması|16.05.2026",
-      "[DEPENDENT]Gelen verilerin arayüze basılması|17.05.2026"
-    ]
-  },
-  {
-    "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
-    "deadline": "2026-05-20",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif"
-    ],
-    "description": "Login sayfasındaki şifrelerin MD5 yerine SHA-256 ile şifrelenmesi ve hatalı girişlerde Captcha doğrulaması eklenmesi.",
-    "steps": [
-      "SHA-256 algoritmasının entegrasyonu|18.05.2026",
-      "Eski şifrelerin hash'lenerek güncellenmesi|19.05.2026",
-      "[DEPENDENT]Google reCAPTCHA v3 kurulumu|20.05.2026"
-    ]
-  },
-  {
-    "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
-    "deadline": "2026-05-28",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif",
-      "can"
-    ],
-    "description": "Web uygulamasının tablet ve telefon ekran boyutlarında düzgün göründüğünün test edilmesi ve CSS Grid hatalarının giderilmesi.",
-    "steps": [
-      "iPhone ve Android ekranlarında test|24.05.2026",
-      "Taşan menülerin Hamburger menüye çevrilmesi|26.05.2026",
-      "[DEPENDENT]Canlı sunucuya (Production) aktarım|27.05.2026"
-    ]
-  },
-  {
-    "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
-    "deadline": "2026-06-02",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif"
-    ],
-    "description": "Sistemdeki mevcut ödeme altyapısına Iyzico 3D Secure entegrasyonunun yapılması ve test kartlarıyla başarılı ödeme akışının sağlanması.",
-    "steps": [
-      "Iyzico Sandbox ortamının kurulması|30.05.2026",
-      "3D Secure yönlendirme sayfasının tasarımı|01.06.2026",
-      "[DEPENDENT]Gerçek ortam (Live) API anahtarlarının girilmesi|02.06.2026"
-    ]
-  },
-  {
-    "title": "SUNUCU GEÇİŞİ (MIGRATION)",
-    "deadline": "2026-06-10",
-    "managerName": "Ahmet Yıldız",
     "assignedEmployees": [
       "elif",
       "mehmet"
     ],
-    "description": "Projenin mevcut yerel sunuculardan AWS EC2 bulut sunucularına taşınması ve domain yönlendirmelerinin DNS üzerinden yapılması.",
+    "deadline": "2026-06-15",
+    "managerName": "Ahmet Yıldız",
+    "description": "Müşteri verilerinin tutulduğu tabloların indekslenmesi ve sistem sorgularının hızlandırılması işlemleri.",
+    "starred": false
+  },
+  {
+    "title": "API ENTEGRASYONU",
+    "steps": [
+      "API anahtarlarının alınması|15.05.2026",
+      "Bağlantı kodlarının yazılması|16.05.2026",
+      "[DEPENDENT]Gelen verilerin arayüze basılması|17.05.2026"
+    ],
+    "assignedEmployees": [
+      "elif",
+      "zeynep"
+    ],
+    "deadline": "2026-05-18",
+    "managerName": "Ahmet Yıldız",
+    "description": "Üçüncü parti hava durumu ve döviz kurları API\u0027lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
+    "starred": false
+  },
+  {
+    "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
+    "steps": [
+      "SHA-256 algoritmasının entegrasyonu|18.05.2026",
+      "Eski şifrelerin hash\u0027lenerek güncellenmesi|19.05.2026",
+      "[DEPENDENT]Google reCAPTCHA v3 kurulumu|20.05.2026"
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-05-20",
+    "managerName": "Ahmet Yıldız",
+    "description": "Login sayfasındaki şifrelerin MD5 yerine SHA-256 ile şifrelenmesi ve hatalı girişlerde Captcha doğrulaması eklenmesi.",
+    "starred": false
+  },
+  {
+    "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
+    "steps": [
+      "iPhone ve Android ekranlarında test|24.05.2026",
+      "Taşan menülerin Hamburger menüye çevrilmesi|26.05.2026",
+      "[DEPENDENT]Canlı sunucuya (Production) aktarım|27.05.2026"
+    ],
+    "assignedEmployees": [
+      "elif",
+      "can"
+    ],
+    "deadline": "2026-05-28",
+    "managerName": "Ahmet Yıldız",
+    "description": "Web uygulamasının tablet ve telefon ekran boyutlarında düzgün göründüğünün test edilmesi ve CSS Grid hatalarının giderilmesi.",
+    "starred": false
+  },
+  {
+    "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
+    "steps": [
+      "Iyzico Sandbox ortamının kurulması|30.05.2026",
+      "3D Secure yönlendirme sayfasının tasarımı|01.06.2026",
+      "[DEPENDENT]Gerçek ortam (Live) API anahtarlarının girilmesi|02.06.2026"
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-06-02",
+    "managerName": "Ahmet Yıldız",
+    "description": "Sistemdeki mevcut ödeme altyapısına Iyzico 3D Secure entegrasyonunun yapılması ve test kartlarıyla başarılı ödeme akışının sağlanması.",
+    "starred": false
+  },
+  {
+    "title": "SUNUCU GEÇİŞİ (MIGRATION)",
     "steps": [
       "AWS EC2 instance oluşturulması|05.06.2026",
       "Veritabanı dump alınıp buluta yüklenmesi|07.06.2026",
       "DNS ayarlarının güncellenmesi (Route 53)|08.06.2026",
       "[DEPENDENT]Eski sunucuların kapatılması|09.06.2026"
-    ]
+    ],
+    "assignedEmployees": [
+      "elif",
+      "mehmet"
+    ],
+    "deadline": "2026-06-10",
+    "managerName": "Ahmet Yıldız",
+    "description": "Projenin mevcut yerel sunuculardan AWS EC2 bulut sunucularına taşınması ve domain yönlendirmelerinin DNS üzerinden yapılması.",
+    "starred": false
   },
   {
     "title": "YÖNETİCİ PANELİ LOG SİSTEMİ",
-    "deadline": "2026-06-05",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif"
-    ],
-    "description": "Sistemdeki yöneticilerin hangi çalışana ne zaman görev atadığının veya sildiğinin kayıt altına alınacağı bir log tablosu oluşturulması.",
     "steps": [
       "Log tablosunun veritabanına eklenmesi|03.06.2026",
       "Controller içine kayıt kodlarının yazılması|04.06.2026",
       "[DEPENDENT]Yönetici arayüzünde logların listelenmesi|05.06.2026"
-    ]
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-06-05",
+    "managerName": "Ahmet Yıldız",
+    "description": "Sistemdeki yöneticilerin hangi çalışana ne zaman görev atadığının veya sildiğinin kayıt altına alınacağı bir log tablosu oluşturulması.",
+    "starred": false
   },
   {
     "title": "E-POSTA BİLDİRİM SİSTEMİ",
-    "deadline": "2026-05-30",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif",
-      "ayse"
-    ],
-    "description": "Yeni bir görev atandığında veya görevin teslim tarihine 1 gün kaldığında çalışanın şirket mailine otomatik hatırlatma e-postası atılması.",
     "steps": [
       "SMTP sunucu ayarlarının yapılması|27.05.2026",
       "JavaMail kütüphanesinin projeye dahil edilmesi|28.05.2026",
       "Zamanlanmış görevlerin (Cron Job) ayarlanması|29.05.2026"
-    ]
+    ],
+    "assignedEmployees": [
+      "elif",
+      "ayse"
+    ],
+    "deadline": "2026-05-30",
+    "managerName": "Ahmet Yıldız",
+    "description": "Yeni bir görev atandığında veya görevin teslim tarihine 1 gün kaldığında çalışanın şirket mailine otomatik hatırlatma e-postası atılması.",
+    "starred": false
   },
   {
     "title": "DOKÜMANTASYON GÜNCELLEMESİ",
-    "deadline": "2026-06-25",
-    "managerName": "Ahmet Yıldız",
-    "assignedEmployees": [
-      "elif"
-    ],
-    "description": "Dönem sonu teslimi için UML diyagramlarının güncellenmesi, Javadoc yorumlarının yazılması ve kullanım kılavuzunun hazırlanması.",
     "steps": [
       "Sınıf (Class) diyagramlarının çizilmesi|20.06.2026",
       "Eksik fonksiyonlara Javadoc eklenmesi|22.06.2026",
       "[DEPENDENT]PDF raporunun oluşturulması|24.06.2026"
-    ]
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-06-25",
+    "managerName": "Ahmet Yıldız",
+    "description": "Dönem sonu teslimi için UML diyagramlarının güncellenmesi, Javadoc yorumlarının yazılması ve kullanım kılavuzunun hazırlanması.",
+    "starred": false
   }
 ]

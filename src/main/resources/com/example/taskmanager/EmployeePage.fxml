@@ -57,7 +57,7 @@
                             <Label text="Yeni" styleClass="menu-text" style="-fx-text-fill: white;"/>
                         </HBox>
 
-                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#onemliGorevler" alignment="CENTER_LEFT">
+                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#yildizliGorevler" alignment="CENTER_LEFT">
                             <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
                                 <Image url="@images/star.png" />
                             </ImageView>
