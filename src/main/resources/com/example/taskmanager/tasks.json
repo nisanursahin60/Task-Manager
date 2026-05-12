@@ -207,5 +207,21 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-05-12T15:32:26.455601300"
+  },
+  {
+    "title": "deneme",
+    "steps": [
+      "1. ilk adım",
+      "2. sonraki"
+    ],
+    "assignedEmployees": [
+      "mehmet"
+    ],
+    "deadline": "2026-05-15",
+    "managerName": "Ahmet Yıldız",
+    "description": "açıklama var",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-05-12T16:32:07.190114"
   }
 ]

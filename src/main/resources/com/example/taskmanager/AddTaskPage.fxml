@@ -16,6 +16,11 @@
                             <TextField fx:id="titleField" prefHeight="35.0" />
                         </VBox>
 
+                        <VBox spacing="5">
+                            <Label text="Görev Açıklaması" styleClass="small-text" />
+                            <TextArea fx:id="descriptionField" prefHeight="80.0" promptText="Görev hakkında detaylı bilgi giriniz..." wrapText="true" style="-fx-background-radius: 10;" />
+                        </VBox>
+
                         <VBox spacing="8" VBox.vgrow="ALWAYS">
                             <Label text="Görev Adımları (Linked List Yapısı)" styleClass="small-text" />
                             <HBox spacing="10">

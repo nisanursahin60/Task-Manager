@@ -153,6 +153,10 @@ public class AddTaskController {
         }
     }
 
+    // 1. Yeni alanı tanımlayın
+    @FXML private TextArea descriptionField;
+
+    // 2. handleSave metodunu güncelleyin
     @FXML
     private void handleSave() {
         if (titleField.getText().isEmpty() || deadlinePicker.getValue() == null) {
@@ -168,17 +172,29 @@ public class AddTaskController {
             return;
         }
 
+        // TaskNode oluştururken descriptionField'dan gelen metni alıyoruz
         TaskNode newNode = new TaskNode(
                 titleField.getText(),
                 new ArrayList<>(stepsList),
                 selectedUsernames,
                 deadlinePicker.getValue(),
-                userService.getCurrentUser().map(User::getFullName).orElse("Yönetici")
+                userService.getCurrentUser().map(User::getFullName).orElse("Yönetici"),
+                descriptionField.getText().trim(), // AÇIKLAMA BURADA EKLENDİ
+                new ArrayList<>() // Henüz dosya ekleme arayüzü yoksa boş liste
         );
 
         TaskService.addTask(newNode);
         showAlert("Başarılı", "Görev başarıyla eklendi.");
         clearForm();
+    }
+
+    // 3. clearForm metoduna ekleyin
+    private void clearForm() {
+        titleField.clear();
+        descriptionField.clear(); // AÇIKLAMA ALANINI TEMİZLE
+        stepsList.clear();
+        stepInputField.clear();
+        deadlinePicker.setValue(null);
     }
 
     private void findSelectedUsernames(TreeItem<String> item, List<String> list) {
@@ -195,13 +211,6 @@ public class AddTaskController {
         for (TreeItem<String> child : item.getChildren()) {
             findSelectedUsernames(child, list);
         }
-    }
-
-    private void clearForm() {
-        titleField.clear();
-        stepsList.clear();
-        stepInputField.clear();
-        deadlinePicker.setValue(null);
     }
 
     private void showAlert(String title, String content) {
