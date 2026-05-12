@@ -132,7 +132,16 @@ public class EmployeePageController {
 
     @FXML
     void tamamlananGorevler() {
-        if (panelBaslik != null) panelBaslik.setText("Tamamlanan Görevler");
+        if (panelBaslik != null) {
+            panelBaslik.setText("Tamamlanan Görevler");
+        }
+
+        gorevKartAlani.getChildren().clear();
+
+        Label bos = new Label("Tamamlanan görev bulunmuyor.");
+        bos.setStyle("-fx-font-size: 14px; -fx-text-fill: #7b8a9b;");
+
+        gorevKartAlani.getChildren().add(bos);
     }
 
     // -------------------------------------------------------------------------
