@@ -27,6 +27,7 @@ public class ManagerPageController {
     @FXML private HBox gorevSutunAlani;     // Yeni eklediğimiz görev sütunları (HBox)
     @FXML private Label departmanad;
     @FXML private Label profilLabel;
+    @FXML private TextField aramaCubugu;
 
     private final UserService userService = UserService.getInstance();
     private User currentUser;
@@ -35,6 +36,22 @@ public class ManagerPageController {
     public void initialize() {
         // İlk açılışta çalışanlar listesi görünsün
         gorunumDegistir(false);
+        // Arama kutusuna her yazı yazıldığında filtreleme yap
+        aramaCubugu.textProperty().addListener((observable, oldValue, newValue) -> {
+            filtreleVeGoster(newValue);
+        });
+    }
+
+    private void filtreleVeGoster(String arananKelime) {
+        calisanKartAlani.getChildren().clear();
+        LinkedList<User> hepsi = userService.getAllEmployees();
+
+        for (User emp : hepsi) {
+            // İsimde aranan kelime var mı diye bak (küçük/büyük harf duyarsız)
+            if (emp.getFullName().toLowerCase().contains(arananKelime.toLowerCase())) {
+                calisanKartEkle(emp.getFullName(), emp.getDepartment());
+            }
+        }
     }
 
     public void initWithUser(User user) {

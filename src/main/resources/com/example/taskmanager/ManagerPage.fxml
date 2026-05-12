@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
 
 <AnchorPane fx:id="anchorPane"
             prefHeight="600.0"
@@ -76,15 +77,17 @@
             <!-- SAĞ PANEL -->
             <VBox fx:id="mainPanel" spacing="22" styleClass="main-panel" HBox.hgrow="ALWAYS">
 
-                <!-- ÜST BAŞLIK -->
-                <HBox alignment="TOP_LEFT">
-                    <VBox spacing="6">
-                        <Label fx:id="departmanad" text="Tüm Çalışanlar" styleClass="page-title"/>
-                        <Label text="Çalışan bilgilerini buradan görüntüleyebilirsin."
-                               styleClass="page-subtitle"/>
-                    </VBox>
+                <HBox alignment="CENTER_LEFT" spacing="15"> <VBox spacing="6">
+                    <Label fx:id="departmanad" text="Tüm Çalışanlar" styleClass="page-title"/>
+                    <Label text="Çalışan bilgilerini buradan görüntüleyebilirsin." styleClass="page-subtitle"/>
+                </VBox>
 
                     <Region HBox.hgrow="ALWAYS"/>
+
+                    <TextField fx:id="aramaCubugu"
+                               promptText="Çalışan ara..."
+                               styleClass="search-field"
+                               prefWidth="200"/>
 
                     <HBox spacing="6" styleClass="add-task-link" onMouseClicked="#gorevEklePaneliAc">
                         <Label text="+" styleClass="add-plus"/>

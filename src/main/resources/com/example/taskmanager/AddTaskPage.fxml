@@ -38,6 +38,11 @@
                 <VBox prefWidth="480.0" spacing="15.0" styleClass="main-panel" HBox.hgrow="ALWAYS">
                     <children>
                         <Label styleClass="page-title" text="Personel Atama" />
+
+                        <TextField fx:id="personelArama"
+                                   promptText="Personel ismi ara..."
+                                   styleClass="search-field" />
+
                         <TreeView fx:id="employeeTreeView" VBox.vgrow="ALWAYS" />
                     </children>
                     <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>

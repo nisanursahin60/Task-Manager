@@ -104,12 +104,15 @@
 }
 
 .add-task-link {
-    -fx-padding: 8 14;
+    -fx-padding: 5 12;
     -fx-background-color: white;
     -fx-background-radius: 18;
+    -fx-alignment: center;
+
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 3);
     -fx-cursor: hand;
 }
+
 
 .add-task-link:hover {
     -fx-background-color: #eaf4ff;
@@ -307,4 +310,52 @@
 
 .sub-menu-item:hover .label {
     -fx-text-fill: white;
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dcdde1;
+    -fx-border-radius: 20;
+    -fx-padding: 8 15;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #a5b1be;
+}
+
+.search-field:focused {
+    -fx-border-color: #243b55; /* Panel renginle uyumlu */
+    -fx-background-color: #ffffff;
+}
+
+/* Adım listesindeki metin rengi (siyah olmaması için) */
+.step-item-text {
+    -fx-text-fill: #243b55;
+    -fx-font-size: 13px;
+}
+
+.delete-step-btn {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 1.5;
+
+    /* Her zaman yuvarlak kalması için */
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+
+    /* Kareleşmeyi önlemek için sabit boyut */
+    -fx-min-width: 22;
+    -fx-max-width: 22;
+    -fx-min-height: 22;
+    -fx-max-height: 22;
+}
+
+.delete-step-btn:hover {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    /* Hover durumunda da aynı radius kalmalı */
+    -fx-background-radius: 15;
 }

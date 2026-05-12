@@ -7,8 +7,13 @@ import com.example.taskmanager.service.UserService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,6 +24,7 @@ public class AddTaskController {
     @FXML private ListView<String> stepsListView;
     @FXML private DatePicker deadlinePicker;
     @FXML private TreeView<String> employeeTreeView;
+    @FXML private TextField personelArama;
 
     private final ObservableList<String> stepsList = FXCollections.observableArrayList();
     private final UserService userService = UserService.getInstance();
@@ -27,6 +33,50 @@ public class AddTaskController {
     public void initialize() {
         stepsListView.setItems(stepsList);
         setupEmployeeTree();
+
+        personelArama.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterEmployeeTree(newValue);
+        });
+
+        // Satırları özelleştiriyoruz
+        stepsListView.setCellFactory(param -> new ListCell<String>() {
+            private final HBox container = new HBox();
+            private final Label stepText = new Label();
+            private final Label deleteBtn = new Label("-"); // Eksi butonu
+            private final Region spacer = new Region();
+
+            {
+                // Stil ve yerleşim ayarları
+                container.setAlignment(Pos.CENTER_LEFT);
+                HBox.setHgrow(spacer, Priority.ALWAYS); // Metin ile buton arasını açar
+                deleteBtn.getStyleClass().add("delete-step-btn");
+                stepText.getStyleClass().add("step-item-text");
+
+                container.getChildren().addAll(stepText, spacer, deleteBtn);
+
+                // Silme fonksiyonu
+                deleteBtn.setOnMouseClicked(event -> {
+                    String item = getItem();
+                    if (item != null) {
+                        // Mevcut metinden gerçek içeriği al (numarayı atla)
+                        // "1. Adım İçeriği" -> "Adım İçeriği"
+                        stepsList.remove(item);
+                        reorderSteps(); // Numaraları düzelt
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    stepText.setText(item);
+                    setGraphic(container);
+                }
+            }
+        });
     }
 
     private void setupEmployeeTree() {
@@ -55,13 +105,51 @@ public class AddTaskController {
         employeeTreeView.setCellFactory(CheckBoxTreeCell.forTreeView());
     }
 
+    private void filterEmployeeTree(String filter) {
+        if (filter == null || filter.isEmpty()) {
+            setupEmployeeTree(); // Arama boşsa tüm listeyi tekrar göster
+            return;
+        }
+
+        CheckBoxTreeItem<String> filteredRoot = new CheckBoxTreeItem<>("Arama Sonuçları");
+        filteredRoot.setExpanded(true);
+
+        for (User user : userService.getAllEmployees()) {
+            if (user.getFullName().toLowerCase().contains(filter.toLowerCase())) {
+                CheckBoxTreeItem<String> item = new CheckBoxTreeItem<>(user.getFullName() + " (@" + user.getUsername() + ")");
+                filteredRoot.getChildren().add(item);
+            }
+        }
+        employeeTreeView.setRoot(filteredRoot);
+    }
+
+    // Yeni adımları listeye ekleyen metodu güncelle
     @FXML
     private void handleAddStep() {
-        String newStep = stepInputField.getText().trim();
-        if (!newStep.isEmpty()) {
-            int stepNumber = stepsList.size() + 1;
-            stepsList.add(stepNumber + ". " + newStep);
+        String stepText = stepInputField.getText().trim();
+        if (!stepText.isEmpty()) {
+            // Listeye eklerken numara koymuyoruz, reorderSteps halledecek
+            stepsList.add(stepText);
+            reorderSteps();
             stepInputField.clear();
+        }
+    }
+
+    // Tüm adımları baştan numaralandıran sihirli metod
+    private void reorderSteps() {
+        List<String> currentTexts = new ArrayList<>();
+
+        // Mevcut metinlerin başındaki "1. ", "2. " kısımlarını temizleyip saf hallerini al
+        for (String s : stepsList) {
+            String cleanText = s.replaceAll("^\\d+\\.\\s*", "");
+            currentTexts.add(cleanText);
+        }
+
+        stepsList.clear();
+
+        // Yeniden numaralandırarak listeye geri ekle
+        for (int i = 0; i < currentTexts.size(); i++) {
+            stepsList.add((i + 1) + ". " + currentTexts.get(i));
         }
     }
 
