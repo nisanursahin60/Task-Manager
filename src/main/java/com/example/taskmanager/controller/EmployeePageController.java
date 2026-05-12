@@ -751,22 +751,10 @@ public class EmployeePageController {
 
     @FXML
     private void cikisYap() {
-        userService.logout();
-        viewHistory.clear();
-
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/taskmanager/LoginPage.fxml")
-            );
-
-            Scene scene = new Scene(loader.load());
-
-            Stage stage = (Stage) anchorPane.getScene().getWindow();
-            stage.setScene(scene);
-
-        } catch (Exception e) {
-            System.err.println("Çıkış hatası: " + e.getMessage());
-        }
+            Parent login = FXMLLoader.load(getClass().getResource("/com/example/taskmanager/LoginPage.fxml"));
+            anchorPane.getScene().setRoot(login);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private String basHarfleriAl(String adSoyad) {
