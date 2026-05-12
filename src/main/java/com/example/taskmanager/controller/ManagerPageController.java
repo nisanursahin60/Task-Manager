@@ -12,6 +12,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.LinkedList;
@@ -148,8 +151,24 @@ public class ManagerPageController {
         baslikSatiri.setAlignment(Pos.CENTER_LEFT);
         Label okIkonu = new Label("▶");
         okIkonu.getStyleClass().add("collapse-icon");
-        Label baslikLabel = new Label(gorev.getTitle().toUpperCase());
+        String baslikMetni = gorev.getTitle().toUpperCase();
+        Label baslikLabel = new Label(baslikMetni);
         baslikLabel.getStyleClass().add("task-card-title");
+        baslikLabel.setWrapText(false);
+
+        // --- PUNTO KÜÇÜLTME MANTIĞI (GÜNCELLENEN YER) ---
+        // Görünmez bir Text nesnesi ile başlığın gerçek genişliğini ölçüyoruz
+        Text textNode = new Text(baslikMetni);
+        textNode.setFont(Font.font("System", FontWeight.BOLD, 15));
+        double textGenisligi = textNode.getLayoutBounds().getWidth();
+        double maksimumGenislik = 180.0;
+
+        if (textGenisligi > maksimumGenislik) {
+            // Eğer başlık 180px'den genişse, oranı koruyarak fontu küçültüyoruz
+            double yeniFontBoyutu = 15.0 * (maksimumGenislik / textGenisligi);
+            yeniFontBoyutu = Math.max(yeniFontBoyutu, 10.5); // Minimum 10.5 puntoya kadar düşer
+            baslikLabel.setStyle("-fx-font-size: " + yeniFontBoyutu + "px; -fx-padding: 5 0 0 0;");
+        }
 
         Region sp = new Region(); HBox.setHgrow(sp, Priority.ALWAYS);
         baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, sp);
