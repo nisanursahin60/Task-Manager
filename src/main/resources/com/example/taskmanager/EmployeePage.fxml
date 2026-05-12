@@ -9,6 +9,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <AnchorPane fx:id="anchorPane"
             prefHeight="600.0" prefWidth="900.0"
@@ -38,10 +40,30 @@
                         <Label text="▾" styleClass="arrow"/>
                         <Label text="Görevlerim" styleClass="menu-text"/>
                     </HBox>
+
                     <VBox spacing="6" styleClass="sub-menu">
-                        <Label text="⭐ Önemli" styleClass="sub-menu-item" onMouseClicked="#onemliGorevler"/>
-                        <Label text="⏰ Yaklaşanlar" styleClass="sub-menu-item" onMouseClicked="#sonTarihYaklasanlar"/>
-                        <Label text="🆕 Yeni" styleClass="sub-menu-item" onMouseClicked="#yeniGorevler"/>
+
+                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#sonTarihYaklasanlar" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                                <Image url="@images/upcoming.png" />
+                            </ImageView>
+                            <Label text="Yaklaşanlar" styleClass="menu-text" style="-fx-text-fill: white;"/>
+                        </HBox>
+
+                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#yeniGorevler" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                                <Image url="@images/new.png" />
+                            </ImageView>
+                            <Label text="Yeni" styleClass="menu-text" style="-fx-text-fill: white;"/>
+                        </HBox>
+
+                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#onemliGorevler" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                                <Image url="@images/star.png" />
+                            </ImageView>
+                            <Label text="Yıldızlı" styleClass="menu-text" style="-fx-text-fill: white;"/>
+                        </HBox>
+
                     </VBox>
                 </VBox>
 

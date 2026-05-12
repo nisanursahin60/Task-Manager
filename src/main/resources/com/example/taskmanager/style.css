@@ -294,3 +294,17 @@
     -fx-background-color: #1e40af;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
 }
+
+.sub-menu-item {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 4 10;
+    -fx-cursor: hand;
+}
+
+.sub-menu-item .label {
+    -fx-text-fill: #ecf0f1;
+}
+
+.sub-menu-item:hover .label {
+    -fx-text-fill: white;
+}
