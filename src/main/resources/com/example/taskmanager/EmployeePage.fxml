@@ -64,6 +64,13 @@
                             <Label text="Yıldızlı" styleClass="menu-text" style="-fx-text-fill: white;"/>
                         </HBox>
 
+                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#tamamlananGorevler" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                                <Image url="@images/checked.png" />
+                            </ImageView>
+                            <Label text="Tamamlananlar" styleClass="menu-text" style="-fx-text-fill: white;"/>
+                        </HBox>
+
                     </VBox>
                 </VBox>
 
