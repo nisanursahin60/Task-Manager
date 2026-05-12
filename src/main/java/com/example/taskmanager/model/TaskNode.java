@@ -1,6 +1,7 @@
 package com.example.taskmanager.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList; // Dosya listesinin null gelme ihtimaline karşı eklendi
 import java.util.List;
 
 public class TaskNode implements Comparable<TaskNode> {
@@ -11,10 +12,12 @@ public class TaskNode implements Comparable<TaskNode> {
     private LocalDate deadline;
     private String managerName;
     private String description;
-    private boolean starred = false; // YENİ: Yıldızlı mı?
+    private boolean starred = false; // Yıldızlı mı?
+    private List<String> attachedFiles; // YENİ: Ekli dosyaların isimleri
 
+    // Tüm verileri (Dosyalar dahil) alan ana Constructor
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
-                    LocalDate deadline, String managerName, String description) {
+                    LocalDate deadline, String managerName, String description, List<String> attachedFiles) {
         this.title = title;
         this.steps = steps;
         this.assignedEmployees = assignedEmployees;
@@ -22,12 +25,16 @@ public class TaskNode implements Comparable<TaskNode> {
         this.managerName = managerName;
         this.description = description;
         this.starred = false;
+        // Eğer dosya listesi boş gönderilirse (null), hata vermemesi için boş bir liste oluşturuyoruz
+        this.attachedFiles = attachedFiles != null ? attachedFiles : new ArrayList<>();
     }
 
+    // Eski kodların bozulmaması için eski Constructor (Açıklama ve Dosya girilmediğinde çalışır)
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName) {
+        // Otomatik olarak boş bir açıklama ve boş bir dosya listesi (new ArrayList<>()) atar
         this(title, steps, assignedEmployees, deadline, managerName,
-                "Bu görev için henüz bir açıklama eklenmemiştir.");
+                "Bu görev için henüz bir açıklama eklenmemiştir.", new ArrayList<>());
     }
 
     @Override
@@ -44,8 +51,10 @@ public class TaskNode implements Comparable<TaskNode> {
     public String getManagerName()                  { return managerName; }
     public String getDescription()                  { return description; }
     public boolean isStarred()                      { return starred; }
+    public List<String> getAttachedFiles()          { return attachedFiles; } // YENİ
 
     // Setters
     public void setDescription(String description)  { this.description = description; }
     public void setStarred(boolean starred)         { this.starred = starred; }
+    public void setAttachedFiles(List<String> attachedFiles) { this.attachedFiles = attachedFiles; } // YENİ
 }

@@ -2,9 +2,12 @@ package com.example.taskmanager.controller;
 
 import com.example.taskmanager.model.TaskNode;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class TaskDetailPageController {
 
@@ -13,10 +16,10 @@ public class TaskDetailPageController {
     @FXML private Label taskTitleLabel;
     @FXML private Label taskDescriptionLabel;
     @FXML private TextArea questionArea;
+    @FXML private VBox filesContainer; // FXML'den bağladığımız alan
 
     private TaskNode currentTask;
 
-    // EmployeePageController'dan Modal açılırken bu metod çağrılacak
     public void setTaskDetails(TaskNode task) {
         this.currentTask = task;
 
@@ -24,23 +27,47 @@ public class TaskDetailPageController {
         managerAvatarLabel.setText(basHarfleriAl(task.getManagerName()));
         taskTitleLabel.setText(task.getTitle().toUpperCase());
 
-        // Eğer JSON'da açıklama yoksa boş dönmemesi için kontrol
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
             taskDescriptionLabel.setText(task.getDescription());
         } else {
             taskDescriptionLabel.setText("Bu görev için yönetici tarafından herhangi bir detaylı açıklama eklenmemiştir.");
+        }
+
+        // --- DİNAMİK DOSYA YÜKLEME KISMI ---
+        // FXML'de "Ekli Dosyalar" başlığı var, onun altını temizliyoruz ki üst üste binmesin
+        if (filesContainer.getChildren().size() > 1) {
+            filesContainer.getChildren().subList(1, filesContainer.getChildren().size()).clear();
+        }
+
+        if (task.getAttachedFiles() != null && !task.getAttachedFiles().isEmpty()) {
+            // Dosyalar varsa her biri için bir kutucuk oluştur
+            for (String fileName : task.getAttachedFiles()) {
+                HBox dosyaKutusu = new HBox(10);
+                dosyaKutusu.setAlignment(Pos.CENTER_LEFT);
+                dosyaKutusu.setStyle("-fx-background-color: white; -fx-padding: 12 18; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+
+                Label ikon = new Label("📄");
+                ikon.setStyle("-fx-font-size: 22px;");
+
+                Label isimLabel = new Label(fileName);
+                isimLabel.setStyle("-fx-text-fill: #1d4ed8; -fx-cursor: hand; -fx-font-weight: bold;");
+
+                dosyaKutusu.getChildren().addAll(ikon, isimLabel);
+                filesContainer.getChildren().add(dosyaKutusu);
+            }
+        } else {
+            // Dosya yoksa bilgi ver
+            Label yokLabel = new Label("Bu göreve eklenmiş herhangi bir dosya bulunmuyor.");
+            yokLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-style: italic;");
+            filesContainer.getChildren().add(yokLabel);
         }
     }
 
     @FXML
     private void handleSendQuestion() {
         String question = questionArea.getText().trim();
-        if (question.isEmpty()) {
-            return; // Boşsa işlem yapma
-        }
+        if (question.isEmpty()) return;
 
-        // İleride buraya soruyu kaydedecek Service kodunu ekleyeceğiz.
-        // Şimdilik başarılı mesajı gösterip alanı temizliyoruz.
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Mesaj Gönderildi");
         alert.setHeaderText(null);

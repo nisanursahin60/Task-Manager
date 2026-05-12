@@ -44,7 +44,7 @@
     "deadline": "2026-05-18",
     "managerName": "Ahmet Yıldız",
     "description": "Üçüncü parti hava durumu ve döviz kurları API\u0027lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
-    "starred": false
+    "starred": true
   },
   {
     "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
