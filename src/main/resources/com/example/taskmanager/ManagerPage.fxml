@@ -93,13 +93,25 @@
                 </HBox>
 
                 <!-- ÇALIŞAN KARTLARI -->
-                <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean" VBox.vgrow="ALWAYS">
                     <content>
-                        <TilePane fx:id="calisanKartAlani"
-                                  hgap="18"
-                                  vgap="18"
-                                  prefColumns="3"
-                                  styleClass="card-area"/>
+                        <StackPane>
+                            <TilePane fx:id="calisanKartAlani"
+                                      hgap="18"
+                                      vgap="18"
+                                      prefColumns="3"
+                                      styleClass="card-area"
+                                      visible="true"
+                                      managed="true"/>
+
+                            <HBox fx:id="gorevSutunAlani"
+                                  spacing="20"
+                                  styleClass="card-area"
+                                  visible="false"
+                                  managed="false"
+                                  alignment="TOP_LEFT">
+                            </HBox>
+                        </StackPane>
                     </content>
                 </ScrollPane>
 

@@ -27,7 +27,7 @@ public class TaskService {
     static {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
-                // LocalDate adapter
+                // LocalDate adapter (Arkadaşının eklediği)
                 .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
                     @Override
                     public void write(JsonWriter out, LocalDate value) throws IOException {
@@ -43,7 +43,7 @@ public class TaskService {
                         return LocalDate.parse(in.nextString());
                     }
                 })
-                // LocalDateTime adapter
+                // LocalDateTime adapter (Arkadaşının eklediği)
                 .registerTypeAdapter(LocalDateTime.class, new TypeAdapter<LocalDateTime>() {
                     @Override
                     public void write(JsonWriter out, LocalDateTime value) throws IOException {
@@ -67,7 +67,10 @@ public class TaskService {
     private static void loadTasksFromJson() {
         try {
             File file = new File(FILE_PATH);
-            if (!file.exists() || file.length() == 0) return;
+            if (!file.exists() || file.length() == 0) {
+                allTasks = new ArrayList<>();
+                return;
+            }
 
             Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
             Type taskListType = new TypeToken<ArrayList<TaskNode>>(){}.getType();
@@ -75,15 +78,16 @@ public class TaskService {
             reader.close();
 
             if (allTasks != null) {
-                // Eski JSON'daki görevlerin createdAt'i yoksa sıralı zaman damgası ata
-                // (JSON'daki sıra = atanma sırası olarak kabul edilir)
+                priorityQueue.clear(); // Kuyruğu temizleyip yeniden dolduruyoruz
+
+                // Arkadaşının eklediği zaman damgası tamamlama mantığı
                 for (int i = 0; i < allTasks.size(); i++) {
                     TaskNode task = allTasks.get(i);
                     if (task.getCreatedAt() == null) {
-                        // Eski görevler: index'e göre geçmiş zamanda birer dakika arayla
                         task.setCreatedAt(LocalDateTime.of(2026, 1, 1, 0, i));
                     }
                 }
+
                 priorityQueue.addAll(allTasks);
                 System.out.println("✅ " + allTasks.size() + " adet görev JSON'dan yüklendi.");
             } else {
@@ -95,6 +99,10 @@ public class TaskService {
     }
 
     public static void addTask(TaskNode node) {
+        // Yeni görev eklenirken zaman damgası yoksa o anki zamanı ata
+        if (node.getCreatedAt() == null) {
+            node.setCreatedAt(LocalDateTime.now());
+        }
         allTasks.add(node);
         priorityQueue.offer(node);
         saveToJson();
@@ -115,8 +123,7 @@ public class TaskService {
     }
 
     /**
-     * Belirli bir çalışana atanmış görevleri döner.
-     * PriorityQueue deadline sıralamasıyla döner (deadline bazlı görünümler için kullanılır).
+     * Belirli bir çalışana atanmış görevleri döner (Deadline sıralı).
      */
     public static PriorityQueue<TaskNode> getTasksForEmployee(String username) {
         PriorityQueue<TaskNode> employeeTasks = new PriorityQueue<>();
@@ -130,8 +137,7 @@ public class TaskService {
     }
 
     /**
-     * "Tüm Görevlerim" için: en son atanan en başa gelir (createdAt DESC).
-     * ArrayList döner çünkü PriorityQueue deadline'a göre heap kurar.
+     * Belirli bir çalışana atanmış görevleri döner (Oluşturulma tarihine göre DESC).
      */
     public static List<TaskNode> getTasksForEmployeeByCreatedAt(String username) {
         List<TaskNode> result = new ArrayList<>();
@@ -141,16 +147,19 @@ public class TaskService {
                 result.add(task);
             }
         }
-        // En son eklenen en başa
+        // En son eklenen en başa (Arkadaşının eklediği sıralama mantığı)
         result.sort((a, b) -> {
             if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
             if (a.getCreatedAt() == null) return 1;
             if (b.getCreatedAt() == null) return -1;
-            return b.getCreatedAt().compareTo(a.getCreatedAt()); // DESC
+            return b.getCreatedAt().compareTo(a.getCreatedAt());
         });
         return result;
     }
 
+    /**
+     * Çalışanın yıldızlı görevlerini döner.
+     */
     public static PriorityQueue<TaskNode> getStarredTasksForEmployee(String username) {
         PriorityQueue<TaskNode> starred = new PriorityQueue<>();
         for (TaskNode task : allTasks) {
@@ -163,7 +172,17 @@ public class TaskService {
         return starred;
     }
 
+    /**
+     * Senin sistemin için: Yönetici sayfasında tüm görevleri deadline'a göre sıralı döner.
+     */
     public static PriorityQueue<TaskNode> getPriorityQueue() {
         return priorityQueue;
+    }
+
+    /**
+     * Senin sistemin için: Tüm görevleri liste olarak döner.
+     */
+    public static List<TaskNode> getAllTasks() {
+        return new ArrayList<>(allTasks);
     }
 }
