@@ -13,7 +13,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Otel projesi için ağ altyapısının Packet Tracer üzerinde simüle edilmesi, VLAN atamalarının ve IP yönlendirmelerinin yapılması.",
     "starred": false,
-    "createdAt": "2026-01-01T00:00"
+    "createdAt": "2026-01-01T00:00",
+    "completed": false
   },
   {
     "title": "VERİTABANI OPTİMİZASYONU",
@@ -30,7 +31,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Müşteri verilerinin tutulduğu tabloların indekslenmesi ve sistem sorgularının hızlandırılması işlemleri.",
     "starred": false,
-    "createdAt": "2026-01-01T00:01"
+    "createdAt": "2026-01-01T00:01",
+    "completed": false
   },
   {
     "title": "API ENTEGRASYONU",
@@ -47,7 +49,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Üçüncü parti hava durumu ve döviz kurları API\u0027lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
     "starred": false,
-    "createdAt": "2026-01-01T00:02"
+    "createdAt": "2026-01-01T00:02",
+    "completed": false
   },
   {
     "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
@@ -63,7 +66,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Login sayfasındaki şifrelerin MD5 yerine SHA-256 ile şifrelenmesi ve hatalı girişlerde Captcha doğrulaması eklenmesi.",
     "starred": false,
-    "createdAt": "2026-01-01T00:03"
+    "createdAt": "2026-01-01T00:03",
+    "completed": false
   },
   {
     "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
@@ -80,7 +84,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Web uygulamasının tablet ve telefon ekran boyutlarında düzgün göründüğünün test edilmesi ve CSS Grid hatalarının giderilmesi.",
     "starred": false,
-    "createdAt": "2026-01-01T00:04"
+    "createdAt": "2026-01-01T00:04",
+    "completed": false
   },
   {
     "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
@@ -96,7 +101,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Sistemdeki mevcut ödeme altyapısına Iyzico 3D Secure entegrasyonunun yapılması ve test kartlarıyla başarılı ödeme akışının sağlanması.",
     "starred": false,
-    "createdAt": "2026-01-01T00:05"
+    "createdAt": "2026-01-01T00:05",
+    "completed": false
   },
   {
     "title": "SUNUCU GEÇİŞİ (MIGRATION)",
@@ -114,7 +120,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Projenin mevcut yerel sunuculardan AWS EC2 bulut sunucularına taşınması ve domain yönlendirmelerinin DNS üzerinden yapılması.",
     "starred": false,
-    "createdAt": "2026-01-01T00:06"
+    "createdAt": "2026-01-01T00:06",
+    "completed": false
   },
   {
     "title": "YÖNETİCİ PANELİ LOG SİSTEMİ",
@@ -130,7 +137,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Sistemdeki yöneticilerin hangi çalışana ne zaman görev atadığının veya sildiğinin kayıt altına alınacağı bir log tablosu oluşturulması.",
     "starred": false,
-    "createdAt": "2026-01-01T00:07"
+    "createdAt": "2026-01-01T00:07",
+    "completed": false
   },
   {
     "title": "E-POSTA BİLDİRİM SİSTEMİ",
@@ -147,7 +155,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Yeni bir görev atandığında veya görevin teslim tarihine 1 gün kaldığında çalışanın şirket mailine otomatik hatırlatma e-postası atılması.",
     "starred": false,
-    "createdAt": "2026-01-01T00:08"
+    "createdAt": "2026-01-01T00:08",
+    "completed": true
   },
   {
     "title": "DOKÜMANTASYON GÜNCELLEMESİ",
@@ -163,7 +172,8 @@
     "managerName": "Ahmet Yıldız",
     "description": "Dönem sonu teslimi için UML diyagramlarının güncellenmesi, Javadoc yorumlarının yazılması ve kullanım kılavuzunun hazırlanması.",
     "starred": false,
-    "createdAt": "2026-01-01T00:09"
+    "createdAt": "2026-01-01T00:09",
+    "completed": true
   },
   {
     "title": "ayşe",
@@ -178,7 +188,8 @@
     "description": "Bu görev için henüz bir açıklama eklenmemiştir.",
     "starred": false,
     "attachedFiles": [],
-    "createdAt": "2026-01-01T00:10"
+    "createdAt": "2026-01-01T00:10",
+    "completed": false
   },
   {
     "title": "ayse",
@@ -191,7 +202,8 @@
     "description": "Bu görev için henüz bir açıklama eklenmemiştir.",
     "starred": false,
     "attachedFiles": [],
-    "createdAt": "2026-01-01T00:11"
+    "createdAt": "2026-01-01T00:11",
+    "completed": false
   },
   {
     "title": "elifin gorev",
@@ -206,7 +218,8 @@
     "description": "Bu görev için henüz bir açıklama eklenmemiştir.",
     "starred": false,
     "attachedFiles": [],
-    "createdAt": "2026-05-12T15:32:26.455601300"
+    "createdAt": "2026-05-12T15:32:26.455601300",
+    "completed": true
   },
   {
     "title": "deneme",
@@ -222,6 +235,7 @@
     "description": "açıklama var",
     "starred": false,
     "attachedFiles": [],
-    "createdAt": "2026-05-12T16:32:07.190114"
+    "createdAt": "2026-05-12T16:32:07.190114",
+    "completed": false
   }
 ]

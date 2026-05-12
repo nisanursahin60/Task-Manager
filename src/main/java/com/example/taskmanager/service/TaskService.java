@@ -129,7 +129,8 @@ public class TaskService {
         PriorityQueue<TaskNode> employeeTasks = new PriorityQueue<>();
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
-                    && task.getAssignedEmployees().contains(username)) {
+                    && task.getAssignedEmployees().contains(username)
+                    && !task.isCompleted()) {
                 employeeTasks.offer(task);
             }
         }
@@ -143,7 +144,8 @@ public class TaskService {
         List<TaskNode> result = new ArrayList<>();
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
-                    && task.getAssignedEmployees().contains(username)) {
+                    && task.getAssignedEmployees().contains(username)
+                    && !task.isCompleted()) {
                 result.add(task);
             }
         }
@@ -184,5 +186,31 @@ public class TaskService {
      */
     public static List<TaskNode> getAllTasks() {
         return new ArrayList<>(allTasks);
+    }
+
+    public static void completeTask(TaskNode node) {
+        node.setCompleted(true);
+        saveToJson();
+    }
+
+    public static List<TaskNode> getCompletedTasksForEmployee(String username) {
+        List<TaskNode> result = new ArrayList<>();
+
+        for (TaskNode task : allTasks) {
+            if (task.getAssignedEmployees() != null
+                    && task.getAssignedEmployees().contains(username)
+                    && task.isCompleted()) {
+                result.add(task);
+            }
+        }
+
+        result.sort((a, b) -> {
+            if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
+            if (a.getCreatedAt() == null) return 1;
+            if (b.getCreatedAt() == null) return -1;
+            return b.getCreatedAt().compareTo(a.getCreatedAt());
+        });
+
+        return result;
     }
 }

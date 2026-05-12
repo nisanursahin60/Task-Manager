@@ -43,6 +43,7 @@ public class EmployeePageController {
     private static final String VIEW_YAKLASAN = "Son Tarihi Yaklaşanlar";
     private static final String VIEW_YILDIZLI = "Yıldızlı Görevler";
     private static final String VIEW_YENI     = "Yeni Eklenenler";
+    private static final String VIEW_TAMAMLANAN = "Tamamlanan Görevler";
 
     @FXML
     public void initialize() { }
@@ -76,7 +77,6 @@ public class EmployeePageController {
         viewHistory.push(VIEW_TUM);
         if (panelBaslik != null) panelBaslik.setText(VIEW_TUM);
 
-        // *** DEĞİŞİKLİK: createdAt DESC sıralaması — en son atanan en başa ***
         List<TaskNode> sirali = TaskService.getTasksForEmployeeByCreatedAt(currentUser.getUsername());
         kartlariEkranListeden(sirali, false);
     }
@@ -132,20 +132,20 @@ public class EmployeePageController {
 
     @FXML
     void tamamlananGorevler() {
+        viewHistory.push(VIEW_TAMAMLANAN);
+
         if (panelBaslik != null) {
-            panelBaslik.setText("Tamamlanan Görevler");
+            panelBaslik.setText(VIEW_TAMAMLANAN);
         }
 
-        gorevKartAlani.getChildren().clear();
+        List<TaskNode> tamamlananlar =
+                TaskService.getCompletedTasksForEmployee(currentUser.getUsername());
 
-        Label bos = new Label("Tamamlanan görev bulunmuyor.");
-        bos.setStyle("-fx-font-size: 14px; -fx-text-fill: #7b8a9b;");
-
-        gorevKartAlani.getChildren().add(bos);
+        kartlariEkranListeden(tamamlananlar, false);
     }
 
     // -------------------------------------------------------------------------
-    // KARTLARI EKRANA DÖŞE — List<TaskNode> versiyonu (tumGorevleriGoster için)
+    // KARTLARI EKRANA DÖŞE — List<TaskNode> versiyonu
     // -------------------------------------------------------------------------
 
     /**
@@ -193,7 +193,7 @@ public class EmployeePageController {
     }
 
     // -------------------------------------------------------------------------
-    // KARTLARI EKRANA DÖŞE — PriorityQueue versiyonu (diğer görünümler için)
+    // KARTLARI EKRANA DÖŞE — PriorityQueue versiyonu
     // -------------------------------------------------------------------------
 
     private void kartlariEkrana(PriorityQueue<TaskNode> pq, boolean urgencyBadge) {
@@ -243,14 +243,17 @@ public class EmployeePageController {
 
     private String urgencyHesapla(LocalDate deadline) {
         if (deadline == null) return "NORMAL";
+
         long gunFarki = ChronoUnit.DAYS.between(LocalDate.now(), deadline);
+
         if (gunFarki <= 0) return "KRITIK";
         if (gunFarki <= 7) return "YAKLASAN";
+
         return "NORMAL";
     }
 
     // -------------------------------------------------------------------------
-    // KART TASARIMI (değişiklik yok)
+    // KART TASARIMI
     // -------------------------------------------------------------------------
 
     private VBox kartTasarimiOlustur(TaskNode gorev, String badgeRenk, String urgencyKey) {
@@ -276,8 +279,10 @@ public class EmployeePageController {
         javafx.scene.text.Text textNode = new javafx.scene.text.Text(baslikMetni);
         textNode.setFont(javafx.scene.text.Font.font(
                 "System", javafx.scene.text.FontWeight.BOLD, 15));
+
         double textGenisligi    = textNode.getLayoutBounds().getWidth();
         double maksimumGenislik = 180.0;
+
         if (textGenisligi > maksimumGenislik) {
             double yeni = Math.max(15.0 * (maksimumGenislik / textGenisligi), 10.5);
             baslikLabel.setStyle("-fx-font-size: " + yeni + "px; -fx-padding: 5 0 0 0;");
@@ -288,16 +293,19 @@ public class EmployeePageController {
 
         boolean isStarred  = starredTitles.contains(gorev.getTitle());
         Label yildizIkonu  = new Label(isStarred ? "★" : "☆");
+
         yildizIkonu.setStyle(
                 "-fx-font-size: 18px; -fx-cursor: hand; -fx-text-fill: "
                         + (isStarred ? "#f59e0b" : "#cbd5e1") + ";");
 
         yildizIkonu.setOnMouseClicked(e -> {
             e.consume();
+
             TaskService.toggleStar(gorev);
             syncStarredSet();
 
             boolean nowStarred = starredTitles.contains(gorev.getTitle());
+
             yildizIkonu.setText(nowStarred ? "★" : "☆");
             yildizIkonu.setStyle(
                     "-fx-font-size: 18px; -fx-cursor: hand; -fx-text-fill: "
@@ -306,7 +314,9 @@ public class EmployeePageController {
 
         if (badgeRenk != null) {
             long kalanGun = ChronoUnit.DAYS.between(LocalDate.now(), gorev.getDeadline());
+
             String kalanGunMetin;
+
             if (kalanGun < 0) {
                 kalanGunMetin = Math.abs(kalanGun) + " gün geçti";
             } else if (kalanGun == 0) {
@@ -321,6 +331,7 @@ public class EmployeePageController {
                             "-fx-text-fill: "        + badgeRenk + ";" +
                             "-fx-font-size: 10px; -fx-font-weight: bold;" +
                             "-fx-background-radius: 6; -fx-padding: 2 6;");
+
             baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, baslikSpacer, badge, yildizIkonu);
         } else {
             baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, baslikSpacer, yildizIkonu);
@@ -344,7 +355,7 @@ public class EmployeePageController {
         altBilgiSatiri.getChildren().addAll(atayanLabel, headerSpacer, anaDeadline);
         headerContainer.getChildren().addAll(baslikSatiri, altBilgiSatiri);
 
-        // BODY (başlangıçta kapalı)
+        // BODY
         VBox bodyContent = new VBox(12);
         bodyContent.setStyle("-fx-padding: 0 15 15 15;");
         bodyContent.setVisible(false);
@@ -352,17 +363,22 @@ public class EmployeePageController {
 
         VBox progBox = new VBox(5);
         HBox progTextSatiri = new HBox();
+
         Label progLabel = new Label("İlerleme");
         progLabel.getStyleClass().add("small-text");
+
         Region progSpacer = new Region();
         HBox.setHgrow(progSpacer, Priority.ALWAYS);
+
         Label yuzdeLabel = new Label("%0");
         yuzdeLabel.getStyleClass().add("progress-text");
+
         progTextSatiri.getChildren().addAll(progLabel, progSpacer, yuzdeLabel);
 
         ProgressBar pb = new ProgressBar(0);
         pb.setMaxWidth(Double.MAX_VALUE);
         pb.getStyleClass().add("task-progress");
+
         progBox.getChildren().addAll(progTextSatiri, pb);
 
         Label detayLink = new Label("Görev Açıklamasını Gör ↗");
@@ -373,6 +389,7 @@ public class EmployeePageController {
 
         VBox adimlarKutusu = new VBox(10);
         adimlarKutusu.setStyle("-fx-padding: 0 5 0 0;");
+
         List<CheckBox> cbs = new ArrayList<>();
 
         for (String stepRaw : gorev.getSteps()) {
@@ -394,6 +411,7 @@ public class EmployeePageController {
 
             Region stepSpacer = new Region();
             HBox.setHgrow(stepSpacer, Priority.ALWAYS);
+
             Label stepDate = new Label(adimTarihi);
             stepDate.getStyleClass().add("step-deadline");
 
@@ -404,19 +422,9 @@ public class EmployeePageController {
             } else {
                 adimSatiri.getChildren().addAll(cb, stepSpacer, stepDate);
             }
+
             adimlarKutusu.getChildren().add(adimSatiri);
         }
-
-        cbs.forEach(c -> c.setOnAction(e -> {
-            double p = (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
-            pb.setProgress(p);
-            yuzdeLabel.setText("%" + Math.round(p * 100));
-            int idx = cbs.indexOf(c);
-            if (c.isSelected() && idx + 1 < cbs.size()
-                    && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
-                cbs.get(idx + 1).setDisable(false);
-            }
-        }));
 
         ScrollPane adimlarScroll = new ScrollPane(adimlarKutusu);
         adimlarScroll.setFitToWidth(true);
@@ -424,19 +432,168 @@ public class EmployeePageController {
         adimlarScroll.getStyleClass().add("scroll-pane-clean");
         adimlarScroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
 
-        Separator s1 = new Separator(); s1.setStyle("-fx-opacity: 0.3;");
-        Separator s2 = new Separator(); s2.setStyle("-fx-opacity: 0.3;");
+        Separator s1 = new Separator();
+        s1.setStyle("-fx-opacity: 0.3;");
 
-        bodyContent.getChildren().addAll(progBox, s1, detayLink, s2, adimlarScroll);
+        Separator s2 = new Separator();
+        s2.setStyle("-fx-opacity: 0.3;");
+
+        // ---------------------------------------------------------------------
+        // GÖREVİ TAMAMLA BUTONU / COMPLETED LABEL
+        // ---------------------------------------------------------------------
+
+        Button tamamlaButton = new Button("Görevi Tamamla");
+
+        Label completedLabel = new Label("Görev Tamamlandı");
+        completedLabel.setStyle(
+                "-fx-background-color: #dcfce7;" +
+                        "-fx-text-fill: #16a34a;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 8;" +
+                        "-fx-padding: 8 14;"
+        );
+
+        HBox tamamlaSatiri = new HBox();
+        tamamlaSatiri.setAlignment(Pos.CENTER_RIGHT);
+
+        if (gorev.isCompleted()) {
+            tamamlaButton.setVisible(false);
+            tamamlaButton.setManaged(false);
+
+            completedLabel.setVisible(true);
+            completedLabel.setManaged(true);
+
+            tamamlaSatiri.getChildren().add(completedLabel);
+
+            pb.setProgress(1);
+            yuzdeLabel.setText("%100");
+
+            for (CheckBox cb : cbs) {
+                cb.setSelected(true);
+                cb.setDisable(true);
+            }
+
+        } else {
+            completedLabel.setVisible(false);
+            completedLabel.setManaged(false);
+
+            tamamlaButton.setDisable(true);
+            tamamlaButton.setStyle(
+                    "-fx-background-color: #cbd5e1;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-padding: 8 14;" +
+                            "-fx-opacity: 0.6;" +
+                            "-fx-cursor: default;"
+            );
+
+            tamamlaSatiri.getChildren().add(tamamlaButton);
+        }
+
+        if (!gorev.isCompleted() && cbs.isEmpty()) {
+            tamamlaButton.setDisable(false);
+            tamamlaButton.setStyle(
+                    "-fx-background-color: #2563eb;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-padding: 8 14;" +
+                            "-fx-opacity: 1;" +
+                            "-fx-cursor: hand;"
+            );
+        }
+
+        if (!gorev.isCompleted()) {
+            cbs.forEach(c -> c.setOnAction(e -> {
+                double p = (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
+
+                pb.setProgress(p);
+                yuzdeLabel.setText("%" + Math.round(p * 100));
+
+                if (p == 1.0) {
+                    tamamlaButton.setDisable(false);
+                    tamamlaButton.setStyle(
+                            "-fx-background-color: #2563eb;" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-background-radius: 8;" +
+                                    "-fx-padding: 8 14;" +
+                                    "-fx-opacity: 1;" +
+                                    "-fx-cursor: hand;"
+                    );
+                } else {
+                    tamamlaButton.setDisable(true);
+                    tamamlaButton.setStyle(
+                            "-fx-background-color: #cbd5e1;" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-background-radius: 8;" +
+                                    "-fx-padding: 8 14;" +
+                                    "-fx-opacity: 0.6;" +
+                                    "-fx-cursor: default;"
+                    );
+                }
+
+                int idx = cbs.indexOf(c);
+
+                if (c.isSelected() && idx + 1 < cbs.size()
+                        && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
+                    cbs.get(idx + 1).setDisable(false);
+                }
+            }));
+        }
+
+        tamamlaButton.setOnAction(e -> {
+            if (gorev.isCompleted()) {
+                return;
+            }
+
+            TaskService.completeTask(gorev);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Görev Tamamlandı");
+            alert.setHeaderText(null);
+            alert.setContentText("Görev başarıyla tamamlandı.");
+            alert.showAndWait();
+
+            String aktifBaslik = panelBaslik != null ? panelBaslik.getText() : "";
+
+            if (aktifBaslik.equals(VIEW_TAMAMLANAN)) {
+                tamamlananGorevler();
+            } else if (aktifBaslik.equals(VIEW_TUM)) {
+                tumGorevleriGoster();
+            } else if (aktifBaslik.equals(VIEW_YAKLASAN)) {
+                sonTarihYaklasanlar();
+            } else if (aktifBaslik.equals(VIEW_YILDIZLI)) {
+                yildizliGorevler();
+            } else if (aktifBaslik.equals(VIEW_YENI)) {
+                yeniGorevler();
+            } else {
+                tumGorevleriGoster();
+            }
+        });
+
+        bodyContent.getChildren().addAll(
+                progBox,
+                s1,
+                detayLink,
+                s2,
+                adimlarScroll,
+                tamamlaSatiri
+        );
 
         headerContainer.setOnMouseClicked(e -> {
             boolean acik = bodyContent.isVisible();
+
             bodyContent.setVisible(!acik);
             bodyContent.setManaged(!acik);
+
             okIkonu.setText(acik ? "▶" : "▼");
         });
 
         kart.getChildren().addAll(headerContainer, bodyContent);
+
         return kart;
     }
 
@@ -448,14 +605,18 @@ public class EmployeePageController {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/example/taskmanager/TaskDetailPage.fxml"));
+
             Parent root = loader.load();
+
             TaskDetailPageController controller = loader.getController();
             controller.setTaskDetails(gorev);
+
             Stage stage = new Stage();
             stage.setTitle("Görev Detayları");
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
+
         } catch (Exception ex) {
             System.err.println("Modal açılırken hata: " + ex.getMessage());
             ex.printStackTrace();
@@ -466,12 +627,16 @@ public class EmployeePageController {
     private void cikisYap() {
         userService.logout();
         viewHistory.clear();
+
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/example/taskmanager/LoginPage.fxml"));
+
             Scene scene = new Scene(loader.load());
+
             Stage stage = (Stage) anchorPane.getScene().getWindow();
             stage.setScene(scene);
+
         } catch (Exception e) {
             System.err.println("Çıkış hatası: " + e.getMessage());
         }
@@ -479,8 +644,13 @@ public class EmployeePageController {
 
     private String basHarfleriAl(String adSoyad) {
         if (adSoyad == null || adSoyad.trim().isEmpty()) return "?";
+
         String[] parcalar = adSoyad.trim().split("\\s+");
-        if (parcalar.length == 1) return parcalar[0].substring(0, 1).toUpperCase();
+
+        if (parcalar.length == 1) {
+            return parcalar[0].substring(0, 1).toUpperCase();
+        }
+
         return (parcalar[0].substring(0, 1) +
                 parcalar[parcalar.length - 1].substring(0, 1)).toUpperCase();
     }

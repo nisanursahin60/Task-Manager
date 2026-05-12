@@ -16,6 +16,7 @@ public class TaskNode implements Comparable<TaskNode> {
     private boolean starred = false;
     private List<String> attachedFiles;
     private LocalDateTime createdAt; // En son atanan en başa için
+    private boolean completed = false;
 
     // Ana constructor (dosyalar + açıklama + createdAt)
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
@@ -54,6 +55,13 @@ public class TaskNode implements Comparable<TaskNode> {
     public boolean isStarred()                      { return starred; }
     public List<String> getAttachedFiles()          { return attachedFiles; }
     public LocalDateTime getCreatedAt()             { return createdAt; }
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 
     // Setters
     public void setDescription(String description)  { this.description = description; }
