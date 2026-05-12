@@ -10,6 +10,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -26,6 +27,7 @@ public class TaskService {
     static {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
+                // LocalDate adapter
                 .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
                     @Override
                     public void write(JsonWriter out, LocalDate value) throws IOException {
@@ -39,6 +41,22 @@ public class TaskService {
                             return null;
                         }
                         return LocalDate.parse(in.nextString());
+                    }
+                })
+                // LocalDateTime adapter
+                .registerTypeAdapter(LocalDateTime.class, new TypeAdapter<LocalDateTime>() {
+                    @Override
+                    public void write(JsonWriter out, LocalDateTime value) throws IOException {
+                        if (value == null) out.nullValue();
+                        else out.value(value.toString());
+                    }
+                    @Override
+                    public LocalDateTime read(JsonReader in) throws IOException {
+                        if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
+                            in.nextNull();
+                            return null;
+                        }
+                        return LocalDateTime.parse(in.nextString());
                     }
                 })
                 .create();
@@ -57,6 +75,15 @@ public class TaskService {
             reader.close();
 
             if (allTasks != null) {
+                // Eski JSON'daki görevlerin createdAt'i yoksa sıralı zaman damgası ata
+                // (JSON'daki sıra = atanma sırası olarak kabul edilir)
+                for (int i = 0; i < allTasks.size(); i++) {
+                    TaskNode task = allTasks.get(i);
+                    if (task.getCreatedAt() == null) {
+                        // Eski görevler: index'e göre geçmiş zamanda birer dakika arayla
+                        task.setCreatedAt(LocalDateTime.of(2026, 1, 1, 0, i));
+                    }
+                }
                 priorityQueue.addAll(allTasks);
                 System.out.println("✅ " + allTasks.size() + " adet görev JSON'dan yüklendi.");
             } else {
@@ -73,9 +100,6 @@ public class TaskService {
         saveToJson();
     }
 
-    /**
-     * Yıldız durumunu değiştirip JSON'a kaydeder.
-     */
     public static void toggleStar(TaskNode node) {
         node.setStarred(!node.isStarred());
         saveToJson();
@@ -90,6 +114,10 @@ public class TaskService {
         }
     }
 
+    /**
+     * Belirli bir çalışana atanmış görevleri döner.
+     * PriorityQueue deadline sıralamasıyla döner (deadline bazlı görünümler için kullanılır).
+     */
     public static PriorityQueue<TaskNode> getTasksForEmployee(String username) {
         PriorityQueue<TaskNode> employeeTasks = new PriorityQueue<>();
         for (TaskNode task : allTasks) {
@@ -102,9 +130,27 @@ public class TaskService {
     }
 
     /**
-     * VERİ YAPISI: HashSet ile yıldızlı görevler hızlıca filtrelenir.
-     * HashSet → O(1) contains, yıldızlı title'ları saklar.
+     * "Tüm Görevlerim" için: en son atanan en başa gelir (createdAt DESC).
+     * ArrayList döner çünkü PriorityQueue deadline'a göre heap kurar.
      */
+    public static List<TaskNode> getTasksForEmployeeByCreatedAt(String username) {
+        List<TaskNode> result = new ArrayList<>();
+        for (TaskNode task : allTasks) {
+            if (task.getAssignedEmployees() != null
+                    && task.getAssignedEmployees().contains(username)) {
+                result.add(task);
+            }
+        }
+        // En son eklenen en başa
+        result.sort((a, b) -> {
+            if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
+            if (a.getCreatedAt() == null) return 1;
+            if (b.getCreatedAt() == null) return -1;
+            return b.getCreatedAt().compareTo(a.getCreatedAt()); // DESC
+        });
+        return result;
+    }
+
     public static PriorityQueue<TaskNode> getStarredTasksForEmployee(String username) {
         PriorityQueue<TaskNode> starred = new PriorityQueue<>();
         for (TaskNode task : allTasks) {

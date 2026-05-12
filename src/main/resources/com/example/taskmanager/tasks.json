@@ -12,7 +12,8 @@
     "deadline": "2026-05-25",
     "managerName": "Ahmet Yıldız",
     "description": "Otel projesi için ağ altyapısının Packet Tracer üzerinde simüle edilmesi, VLAN atamalarının ve IP yönlendirmelerinin yapılması.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:00"
   },
   {
     "title": "VERİTABANI OPTİMİZASYONU",
@@ -28,7 +29,8 @@
     "deadline": "2026-06-15",
     "managerName": "Ahmet Yıldız",
     "description": "Müşteri verilerinin tutulduğu tabloların indekslenmesi ve sistem sorgularının hızlandırılması işlemleri.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:01"
   },
   {
     "title": "API ENTEGRASYONU",
@@ -44,7 +46,8 @@
     "deadline": "2026-05-18",
     "managerName": "Ahmet Yıldız",
     "description": "Üçüncü parti hava durumu ve döviz kurları API\u0027lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
-    "starred": true
+    "starred": false,
+    "createdAt": "2026-01-01T00:02"
   },
   {
     "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
@@ -59,7 +62,8 @@
     "deadline": "2026-05-20",
     "managerName": "Ahmet Yıldız",
     "description": "Login sayfasındaki şifrelerin MD5 yerine SHA-256 ile şifrelenmesi ve hatalı girişlerde Captcha doğrulaması eklenmesi.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:03"
   },
   {
     "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
@@ -75,7 +79,8 @@
     "deadline": "2026-05-28",
     "managerName": "Ahmet Yıldız",
     "description": "Web uygulamasının tablet ve telefon ekran boyutlarında düzgün göründüğünün test edilmesi ve CSS Grid hatalarının giderilmesi.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:04"
   },
   {
     "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
@@ -90,7 +95,8 @@
     "deadline": "2026-06-02",
     "managerName": "Ahmet Yıldız",
     "description": "Sistemdeki mevcut ödeme altyapısına Iyzico 3D Secure entegrasyonunun yapılması ve test kartlarıyla başarılı ödeme akışının sağlanması.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:05"
   },
   {
     "title": "SUNUCU GEÇİŞİ (MIGRATION)",
@@ -107,7 +113,8 @@
     "deadline": "2026-06-10",
     "managerName": "Ahmet Yıldız",
     "description": "Projenin mevcut yerel sunuculardan AWS EC2 bulut sunucularına taşınması ve domain yönlendirmelerinin DNS üzerinden yapılması.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:06"
   },
   {
     "title": "YÖNETİCİ PANELİ LOG SİSTEMİ",
@@ -122,7 +129,8 @@
     "deadline": "2026-06-05",
     "managerName": "Ahmet Yıldız",
     "description": "Sistemdeki yöneticilerin hangi çalışana ne zaman görev atadığının veya sildiğinin kayıt altına alınacağı bir log tablosu oluşturulması.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:07"
   },
   {
     "title": "E-POSTA BİLDİRİM SİSTEMİ",
@@ -138,7 +146,8 @@
     "deadline": "2026-05-30",
     "managerName": "Ahmet Yıldız",
     "description": "Yeni bir görev atandığında veya görevin teslim tarihine 1 gün kaldığında çalışanın şirket mailine otomatik hatırlatma e-postası atılması.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:08"
   },
   {
     "title": "DOKÜMANTASYON GÜNCELLEMESİ",
@@ -153,6 +162,50 @@
     "deadline": "2026-06-25",
     "managerName": "Ahmet Yıldız",
     "description": "Dönem sonu teslimi için UML diyagramlarının güncellenmesi, Javadoc yorumlarının yazılması ve kullanım kılavuzunun hazırlanması.",
-    "starred": false
+    "starred": false,
+    "createdAt": "2026-01-01T00:09"
+  },
+  {
+    "title": "ayşe",
+    "steps": [
+      "1. adım"
+    ],
+    "assignedEmployees": [
+      "ayse"
+    ],
+    "deadline": "2026-05-12",
+    "managerName": "Ahmet Yıldız",
+    "description": "Bu görev için henüz bir açıklama eklenmemiştir.",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-01-01T00:10"
+  },
+  {
+    "title": "ayse",
+    "steps": [],
+    "assignedEmployees": [
+      "ayse"
+    ],
+    "deadline": "2026-05-31",
+    "managerName": "Ahmet Yıldız",
+    "description": "Bu görev için henüz bir açıklama eklenmemiştir.",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-01-01T00:11"
+  },
+  {
+    "title": "elifin gorev",
+    "steps": [
+      "1. adım"
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-05-31",
+    "managerName": "Ahmet Yıldız",
+    "description": "Bu görev için henüz bir açıklama eklenmemiştir.",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-05-12T15:32:26.455601300"
   }
 ]

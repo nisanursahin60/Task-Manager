@@ -1,7 +1,8 @@
 package com.example.taskmanager.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList; // Dosya listesinin null gelme ihtimaline karşı eklendi
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskNode implements Comparable<TaskNode> {
@@ -12,10 +13,11 @@ public class TaskNode implements Comparable<TaskNode> {
     private LocalDate deadline;
     private String managerName;
     private String description;
-    private boolean starred = false; // Yıldızlı mı?
-    private List<String> attachedFiles; // YENİ: Ekli dosyaların isimleri
+    private boolean starred = false;
+    private List<String> attachedFiles;
+    private LocalDateTime createdAt; // En son atanan en başa için
 
-    // Tüm verileri (Dosyalar dahil) alan ana Constructor
+    // Ana constructor (dosyalar + açıklama + createdAt)
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName, String description, List<String> attachedFiles) {
         this.title = title;
@@ -25,14 +27,13 @@ public class TaskNode implements Comparable<TaskNode> {
         this.managerName = managerName;
         this.description = description;
         this.starred = false;
-        // Eğer dosya listesi boş gönderilirse (null), hata vermemesi için boş bir liste oluşturuyoruz
         this.attachedFiles = attachedFiles != null ? attachedFiles : new ArrayList<>();
+        this.createdAt = LocalDateTime.now(); // Atama anında zaman damgası
     }
 
-    // Eski kodların bozulmaması için eski Constructor (Açıklama ve Dosya girilmediğinde çalışır)
+    // Geriye dönük uyumluluk constructor'ı
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName) {
-        // Otomatik olarak boş bir açıklama ve boş bir dosya listesi (new ArrayList<>()) atar
         this(title, steps, assignedEmployees, deadline, managerName,
                 "Bu görev için henüz bir açıklama eklenmemiştir.", new ArrayList<>());
     }
@@ -51,10 +52,12 @@ public class TaskNode implements Comparable<TaskNode> {
     public String getManagerName()                  { return managerName; }
     public String getDescription()                  { return description; }
     public boolean isStarred()                      { return starred; }
-    public List<String> getAttachedFiles()          { return attachedFiles; } // YENİ
+    public List<String> getAttachedFiles()          { return attachedFiles; }
+    public LocalDateTime getCreatedAt()             { return createdAt; }
 
     // Setters
     public void setDescription(String description)  { this.description = description; }
     public void setStarred(boolean starred)         { this.starred = starred; }
-    public void setAttachedFiles(List<String> attachedFiles) { this.attachedFiles = attachedFiles; } // YENİ
+    public void setAttachedFiles(List<String> attachedFiles) { this.attachedFiles = attachedFiles; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

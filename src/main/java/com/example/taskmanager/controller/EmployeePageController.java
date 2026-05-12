@@ -30,18 +30,13 @@ public class EmployeePageController {
     private final UserService userService = UserService.getInstance();
     private User currentUser;
 
-    /**
-     * VERİ YAPISI 1: STACK — navigasyon geçmişi
-     */
+    /** VERİ YAPISI 1: STACK — navigasyon geçmişi */
     private final Stack<String> viewHistory = new Stack<>();
 
     /**
      * VERİ YAPISI 2: HASHSET — yıldızlı görev title'larını O(1) ile tutar.
-     * JSON'daki starred=true olan görevler buraya senkronize edilir.
-     * Kart render sırasında "bu görev yıldızlı mı?" kontrolü HashSet.contains() ile yapılır.
      */
     private final HashSet<String> starredTitles = new HashSet<>();
-    // HashSet'in yanına
     private final Stack<TaskNode> starStack = new Stack<>();
 
     private static final String VIEW_TUM      = "TÜM GÖREVLERİM";
@@ -64,10 +59,6 @@ public class EmployeePageController {
         tumGorevleriGoster();
     }
 
-    /**
-     * JSON'daki starred=true görevlerin title'larını HashSet'e yükler.
-     * Her yıldız toggle'ından sonra da çağrılır.
-     */
     private void syncStarredSet() {
         starredTitles.clear();
         PriorityQueue<TaskNode> tum = TaskService.getTasksForEmployee(currentUser.getUsername());
@@ -85,8 +76,9 @@ public class EmployeePageController {
         viewHistory.push(VIEW_TUM);
         if (panelBaslik != null) panelBaslik.setText(VIEW_TUM);
 
-        PriorityQueue<TaskNode> pq = TaskService.getTasksForEmployee(currentUser.getUsername());
-        kartlariEkrana(pq, false);
+        // *** DEĞİŞİKLİK: createdAt DESC sıralaması — en son atanan en başa ***
+        List<TaskNode> sirali = TaskService.getTasksForEmployeeByCreatedAt(currentUser.getUsername());
+        kartlariEkranListeden(sirali, false);
     }
 
     @FXML
@@ -95,8 +87,7 @@ public class EmployeePageController {
         if (panelBaslik != null) panelBaslik.setText(VIEW_YAKLASAN);
 
         /**
-         * VERİ YAPISI 3: PRIORITYQUEUE (Min-Heap)
-         * Bugünden 14 gün içindeki görevler deadline'a göre sıralı gelir.
+         * VERİ YAPISI 3: PRIORITYQUEUE (Min-Heap) — deadline'a göre sıralı
          */
         PriorityQueue<TaskNode> tumGorevler = TaskService.getTasksForEmployee(currentUser.getUsername());
         PriorityQueue<TaskNode> yaklasanlar = new PriorityQueue<>();
@@ -120,7 +111,6 @@ public class EmployeePageController {
         viewHistory.push(VIEW_YILDIZLI);
         if (panelBaslik != null) panelBaslik.setText(VIEW_YILDIZLI);
 
-        // HashSet'teki title'lar zaten güncel — TaskService'den yıldızlıları çek
         PriorityQueue<TaskNode> starred = TaskService.getStarredTasksForEmployee(currentUser.getUsername());
         kartlariEkrana(starred, false);
     }
@@ -131,7 +121,6 @@ public class EmployeePageController {
         if (panelBaslik != null) panelBaslik.setText(VIEW_YENI);
 
         PriorityQueue<TaskNode> tumGorevler = TaskService.getTasksForEmployee(currentUser.getUsername());
-        // Ters sıralı: deadline'ı en uzak olan önce (= en yeni atanmış)
         PriorityQueue<TaskNode> yeniPQ = new PriorityQueue<>(Comparator.reverseOrder());
 
         for (TaskNode t : tumGorevler) {
@@ -147,13 +136,57 @@ public class EmployeePageController {
     }
 
     // -------------------------------------------------------------------------
-    // KARTLARI EKRANA DÖŞE
+    // KARTLARI EKRANA DÖŞE — List<TaskNode> versiyonu (tumGorevleriGoster için)
     // -------------------------------------------------------------------------
 
     /**
      * VERİ YAPISI 4: LINKEDLIST — sıralı görevleri 3 sütuna dağıtmak için
      * VERİ YAPISI 5: HASHMAP   — urgency grubu → badge rengi
      */
+    private void kartlariEkranListeden(List<TaskNode> liste, boolean urgencyBadge) {
+        gorevKartAlani.getChildren().clear();
+
+        if (liste.isEmpty()) {
+            Label bos = new Label("Bu kategoride görev bulunmuyor.");
+            bos.setStyle("-fx-font-size: 14px; -fx-text-fill: #7b8a9b;");
+            gorevKartAlani.getChildren().add(bos);
+            return;
+        }
+
+        HashMap<String, String> urgencyColors = new HashMap<>();
+        urgencyColors.put("KRITIK",   "#dc2626");
+        urgencyColors.put("YAKLASAN", "#dc2626");
+        urgencyColors.put("NORMAL",   "#16a34a");
+
+        VBox sutun1 = new VBox(20);
+        VBox sutun2 = new VBox(20);
+        VBox sutun3 = new VBox(20);
+        HBox.setHgrow(sutun1, Priority.ALWAYS);
+        HBox.setHgrow(sutun2, Priority.ALWAYS);
+        HBox.setHgrow(sutun3, Priority.ALWAYS);
+
+        int index = 0;
+        for (TaskNode gorev : liste) {
+            String urgencyKey = urgencyHesapla(gorev.getDeadline());
+            String badgeRenk  = urgencyColors.get(urgencyKey);
+
+            VBox kart = kartTasarimiOlustur(gorev, urgencyBadge ? badgeRenk : null, urgencyKey);
+
+            switch (index % 3) {
+                case 0 -> sutun1.getChildren().add(kart);
+                case 1 -> sutun2.getChildren().add(kart);
+                case 2 -> sutun3.getChildren().add(kart);
+            }
+            index++;
+        }
+
+        gorevKartAlani.getChildren().addAll(sutun1, sutun2, sutun3);
+    }
+
+    // -------------------------------------------------------------------------
+    // KARTLARI EKRANA DÖŞE — PriorityQueue versiyonu (diğer görünümler için)
+    // -------------------------------------------------------------------------
+
     private void kartlariEkrana(PriorityQueue<TaskNode> pq, boolean urgencyBadge) {
         gorevKartAlani.getChildren().clear();
 
@@ -164,13 +197,11 @@ public class EmployeePageController {
             return;
         }
 
-        // HashMap: urgency key → CSS renk kodu
         HashMap<String, String> urgencyColors = new HashMap<>();
         urgencyColors.put("KRITIK",   "#dc2626");
         urgencyColors.put("YAKLASAN", "#dc2626");
         urgencyColors.put("NORMAL",   "#16a34a");
 
-        // LinkedList: PriorityQueue'dan sırayla çekip sakla
         LinkedList<TaskNode> siraliGorevler = new LinkedList<>();
         while (!pq.isEmpty()) {
             siraliGorevler.addLast(pq.poll());
@@ -210,7 +241,7 @@ public class EmployeePageController {
     }
 
     // -------------------------------------------------------------------------
-    // KART TASARIMI
+    // KART TASARIMI (değişiklik yok)
     // -------------------------------------------------------------------------
 
     private VBox kartTasarimiOlustur(TaskNode gorev, String badgeRenk, String urgencyKey) {
@@ -219,7 +250,6 @@ public class EmployeePageController {
         kart.setMaxWidth(Double.MAX_VALUE);
         kart.setMaxHeight(Region.USE_PREF_SIZE);
 
-        // --- HEADER ---
         VBox headerContainer = new VBox(8);
         headerContainer.setStyle("-fx-padding: 15; -fx-cursor: hand;");
 
@@ -247,8 +277,6 @@ public class EmployeePageController {
         Region baslikSpacer = new Region();
         HBox.setHgrow(baslikSpacer, Priority.ALWAYS);
 
-        // --- YILDIZ İKONU ---
-        // HashSet.contains() ile O(1) yıldız kontrolü
         boolean isStarred  = starredTitles.contains(gorev.getTitle());
         Label yildizIkonu  = new Label(isStarred ? "★" : "☆");
         yildizIkonu.setStyle(
@@ -256,9 +284,9 @@ public class EmployeePageController {
                         + (isStarred ? "#f59e0b" : "#cbd5e1") + ";");
 
         yildizIkonu.setOnMouseClicked(e -> {
-            e.consume(); // header collapse tetiklenmesin
+            e.consume();
             TaskService.toggleStar(gorev);
-            syncStarredSet(); // HashSet'i güncelle
+            syncStarredSet();
 
             boolean nowStarred = starredTitles.contains(gorev.getTitle());
             yildizIkonu.setText(nowStarred ? "★" : "☆");
@@ -268,7 +296,6 @@ public class EmployeePageController {
         });
 
         if (badgeRenk != null) {
-            // Kalan gün hesapla
             long kalanGun = ChronoUnit.DAYS.between(LocalDate.now(), gorev.getDeadline());
             String kalanGunMetin;
             if (kalanGun < 0) {
@@ -300,7 +327,6 @@ public class EmployeePageController {
         Region headerSpacer = new Region();
         HBox.setHgrow(headerSpacer, Priority.ALWAYS);
 
-        // YENİ
         String deadlineRenk = "#1d4ed8";
         Label anaDeadline = new Label(gorev.getDeadline().toString());
         anaDeadline.setStyle("-fx-font-weight: bold; -fx-text-fill: " + deadlineRenk +
@@ -309,7 +335,7 @@ public class EmployeePageController {
         altBilgiSatiri.getChildren().addAll(atayanLabel, headerSpacer, anaDeadline);
         headerContainer.getChildren().addAll(baslikSatiri, altBilgiSatiri);
 
-        // --- BODY (başlangıçta KAPALI) ---
+        // BODY (başlangıçta kapalı)
         VBox bodyContent = new VBox(12);
         bodyContent.setStyle("-fx-padding: 0 15 15 15;");
         bodyContent.setVisible(false);
