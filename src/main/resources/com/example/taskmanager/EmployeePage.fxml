@@ -3,8 +3,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -22,7 +20,6 @@
         <HBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
               AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
 
-            <!-- SOL PANEL -->
             <VBox fx:id="sidePanel" prefWidth="240" spacing="18" styleClass="side-panel">
                 <HBox spacing="12" styleClass="profile-box">
                     <StackPane styleClass="avatar-circle">
@@ -56,34 +53,16 @@
                 </HBox>
             </VBox>
 
-            <!-- SAĞ PANEL -->
             <VBox fx:id="mainPanel" spacing="22" styleClass="main-panel" HBox.hgrow="ALWAYS">
                 <VBox spacing="6">
-                    <Label fx:id="panelBaslik" text="Tüm Görevlerim" styleClass="page-title"/>
+                    <Label fx:id="panelBaslik" text="TÜM GÖREVLERİM" styleClass="page-title"/>
                     <Label text="Tamamladığın adımları işaretlemeyi unutma." styleClass="page-subtitle"/>
                 </VBox>
 
                 <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean">
                     <content>
-                        <TilePane fx:id="gorevKartAlani" hgap="20" vgap="20"
-                                  prefColumns="2" styleClass="card-area">
-                            <children>
-                                <TitledPane animated="true" prefWidth="280.0"
-                                            text="Otel Ağ Tasarımı | 25.05"
-                                            styleClass="task-card">
-                                    <content>
-                                        <VBox spacing="10">
-                                            <Label text="Veren: Yönetici" styleClass="small-text"
-                                                   style="-fx-text-fill: #7b8a9b;"/>
-                                            <Separator/>
-                                            <CheckBox text="VLAN Yapılandırması" styleClass="task-check"/>
-                                            <CheckBox text="IP Adresleme" styleClass="task-check"/>
-                                            <CheckBox text="Simülasyon Testi" styleClass="task-check"/>
-                                        </VBox>
-                                    </content>
-                                </TitledPane>
-                            </children>
-                        </TilePane>
+                        <HBox fx:id="gorevKartAlani" spacing="20" styleClass="card-area">
+                        </HBox>
                     </content>
                 </ScrollPane>
             </VBox>

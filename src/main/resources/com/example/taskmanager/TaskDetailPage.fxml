@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="750.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.taskmanager.controller.TaskDetailPageController">
+    <children>
+        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <VBox prefWidth="280.0" spacing="20.0" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-width: 0 1 0 0;" padding="25">
+
+                <Label text="GÖREVİ VEREN" styleClass="small-text" style="-fx-font-weight: bold;"/>
+
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <StackPane styleClass="avatar-circle" style="-fx-min-width: 45; -fx-min-height: 45; -fx-background-color: #e0e7ff;">
+                        <Label fx:id="managerAvatarLabel" text="Y" styleClass="avatar-letter" style="-fx-font-size: 16px;"/>
+                    </StackPane>
+                    <VBox spacing="2">
+                        <Label fx:id="managerNameLabel" text="Yönetici Adı" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <Label text="Proje Yöneticisi" styleClass="small-text"/>
+                    </VBox>
+                </HBox>
+
+                <Separator style="-fx-opacity: 0.5;"/>
+
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <Label text="Yöneticiye Soru Sor" style="-fx-font-weight: bold; -fx-text-fill: #334155;"/>
+                    <TextArea fx:id="questionArea" promptText="Görevle ilgili aklına takılanları buraya yazabilirsin..." wrapText="true" VBox.vgrow="ALWAYS" style="-fx-background-radius: 8;"/>
+                    <Button text="Gönder" onAction="#handleSendQuestion" maxWidth="MAX_VALUE" style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;"/>
+                </VBox>
+
+            </VBox>
+
+            <VBox spacing="20.0" HBox.hgrow="ALWAYS" padding="30">
+                <VBox spacing="5">
+                    <Label fx:id="taskTitleLabel" text="GÖREV BAŞLIĞI" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" wrapText="true"/>
+                    <Label text="Görev Detayları" style="-fx-text-fill: #64748b;"/>
+                </VBox>
+
+                <Separator style="-fx-opacity: 0.5;"/>
+
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean" VBox.vgrow="ALWAYS">
+                    <VBox spacing="20">
+                        <Label fx:id="taskDescriptionLabel" text="Görev açıklaması burada yer alacak..." wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #334155; -fx-line-spacing: 1.5;"/>
+
+                        <VBox spacing="10">
+                            <Label text="Ekli Dosyalar" style="-fx-font-weight: bold; -fx-text-fill: #64748b;"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #f1f5f9; -fx-padding: 10 15; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                                <Label text="📄" style="-fx-font-size: 20px;"/>
+                                <Label text="proje_gereksinimleri.pdf" style="-fx-text-fill: #1d4ed8; -fx-cursor: hand;"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+        </HBox>
+    </children>
+</AnchorPane>

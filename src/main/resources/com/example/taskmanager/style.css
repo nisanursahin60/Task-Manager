@@ -4,7 +4,6 @@
 }
 
 /* SOL PANEL */
-
 .side-panel {
     -fx-background-color: linear-gradient(to bottom, #243b55, #141e30);
     -fx-padding: 28 18 22 18;
@@ -88,7 +87,6 @@
 }
 
 /* SAĞ PANEL */
-
 .main-panel {
     -fx-background-color: #f4f7fb;
     -fx-padding: 34 40 30 40;
@@ -142,6 +140,7 @@
     -fx-padding: 20 10 10 10;
 }
 
+/* ÇALIŞAN KARTLARI (Yönetici Ekranı İçin) */
 .employee-card {
     -fx-pref-width: 170px;
     -fx-pref-height: 170px;
@@ -170,7 +169,6 @@
 }
 
 /* AVATAR */
-
 .avatar-circle {
     -fx-background-color: #dbeafe;
     -fx-background-radius: 50%;
@@ -186,38 +184,92 @@
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
-/* GÖREV KARTI (TitledPane) ÖZELLEŞTİRME */
 
+/* --- YENİ EKLENEN DİNAMİK GÖREV KARTI TASARIMLARI --- */
+
+/* Kartın dış gölgesi ve kenarlığı */
 .task-card {
     -fx-background-color: white;
     -fx-background-radius: 15;
     -fx-border-radius: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 4);
-}
-
-.task-card > .title {
-    -fx-background-color: white;
-    -fx-background-radius: 15 15 0 0;
-    -fx-padding: 12 15;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1f2d3d;
+    /* Sol panelle uyumlu koyu lacivert gölge */
+    -fx-effect: dropshadow(gaussian, rgba(20, 30, 48, 0.25), 15, 0, 0, 5);
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
 }
 
 .task-card:hover {
-    -fx-translate-y: -2;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 6);
+    -fx-effect: dropshadow(gaussian, rgba(20, 30, 48, 0.4), 20, 0, 0, 8);
 }
 
-.task-card > .content {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 0 0 15 15;
+/* Ok işareti stili */
+.collapse-icon {
+    -fx-text-fill: #1d4ed8;
+    -fx-font-size: 18px;
+    -fx-cursor: hand;
+}
+
+/* Checkbox'ların metinlerinin alt satıra geçmesi için */
+.task-check .text {
+    -fx-wrapping-width: 140px; /* Metin uzunsa otomatik alt satıra geçer */
+}
+
+.step-deadline {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-family: "Segoe UI Semibold";
+}
+
+.task-card-header {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 15 15 0 0;
+    -fx-padding: 15;
     -fx-border-color: #f0f3f7;
-    -fx-border-width: 1 0 0 0;
+    -fx-border-width: 0 0 1 0;
 }
 
-/* CHECKBOX ÖZELLEŞTİRME */
+.task-card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2d3d;
+    -fx-padding: 5 0 0 0;
+}
 
+/* İlerleme Çubuğu (Progress Bar) */
+.task-progress {
+    -fx-accent: #8b5cf6; /* Açık Mor */
+    -fx-control-inner-background: #e2e8f0;
+    -fx-pref-height: 8px;
+}
+
+.task-progress .bar {
+    -fx-background-radius: 10;
+}
+
+.task-progress .track {
+    -fx-background-radius: 10;
+}
+
+.progress-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8b5cf6;
+}
+
+/* Görev Açıklaması Linki */
+.description-link {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.description-link:hover {
+    -fx-text-fill: #1d4ed8;
+    -fx-underline: true;
+}
+
+/* Checkbox Özelleştirme */
 .task-check {
     -fx-font-size: 13px;
     -fx-text-fill: #4b5563;
@@ -237,8 +289,8 @@
 .task-check:selected .mark {
     -fx-background-color: #1d4ed8;
 }
-/* LOGIN BUTON HOVER */
+
 .button:hover {
-    -fx-background-color: #1e40af; /* Biraz daha koyu mavi */
+    -fx-background-color: #1e40af;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
 }
