@@ -100,7 +100,7 @@ public class EmployeePageController {
         HBox baslikSatiri = new HBox(10);
         baslikSatiri.setAlignment(Pos.CENTER_LEFT);
 
-        Label okIkonu = new Label("▼");
+        Label okIkonu = new Label("▶");
         okIkonu.getStyleClass().add("collapse-icon");
 
         String baslikMetni = gorev.getTitle().toUpperCase();
@@ -142,6 +142,8 @@ public class EmployeePageController {
 
         VBox bodyContent = new VBox(12);
         bodyContent.setStyle("-fx-padding: 0 15 15 15;");
+        bodyContent.setVisible(false);
+        bodyContent.setManaged(false);
 
         VBox progBox = new VBox(5);
         HBox progTextSatiri = new HBox();
