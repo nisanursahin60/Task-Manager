@@ -10,6 +10,8 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <AnchorPane fx:id="anchorPane"
             prefHeight="600.0"
@@ -42,10 +44,11 @@
 
                 <Separator styleClass="side-separator"/>
 
-                <!-- ÇALIŞANLAR -->
                 <VBox spacing="8">
-                    <HBox spacing="8" styleClass="menu-item" onMouseClicked="#tumCalisanlariGoster">
-                        <Label fx:id="calisanOk" text="▾" styleClass="arrow"/>
+                    <HBox spacing="10" styleClass="menu-item" onMouseClicked="#tumCalisanlariGoster" alignment="CENTER_LEFT">
+                        <ImageView fitHeight="18" fitWidth="18" preserveRatio="true">
+                            <Image url="@images/staff.png" />
+                        </ImageView>
                         <Label text="Çalışanlar" styleClass="menu-text"/>
                     </HBox>
 
@@ -58,9 +61,10 @@
                     </VBox>
                 </VBox>
 
-                <!-- ATANAN GÖREVLER -->
-                <HBox spacing="8" styleClass="menu-item" onMouseClicked="#atananGorevleriGoster">
-                    <Label text="📌" styleClass="icon-text"/>
+                <HBox spacing="10" styleClass="menu-item" onMouseClicked="#atananGorevleriGoster" alignment="CENTER_LEFT">
+                    <ImageView fitHeight="18" fitWidth="18" preserveRatio="true">
+                        <Image url="@images/push-pin.png" />
+                    </ImageView>
                     <Label text="Atanan Görevler" styleClass="menu-text"/>
                 </HBox>
 
