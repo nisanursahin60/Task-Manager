@@ -24,8 +24,8 @@ import java.util.List;
 public class ManagerPageController {
 
     @FXML private AnchorPane anchorPane;
-    @FXML private TilePane calisanKartAlani; // Mevcut çalışan listesi (TilePane)
-    @FXML private HBox gorevSutunAlani;     // Yeni eklediğimiz görev sütunları (HBox)
+    @FXML private TilePane calisanKartAlani;
+    @FXML private HBox gorevSutunAlani;
     @FXML private Label departmanad;
     @FXML private Label profilLabel;
     @FXML private TextField aramaCubugu;
@@ -38,19 +38,15 @@ public class ManagerPageController {
 
     @FXML
     public void initialize() {
-        // 1. Mevcut görüntüyü ayarla (Çalışanlar listesi ilk başta görünsün)
         gorunumDegistir(false, "Çalışan bilgilerini buradan görüntüleyebilirsin.");
 
-        // 2. Arama kutusu dinleyicisi (Eğer kodunda varsa bunu koru)
         if (aramaCubugu != null) {
             aramaCubugu.textProperty().addListener((observable, oldValue, newValue) -> {
                 filtreleVeGoster(newValue);
             });
         }
 
-        // 3. KIRMIZI NOKTA KONTROLÜ (Yeni eklediğimiz kısım)
         if (yeniMesajNoktasi != null) {
-            // TaskService'deki hasNewMessages değişkenine göre görünürlüğü ayarla
             boolean hasNew = TaskService.isHasNewMessages();
             yeniMesajNoktasi.setVisible(hasNew);
             yeniMesajNoktasi.setManaged(hasNew);
@@ -69,9 +65,9 @@ public class ManagerPageController {
         LinkedList<User> hepsi = userService.getAllEmployees();
 
         for (User emp : hepsi) {
-            // İsimde aranan kelime var mı diye bak (küçük/büyük harf duyarsız)
             if (emp.getFullName().toLowerCase().contains(arananKelime.toLowerCase())) {
-                calisanKartEkle(emp.getFullName(), emp.getDepartment());
+                // DEĞİŞEN KISIM: String yerine doğrudan emp nesnesini gönderiyoruz
+                calisanKartEkle(emp);
             }
         }
     }
@@ -84,13 +80,7 @@ public class ManagerPageController {
         tumCalisanlariGoster();
     }
 
-    /**
-     * Görünüm Yönetici:
-     * gorevModu true ise HBox (Sütunlar) görünür, TilePane gizlenir.
-     * gorevModu false ise TilePane (Çalışanlar) görünür, HBox gizlenir.
-     */
     private void gorunumDegistir(boolean gorevModu, String aciklamaMetni) {
-        // Panellerin değişimi
         calisanKartAlani.setVisible(!gorevModu);
         calisanKartAlani.setManaged(!gorevModu);
 
@@ -99,19 +89,16 @@ public class ManagerPageController {
             gorevSutunAlani.setManaged(gorevModu);
         }
 
-        // Üst kısımdaki yazı değişimi
         if (sayfaAciklamasi != null) {
             sayfaAciklamasi.setText(aciklamaMetni);
         }
 
-        // Arama çubuğunun gizlenmesi (Sadece Çalışanlar modunda görünür)
         if (aramaAlani != null) {
             aramaAlani.setVisible(!gorevModu);
             aramaAlani.setManaged(!gorevModu);
         }
     }
 
-    // --- ÇALIŞAN LİSTELEME (ESKİ DÜZEN) ---
     @FXML
     private void tumCalisanlariGoster() {
         gorunumDegistir(false, "Çalışan bilgilerini buradan görüntüleyebilirsin.");
@@ -120,7 +107,8 @@ public class ManagerPageController {
         calisanKartAlani.getChildren().clear();
         LinkedList<User> employees = userService.getAllEmployees();
         for (User emp : employees) {
-            calisanKartEkle(emp.getFullName(), emp.getDepartment());
+            // DEĞİŞEN KISIM: String yerine nesne gidiyor
+            calisanKartEkle(emp);
         }
     }
 
@@ -130,7 +118,8 @@ public class ManagerPageController {
         calisanKartAlani.getChildren().clear();
         LinkedList<User> employees = userService.getEmployeesByDepartment(dAd);
         for (User emp : employees) {
-            calisanKartEkle(emp.getFullName(), emp.getDepartment());
+            // DEĞİŞEN KISIM: String yerine nesne gidiyor
+            calisanKartEkle(emp);
         }
     }
 
@@ -140,35 +129,41 @@ public class ManagerPageController {
     @FXML private void pazarlamaGoster() { departmanYukle("Pazarlama"); }
     @FXML private void destekGoster() { departmanYukle("Destek"); }
 
-    private void calisanKartEkle(String adSoyad, String altBilgi) {
+    // DEĞİŞEN METOT: Parametre String'lerden User nesnesine çevrildi ve tıklama eklendi
+    private void calisanKartEkle(User emp) {
         VBox kart = new VBox(10);
         kart.setAlignment(Pos.CENTER);
         kart.getStyleClass().add("employee-card");
         kart.setPrefSize(150, 180);
+        kart.setStyle("-fx-cursor: hand;"); // Kartın üstüne gelince el işareti çıksın
 
         StackPane avatar = new StackPane();
         avatar.getStyleClass().add("avatar-circle");
-        Label avatarHarf = new Label(basHarfleriAl(adSoyad));
+        Label avatarHarf = new Label(basHarfleriAl(emp.getFullName()));
         avatarHarf.getStyleClass().add("avatar-letter");
         avatar.getChildren().add(avatarHarf);
 
-        Label isimLabel = new Label(adSoyad);
+        Label isimLabel = new Label(emp.getFullName());
         isimLabel.getStyleClass().add("employee-name");
-        Label bilgiLabel = new Label(altBilgi);
+        Label bilgiLabel = new Label(emp.getDepartment());
         bilgiLabel.getStyleClass().add("employee-info");
 
         kart.getChildren().addAll(avatar, isimLabel, bilgiLabel);
+
+        // EKLENEN KISIM: Karta tıklanınca görev ekleme sayfasını bu kullanıcı seçili olacak şekilde açar
+        kart.setOnMouseClicked(event -> {
+            gorevEklePaneliAcParametreli(emp.getUsername());
+        });
+
         calisanKartAlani.getChildren().add(kart);
     }
 
-    // --- GÖREV LİSTELEME (YENİ SÜTUNLU DÜZEN) ---
     @FXML
     private void atananGorevleriGoster() {
         gorunumDegistir(true, "Şu an sistemde aktif olan tüm görevleri görüntülüyorsun.");
         departmanad.setText("Atanan Görevler");
         gorevSutunAlani.getChildren().clear();
 
-        // 3 adet bağımsız sütun (VBox) oluşturuyoruz
         VBox sutun1 = new VBox(20);
         VBox sutun2 = new VBox(20);
         VBox sutun3 = new VBox(20);
@@ -180,7 +175,6 @@ public class ManagerPageController {
             gorevSutunAlani.getChildren().add(sutun);
         }
 
-        // Görevleri öncelik sırasına göre (Heap/PriorityQueue) dağıt
         PriorityQueue<TaskNode> tasks = new PriorityQueue<>(TaskService.getPriorityQueue());
         int sayac = 0;
         while (!tasks.isEmpty()) {
@@ -190,7 +184,6 @@ public class ManagerPageController {
         }
     }
 
-    // Görev Kartı Tasarımı (EmployeePage'deki gibi genişleyebilir yapı)
     private VBox kartTasarimiOlustur(TaskNode gorev) {
         VBox kart = new VBox();
         kart.getStyleClass().add("task-card");
@@ -208,17 +201,14 @@ public class ManagerPageController {
         baslikLabel.getStyleClass().add("task-card-title");
         baslikLabel.setWrapText(false);
 
-        // --- PUNTO KÜÇÜLTME MANTIĞI (GÜNCELLENEN YER) ---
-        // Görünmez bir Text nesnesi ile başlığın gerçek genişliğini ölçüyoruz
         Text textNode = new Text(baslikMetni);
         textNode.setFont(Font.font("System", FontWeight.BOLD, 15));
         double textGenisligi = textNode.getLayoutBounds().getWidth();
         double maksimumGenislik = 180.0;
 
         if (textGenisligi > maksimumGenislik) {
-            // Eğer başlık 180px'den genişse, oranı koruyarak fontu küçültüyoruz
             double yeniFontBoyutu = 15.0 * (maksimumGenislik / textGenisligi);
-            yeniFontBoyutu = Math.max(yeniFontBoyutu, 10.5); // Minimum 10.5 puntoya kadar düşer
+            yeniFontBoyutu = Math.max(yeniFontBoyutu, 10.5);
             baslikLabel.setStyle("-fx-font-size: " + yeniFontBoyutu + "px; -fx-padding: 5 0 0 0;");
         }
 
@@ -246,13 +236,12 @@ public class ManagerPageController {
         for (String step : gorev.getSteps()) {
             CheckBox cb = new CheckBox(step);
             cb.getStyleClass().add("task-check");
-            cb.setDisable(true); // Yönetici sadece izler
+            cb.setDisable(true);
             adimlar.getChildren().add(cb);
         }
 
         body.getChildren().addAll(new Separator(), adimlar);
 
-        // Genişletme/Daraltma Mantığı
         header.setOnMouseClicked(e -> {
             boolean visible = !body.isVisible();
             body.setVisible(visible);
@@ -279,21 +268,37 @@ public class ManagerPageController {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    // DEĞİŞEN METOT: Üstteki düz "Görev Ekle" butonuna basınca parametresiz (boş) paneli açar
     @FXML
     private void gorevEklePaneliAc() {
+        gorevEklePaneliAcParametreli(null);
+    }
+
+    // EKLENEN METOT: Karta tıklandığında çalışan asıl yeni pencere açma mantığı
+    private void gorevEklePaneliAcParametreli(String targetUsername) {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/AddTaskPage.fxml"));
+            Parent root = loader.load();
+
+            AddTaskController addTaskController = loader.getController();
+            if (targetUsername != null) {
+                addTaskController.initSelectedUser(targetUsername);
+            }
+
             Stage stage = new Stage();
             stage.setTitle("Yeni Görev Ekle");
-            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/com/example/taskmanager/AddTaskPage.fxml"))));
+            stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
     @FXML
     private void sorulanSorulariGoster() {
-        gorunumDegistir(true, "Çalışanlardan gelen soruları ve geri bildirimleri yönetebilirsin.");
+        gorunumDegistir(true, "Çalışanlerden gelen soruları ve geri bildirimleri yönetebilirsin.");
         departmanad.setText("Gelen Sorular");
 
-        // JSON içindeki tüm mesajları okundu yap ve kaydet
         TaskService.markAllMessagesAsRead();
 
         if (yeniMesajNoktasi != null) {
@@ -301,11 +306,10 @@ public class ManagerPageController {
             yeniMesajNoktasi.setManaged(false);
         }
         gorevSutunAlani.getChildren().clear();
-        gorevSutunAlani.setSpacing(0); // Tek sütun olacağı için spacing sıfırlanabilir
+        gorevSutunAlani.setSpacing(0);
 
-        // Sütunu enine tam yaymak için
         VBox anaSutun = new VBox(15);
-        HBox.setHgrow(anaSutun, Priority.ALWAYS); // Enine tam kapla
+        HBox.setHgrow(anaSutun, Priority.ALWAYS);
         gorevSutunAlani.getChildren().add(anaSutun);
 
         List<TaskService.TaskMessage> mesajlar = TaskService.getMessages();
@@ -321,30 +325,26 @@ public class ManagerPageController {
 
     private VBox soruKutusuOlustur(TaskService.TaskMessage msg) {
         VBox kutu = new VBox(10);
-        kutu.getStyleClass().add("task-card"); // CSS'indeki task-card stilini kullanır
+        kutu.getStyleClass().add("task-card");
         kutu.setMaxWidth(Double.MAX_VALUE);
         kutu.setStyle("-fx-padding: 20; -fx-background-color: white;");
 
-        // Bilgi Satırı (CSS'indeki employee-info ve employee-name stillerinden esinlenerek)
         Label info = new Label("GÖNDEREN:  " + msg.sender.toUpperCase() + "     |     GÖREV:  " + msg.taskTitle.toUpperCase());
-        info.getStyleClass().add("page-title"); // CSS'indeki gri alt başlık stili
+        info.getStyleClass().add("page-title");
         info.setStyle("-fx-font-weight: bold; -fx-font-size: 11px;");
 
         Separator sep = new Separator();
         sep.setOpacity(0.2);
 
-        // Mesaj İçeriği
         Label icerik = new Label(msg.content);
         icerik.setWrapText(true);
         icerik.setStyle("-fx-font-size: 13px; -fx-text-fill: #7b8a9b; -fx-padding: 5 0 15 0;");
 
-        // Alt Satır ve Onay Butonu
         HBox altSatir = new HBox();
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button onayButonu = new Button("ONAY");
-        // Buton stilini senin .add-task-link ve genel buton yapınla uyumlu hale getirdim
         onayButonu.setStyle("-fx-background-color: #1d4ed8; -fx-text-fill: white; " +
                 "-fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 8 30; " +
                 "-fx-background-radius: 18;");
@@ -365,4 +365,5 @@ public class ManagerPageController {
         kutu.getChildren().addAll(info, sep, icerik, altSatir);
 
         return kutu;
-    }}
+    }
+}

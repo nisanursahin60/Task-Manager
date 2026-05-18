@@ -25,6 +25,7 @@ public class AddTaskController {
     @FXML private DatePicker deadlinePicker;
     @FXML private TreeView<String> employeeTreeView;
     @FXML private TextField personelArama;
+    @FXML private TextArea descriptionField;
 
     private final ObservableList<String> stepsList = FXCollections.observableArrayList();
     private final UserService userService = UserService.getInstance();
@@ -38,30 +39,25 @@ public class AddTaskController {
             filterEmployeeTree(newValue);
         });
 
-        // Satırları özelleştiriyoruz
         stepsListView.setCellFactory(param -> new ListCell<String>() {
             private final HBox container = new HBox();
             private final Label stepText = new Label();
-            private final Label deleteBtn = new Label("-"); // Eksi butonu
+            private final Label deleteBtn = new Label("-");
             private final Region spacer = new Region();
 
             {
-                // Stil ve yerleşim ayarları
                 container.setAlignment(Pos.CENTER_LEFT);
-                HBox.setHgrow(spacer, Priority.ALWAYS); // Metin ile buton arasını açar
+                HBox.setHgrow(spacer, Priority.ALWAYS);
                 deleteBtn.getStyleClass().add("delete-step-btn");
                 stepText.getStyleClass().add("step-item-text");
 
                 container.getChildren().addAll(stepText, spacer, deleteBtn);
 
-                // Silme fonksiyonu
                 deleteBtn.setOnMouseClicked(event -> {
                     String item = getItem();
                     if (item != null) {
-                        // Mevcut metinden gerçek içeriği al (numarayı atla)
-                        // "1. Adım İçeriği" -> "Adım İçeriği"
                         stepsList.remove(item);
-                        reorderSteps(); // Numaraları düzelt
+                        reorderSteps();
                     }
                 });
             }
@@ -92,7 +88,6 @@ public class AddTaskController {
             CheckBoxTreeItem<String> deptItem = new CheckBoxTreeItem<>(entry.getKey());
 
             for (User employee : entry.getValue()) {
-                // Güvenli yöntem: Ad Soyad (@kullanıcıadı)
                 CheckBoxTreeItem<String> empItem = new CheckBoxTreeItem<>(
                         employee.getFullName() + " (@" + employee.getUsername() + ")"
                 );
@@ -107,7 +102,7 @@ public class AddTaskController {
 
     private void filterEmployeeTree(String filter) {
         if (filter == null || filter.isEmpty()) {
-            setupEmployeeTree(); // Arama boşsa tüm listeyi tekrar göster
+            setupEmployeeTree();
             return;
         }
 
@@ -123,23 +118,19 @@ public class AddTaskController {
         employeeTreeView.setRoot(filteredRoot);
     }
 
-    // Yeni adımları listeye ekleyen metodu güncelle
     @FXML
     private void handleAddStep() {
         String stepText = stepInputField.getText().trim();
         if (!stepText.isEmpty()) {
-            // Listeye eklerken numara koymuyoruz, reorderSteps halledecek
             stepsList.add(stepText);
             reorderSteps();
             stepInputField.clear();
         }
     }
 
-    // Tüm adımları baştan numaralandıran sihirli metod
     private void reorderSteps() {
         List<String> currentTexts = new ArrayList<>();
 
-        // Mevcut metinlerin başındaki "1. ", "2. " kısımlarını temizleyip saf hallerini al
         for (String s : stepsList) {
             String cleanText = s.replaceAll("^\\d+\\.\\s*", "");
             currentTexts.add(cleanText);
@@ -147,16 +138,11 @@ public class AddTaskController {
 
         stepsList.clear();
 
-        // Yeniden numaralandırarak listeye geri ekle
         for (int i = 0; i < currentTexts.size(); i++) {
             stepsList.add((i + 1) + ". " + currentTexts.get(i));
         }
     }
 
-    // 1. Yeni alanı tanımlayın
-    @FXML private TextArea descriptionField;
-
-    // 2. handleSave metodunu güncelleyin
     @FXML
     private void handleSave() {
         if (titleField.getText().isEmpty() || deadlinePicker.getValue() == null) {
@@ -172,15 +158,14 @@ public class AddTaskController {
             return;
         }
 
-        // TaskNode oluştururken descriptionField'dan gelen metni alıyoruz
         TaskNode newNode = new TaskNode(
                 titleField.getText(),
                 new ArrayList<>(stepsList),
                 selectedUsernames,
                 deadlinePicker.getValue(),
                 userService.getCurrentUser().map(User::getFullName).orElse("Yönetici"),
-                descriptionField.getText().trim(), // AÇIKLAMA BURADA EKLENDİ
-                new ArrayList<>() // Henüz dosya ekleme arayüzü yoksa boş liste
+                descriptionField.getText().trim(),
+                new ArrayList<>()
         );
 
         TaskService.addTask(newNode);
@@ -188,10 +173,9 @@ public class AddTaskController {
         clearForm();
     }
 
-    // 3. clearForm metoduna ekleyin
     private void clearForm() {
         titleField.clear();
-        descriptionField.clear(); // AÇIKLAMA ALANINI TEMİZLE
+        descriptionField.clear();
         stepsList.clear();
         stepInputField.clear();
         deadlinePicker.setValue(null);
@@ -219,5 +203,48 @@ public class AddTaskController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    // ==========================================
+    // EKLENEN KISIM: OTOMATİK SEÇİM MANTIĞI
+    // ==========================================
+
+    /**
+     * Yönetici sayfasından bir çalışana tıklandığında o çalışanın kullanıcı adını
+     * alıp TreeView üzerinde otomatik Check atan metot.
+     */
+    public void initSelectedUser(String username) {
+        if (username == null || username.isEmpty() || employeeTreeView.getRoot() == null) {
+            return;
+        }
+        selectUserInTree(employeeTreeView.getRoot(), username);
+    }
+
+    /**
+     * Ağaç yapısını recursive (özyinelemeli) olarak tarayan yardımcı metot.
+     */
+    private void selectUserInTree(TreeItem<String> item, String username) {
+        if (item instanceof CheckBoxTreeItem) {
+            CheckBoxTreeItem<String> cbItem = (CheckBoxTreeItem<String>) item;
+            String value = cbItem.getValue();
+
+            // Formatımız "İsim Soyisim (@kullaniciadi)" olduğu için eşleşmeyi kontrol ediyoruz
+            if (value != null && value.contains("(@" + username + ")")) {
+                cbItem.setSelected(true); // Kutucuğu işaretle
+
+                // İşaretlenen elemanın görünmesi için bağlı olduğu üst kırılımları (departmanları) aşağı doğru açar
+                TreeItem<String> parent = cbItem.getParent();
+                while (parent != null) {
+                    parent.setExpanded(true);
+                    parent = parent.getParent();
+                }
+                return; // Eşleşen kullanıcı bulunduğu için döngüden çık
+            }
+        }
+
+        // Alt dalları taramaya devam et
+        for (TreeItem<String> child : item.getChildren()) {
+            selectUserInTree(child, username);
+        }
     }
 }

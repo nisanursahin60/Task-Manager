@@ -77,7 +77,9 @@
                 <Region VBox.vgrow="ALWAYS"/>
 
                 <HBox spacing="8" styleClass="logout-box" onMouseClicked="#cikisYap">
-                    <Label text="↻" styleClass="logout-icon"/>
+                    <ImageView fitHeight="18" fitWidth="18" preserveRatio="true">
+                        <Image url="@images/logout.png" />
+                    </ImageView>
                     <Label text="Çıkış Yap" styleClass="logout-text"/>
                 </HBox>
             </VBox>

@@ -85,7 +85,9 @@
     "description": "Web uygulamasının tablet ve telefon ekran boyutlarında düzgün göründüğünün test edilmesi ve CSS Grid hatalarının giderilmesi.",
     "starred": false,
     "createdAt": "2026-01-01T00:04",
-    "completedEmployees": []
+    "completedEmployees": [
+      "elif"
+    ]
   },
   {
     "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
@@ -242,5 +244,27 @@
     "attachedFiles": [],
     "createdAt": "2026-05-12T16:32:07.190114",
     "completedEmployees": []
+  },
+  {
+    "title": "kart secme",
+    "steps": [
+      "1. gizemi sec",
+      "2. cenki sec",
+      "3. deryayi sec"
+    ],
+    "assignedEmployees": [
+      "derya",
+      "gizem",
+      "cenk"
+    ],
+    "deadline": "2026-05-22",
+    "managerName": "Ahmet Yıldız",
+    "description": "deneme",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-05-18T22:51:53.968912",
+    "completedEmployees": [
+      "derya"
+    ]
   }
 ]
