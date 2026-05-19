@@ -15,13 +15,17 @@ public class TaskNode implements Comparable<TaskNode> {
     private String description;
     private boolean starred = false;
     private List<String> attachedFiles;
-    private LocalDateTime createdAt; // En son atanan en başa için
+    private LocalDateTime createdAt;
 
-    // Bir görev birden fazla kişiye atanabilir.
-    // O yüzden tamamlanma bilgisi de kişi kişi tutulur.
     private List<String> completedEmployees = new ArrayList<>();
 
-    // Ana constructor (dosyalar + açıklama + createdAt)
+    /**
+     * Görevi kimin gördüğünü takip eder.
+     * Bir çalışan "Yeni" sekmesine tıkladığında username buraya eklenir.
+     */
+    private List<String> seenBy = new ArrayList<>();
+
+    // Ana constructor
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName, String description, List<String> attachedFiles) {
         this.title = title;
@@ -32,8 +36,9 @@ public class TaskNode implements Comparable<TaskNode> {
         this.description = description;
         this.starred = false;
         this.attachedFiles = attachedFiles != null ? attachedFiles : new ArrayList<>();
-        this.createdAt = LocalDateTime.now(); // Atama anında zaman damgası
+        this.createdAt = LocalDateTime.now();
         this.completedEmployees = new ArrayList<>();
+        this.seenBy = new ArrayList<>();
     }
 
     // Geriye dönük uyumluluk constructor'ı
@@ -59,14 +64,20 @@ public class TaskNode implements Comparable<TaskNode> {
     public boolean isStarred()                      { return starred; }
     public List<String> getAttachedFiles()          { return attachedFiles; }
     public LocalDateTime getCreatedAt()             { return createdAt; }
+    public List<String> getCompletedEmployees()     { return completedEmployees; }
 
-    public List<String> getCompletedEmployees() {
-        return completedEmployees;
+    public List<String> getSeenBy() {
+        if (seenBy == null) seenBy = new ArrayList<>();
+        return seenBy;
     }
 
-    // Bu çalışan bu görevi tamamladı mı?
     public boolean isCompletedBy(String username) {
         return completedEmployees != null && completedEmployees.contains(username);
+    }
+
+    /** Bu görev bu kullanıcı tarafından daha önce "Yeni" sekmesinde görüldü mü? */
+    public boolean isSeenBy(String username) {
+        return seenBy != null && seenBy.contains(username);
     }
 
     // Setters
@@ -77,5 +88,9 @@ public class TaskNode implements Comparable<TaskNode> {
 
     public void setCompletedEmployees(List<String> completedEmployees) {
         this.completedEmployees = completedEmployees;
+    }
+
+    public void setSeenBy(List<String> seenBy) {
+        this.seenBy = seenBy != null ? seenBy : new ArrayList<>();
     }
 }

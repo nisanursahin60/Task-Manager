@@ -55,6 +55,14 @@
                                 <Image url="@images/new.png" />
                             </ImageView>
                             <Label text="Yeni" styleClass="menu-text" style="-fx-text-fill: white;"/>
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="yeniGorevNokta"
+                                   visible="false"
+                                   managed="false"
+                                   style="-fx-background-color: #ef4444;
+                  -fx-min-width: 8; -fx-min-height: 8;
+                  -fx-max-width: 8; -fx-max-height: 8;
+                  -fx-background-radius: 50;" />
                         </HBox>
 
                         <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#yildizliGorevler" alignment="CENTER_LEFT">

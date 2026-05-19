@@ -30,6 +30,8 @@ public class EmployeePageController {
     private final UserService userService = UserService.getInstance();
     private User currentUser;
 
+    @FXML private Label yeniGorevNokta;
+
     /** VERİ YAPISI 1: STACK — navigasyon geçmişi */
     private final Stack<String> viewHistory = new Stack<>();
 
@@ -66,7 +68,15 @@ public class EmployeePageController {
         }
 
         syncStarredSet();
+        refreshYeniNokta();
         tumGorevleriGoster();
+    }
+
+    private void refreshYeniNokta() {
+        if (yeniGorevNokta == null || currentUser == null) return;
+        boolean var = TaskService.hasUnseenNewTasksForEmployee(currentUser.getUsername());
+        yeniGorevNokta.setVisible(var);
+        yeniGorevNokta.setManaged(var);
     }
 
     private void syncStarredSet() {
@@ -146,21 +156,17 @@ public class EmployeePageController {
     @FXML
     private void yeniGorevler() {
         viewHistory.push(VIEW_YENI);
+        if (panelBaslik != null) panelBaslik.setText(VIEW_YENI);
 
-        if (panelBaslik != null) {
-            panelBaslik.setText(VIEW_YENI);
-        }
+        List<TaskNode> yeniGorevler = TaskService.getNewTasksForEmployee(currentUser.getUsername());
 
-        PriorityQueue<TaskNode> tumGorevler =
-                TaskService.getTasksForEmployee(currentUser.getUsername());
+        // Kullanıcı bu sekmeyi açtığında tüm görevleri "görüldü" say
+        TaskService.markTasksAsSeenByEmployee(yeniGorevler, currentUser.getUsername());
 
-        PriorityQueue<TaskNode> yeniPQ = new PriorityQueue<>(Comparator.reverseOrder());
+        // Nokta sönsün
+        refreshYeniNokta();
 
-        for (TaskNode t : tumGorevler) {
-            yeniPQ.offer(t);
-        }
-
-        kartlariEkrana(yeniPQ, false);
+        kartlariEkranListeden(yeniGorevler, false);
     }
 
     @FXML
