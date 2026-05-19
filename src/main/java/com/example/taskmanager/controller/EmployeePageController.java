@@ -631,6 +631,27 @@ public class EmployeePageController {
 
         if (!buKullaniciTamamladi) {
             cbs.forEach(c -> c.setOnAction(e -> {
+                int idx = cbs.indexOf(c);
+
+                // --- TİK ATMA VE GERİ ALMA (KİLİT MANTIĞI) ---
+                if (idx + 1 < cbs.size() && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
+                    CheckBox altGorev = cbs.get(idx + 1);
+                    HBox altSatir = (HBox) adimlarKutusu.getChildren().get(idx + 1);
+
+                    // Satırın en sonundaki eleman kilit ikonudur (🔒 veya 🔓)
+                    Label kilitIkonu = (Label) altSatir.getChildren().get(altSatir.getChildren().size() - 1);
+
+                    if (c.isSelected()) {
+                        // Üst görev seçildiyse: Bir altındaki bağlı görevin kilidini aç
+                        altGorev.setDisable(false);
+                        kilitIkonu.setText("🔓");
+                    } else {
+                        // Üst görevin tiki kaldırıldıysa: Altındaki tüm bağlı görevleri zincirleme kapat ve kilitle
+                        zincirlemeKapat(cbs, adimlarKutusu, idx + 1, gorev.getSteps());
+                    }
+                }
+
+                // İlerleme çubuğunu (ProgressBar) ve yüzdelik durumları anlık güncelle
                 double p = (double) cbs.stream()
                         .filter(CheckBox::isSelected)
                         .count() / cbs.size();
@@ -638,6 +659,7 @@ public class EmployeePageController {
                 pb.setProgress(p);
                 yuzdeLabel.setText("%" + Math.round(p * 100));
 
+                // İlerleme durumuna göre "Görevi Tamamla" butonunu aktif/deaktif et
                 if (p == 1.0) {
                     tamamlaButton.setDisable(false);
                     tamamlaButton.setStyle(
@@ -660,14 +682,6 @@ public class EmployeePageController {
                                     "-fx-opacity: 0.6;" +
                                     "-fx-cursor: default;"
                     );
-                }
-
-                int idx = cbs.indexOf(c);
-
-                if (c.isSelected()
-                        && idx + 1 < cbs.size()
-                        && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
-                    cbs.get(idx + 1).setDisable(false);
                 }
             }));
         }
@@ -731,6 +745,30 @@ public class EmployeePageController {
     // -------------------------------------------------------------------------
     // YARDIMCI METODLAR
     // -------------------------------------------------------------------------
+    /**
+     * Üst görevin tiki kaldırıldığında ona bağlı olan tüm alt görevleri
+     * recursive (zincirleme) olarak kilitleyen ve tiklerini sıfırlayan yardımcı metot.
+     */
+    private void zincirlemeKapat(List<CheckBox> cbs, VBox adimlarKutusu, int index, List<String> steps) {
+        if (index >= cbs.size()) return;
+
+        // Şu anki alt görevin tikini kaldır ve deaktif et
+        CheckBox mevcutAlt = cbs.get(index);
+        mevcutAlt.setSelected(false);
+        mevcutAlt.setDisable(true);
+
+        // Kilit ikonunu tekrar kapalıya (🔒) çevir
+        HBox satir = (HBox) adimlarKutusu.getChildren().get(index);
+        if (satir != null && !satir.getChildren().isEmpty()) {
+            Label kilitIkonu = (Label) satir.getChildren().get(satir.getChildren().size() - 1);
+            kilitIkonu.setText("🔒");
+        }
+
+        // Eğer bir sonraki adım da [DEPENDENT] yapısındaysa zinciri bozmadan kapatmaya devam et
+        if (index + 1 < cbs.size() && steps.get(index + 1).contains("[DEPENDENT]")) {
+            zincirlemeKapat(cbs, adimlarKutusu, index + 1, steps);
+        }
+    }
 
     private void modalAc(TaskNode gorev) {
         try {
