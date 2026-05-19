@@ -233,11 +233,36 @@ public class ManagerPageController {
         body.setManaged(false);
 
         VBox adimlar = new VBox(8);
-        for (String step : gorev.getSteps()) {
-            CheckBox cb = new CheckBox(step);
+        for (String stepRaw : gorev.getSteps()) {
+            // Tarih ve metin ayırma işlemi
+            String[] parts = stepRaw.split("\\|");
+            String adimMetni = parts[0].trim();
+
+            boolean isDep = adimMetni.startsWith("[DEPENDENT]");
+            // Yönetici arayüzünde "[DEPENDENT]" yazısını gizliyoruz
+            String temizMetin = isDep ? adimMetni.replace("[DEPENDENT]", "").trim() : adimMetni;
+
+            HBox adimSatiri = new HBox(5);
+            adimSatiri.setAlignment(Pos.CENTER_LEFT);
+
+            CheckBox cb = new CheckBox(temizMetin);
             cb.getStyleClass().add("task-check");
-            cb.setDisable(true);
-            adimlar.getChildren().add(cb);
+            cb.setDisable(true); // Yönetici sadece izler
+
+            if (isDep) {
+                // Çalışandaki gibi girintili ve kilit emojili tasarım
+                adimSatiri.setStyle("-fx-padding: 0 0 0 15;");
+                Label altOk = new Label("↳");
+                Label kilit = new Label("🔒");
+                kilit.setStyle("-fx-opacity: 0.5;");
+
+                adimSatiri.getChildren().addAll(altOk, cb, new Region(), kilit);
+                HBox.setHgrow(adimSatiri.getChildren().get(2), Priority.ALWAYS);
+            } else {
+                adimSatiri.getChildren().add(cb);
+            }
+
+            adimlar.getChildren().add(adimSatiri);
         }
 
         body.getChildren().addAll(new Separator(), adimlar);

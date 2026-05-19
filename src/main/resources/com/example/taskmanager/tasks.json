@@ -2,9 +2,9 @@
   {
     "title": "OTEL AĞ TASARIMI",
     "steps": [
-      "VLAN Yapılandırması|20.05.2026",
-      "IP Adresleme|22.05.2026",
-      "[DEPENDENT]Simülasyon Testi|25.05.2026"
+      "VLAN Yapılandırması",
+      "IP Adresleme",
+      "[DEPENDENT]Simülasyon Testi"
     ],
     "assignedEmployees": [
       "elif"
@@ -19,9 +19,9 @@
   {
     "title": "VERİTABANI OPTİMİZASYONU",
     "steps": [
-      "Mevcut sorguların analizi|10.06.2026",
-      "Tablo indekslemelerinin yapılması|12.06.2026",
-      "[DEPENDENT]Performans testlerinin uygulanması|14.06.2026"
+      "Mevcut sorguların analizi",
+      "Tablo indekslemelerinin yapılması",
+      "[DEPENDENT]Performans testlerinin uygulanması"
     ],
     "assignedEmployees": [
       "elif",
@@ -37,9 +37,9 @@
   {
     "title": "API ENTEGRASYONU",
     "steps": [
-      "API anahtarlarının alınması|15.05.2026",
-      "Bağlantı kodlarının yazılması|16.05.2026",
-      "[DEPENDENT]Gelen verilerin arayüze basılması|17.05.2026"
+      "API anahtarlarının alınması",
+      "Bağlantı kodlarının yazılması",
+      "[DEPENDENT]Gelen verilerin arayüze basılması"
     ],
     "assignedEmployees": [
       "elif",
@@ -55,9 +55,9 @@
   {
     "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
     "steps": [
-      "SHA-256 algoritmasının entegrasyonu|18.05.2026",
-      "Eski şifrelerin hash\u0027lenerek güncellenmesi|19.05.2026",
-      "[DEPENDENT]Google reCAPTCHA v3 kurulumu|20.05.2026"
+      "SHA-256 algoritmasının entegrasyonu",
+      "Eski şifrelerin hash\u0027lenerek güncellenmesi",
+      "[DEPENDENT]Google reCAPTCHA v3 kurulumu"
     ],
     "assignedEmployees": [
       "elif"
@@ -72,9 +72,9 @@
   {
     "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
     "steps": [
-      "iPhone ve Android ekranlarında test|24.05.2026",
-      "Taşan menülerin Hamburger menüye çevrilmesi|26.05.2026",
-      "[DEPENDENT]Canlı sunucuya (Production) aktarım|27.05.2026"
+      "iPhone ve Android ekranlarında test",
+      "Taşan menülerin Hamburger menüye çevrilmesi",
+      "[DEPENDENT]Canlı sunucuya (Production) aktarım"
     ],
     "assignedEmployees": [
       "elif",
@@ -92,9 +92,9 @@
   {
     "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
     "steps": [
-      "Iyzico Sandbox ortamının kurulması|30.05.2026",
-      "3D Secure yönlendirme sayfasının tasarımı|01.06.2026",
-      "[DEPENDENT]Gerçek ortam (Live) API anahtarlarının girilmesi|02.06.2026"
+      "Iyzico Sandbox ortamının kurulması",
+      "3D Secure yönlendirme sayfasının tasarımı",
+      "[DEPENDENT]Gerçek ortam (Live) API anahtarlarının girilmesi"
     ],
     "assignedEmployees": [
       "elif"
@@ -109,10 +109,10 @@
   {
     "title": "SUNUCU GEÇİŞİ (MIGRATION)",
     "steps": [
-      "AWS EC2 instance oluşturulması|05.06.2026",
-      "Veritabanı dump alınıp buluta yüklenmesi|07.06.2026",
-      "DNS ayarlarının güncellenmesi (Route 53)|08.06.2026",
-      "[DEPENDENT]Eski sunucuların kapatılması|09.06.2026"
+      "AWS EC2 instance oluşturulması",
+      "Veritabanı dump alınıp buluta yüklenmesi",
+      "DNS ayarlarının güncellenmesi (Route 53)",
+      "[DEPENDENT]Eski sunucuların kapatılması"
     ],
     "assignedEmployees": [
       "elif",
@@ -128,9 +128,9 @@
   {
     "title": "YÖNETİCİ PANELİ LOG SİSTEMİ",
     "steps": [
-      "Log tablosunun veritabanına eklenmesi|03.06.2026",
-      "Controller içine kayıt kodlarının yazılması|04.06.2026",
-      "[DEPENDENT]Yönetici arayüzünde logların listelenmesi|05.06.2026"
+      "Log tablosunun veritabanına eklenmesi",
+      "Controller içine kayıt kodlarının yazılması",
+      "[DEPENDENT]Yönetici arayüzünde logların listelenmesi"
     ],
     "assignedEmployees": [
       "elif"
@@ -145,9 +145,9 @@
   {
     "title": "E-POSTA BİLDİRİM SİSTEMİ",
     "steps": [
-      "SMTP sunucu ayarlarının yapılması|27.05.2026",
-      "JavaMail kütüphanesinin projeye dahil edilmesi|28.05.2026",
-      "Zamanlanmış görevlerin (Cron Job) ayarlanması|29.05.2026"
+      "SMTP sunucu ayarlarının yapılması",
+      "JavaMail kütüphanesinin projeye dahil edilmesi",
+      "Zamanlanmış görevlerin (Cron Job) ayarlanması"
     ],
     "assignedEmployees": [
       "elif",
@@ -166,9 +166,9 @@
   {
     "title": "DOKÜMANTASYON GÜNCELLEMESİ",
     "steps": [
-      "Sınıf (Class) diyagramlarının çizilmesi|20.06.2026",
-      "Eksik fonksiyonlara Javadoc eklenmesi|22.06.2026",
-      "[DEPENDENT]PDF raporunun oluşturulması|24.06.2026"
+      "Sınıf (Class) diyagramlarının çizilmesi",
+      "Eksik fonksiyonlara Javadoc eklenmesi",
+      "[DEPENDENT]PDF raporunun oluşturulması"
     ],
     "assignedEmployees": [
       "elif"
