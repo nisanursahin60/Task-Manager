@@ -32,6 +32,7 @@ public class ManagerPageController {
     @FXML private Label yeniMesajNoktasi;
     @FXML private Label sayfaAciklamasi;
     @FXML private HBox aramaAlani;
+    private String aktifDepartman = null;
 
     private final UserService userService = UserService.getInstance();
     private User currentUser;
@@ -62,11 +63,21 @@ public class ManagerPageController {
 
     private void filtreleVeGoster(String arananKelime) {
         calisanKartAlani.getChildren().clear();
-        LinkedList<User> hepsi = userService.getAllEmployees();
 
-        for (User emp : hepsi) {
-            if (emp.getFullName().toLowerCase().contains(arananKelime.toLowerCase())) {
-                // DEĞİŞEN KISIM: String yerine doğrudan emp nesnesini gönderiyoruz
+        LinkedList<User> aranacakListe;
+
+        if (aktifDepartman == null) {
+            aranacakListe = userService.getAllEmployees();
+        } else {
+            aranacakListe = userService.getEmployeesByDepartment(aktifDepartman);
+        }
+
+        String arama = arananKelime == null ? "" : arananKelime.toLowerCase();
+
+        for (User emp : aranacakListe) {
+            if (emp.getFullName().toLowerCase().contains(arama)
+                    || emp.getUsername().toLowerCase().contains(arama)
+                    || emp.getDepartment().toLowerCase().contains(arama)) {
                 calisanKartEkle(emp);
             }
         }
@@ -99,26 +110,41 @@ public class ManagerPageController {
         }
     }
 
+
     @FXML
     private void tumCalisanlariGoster() {
+        aktifDepartman = null;
+
+        if (aramaCubugu != null) {
+            aramaCubugu.clear();
+        }
+
         gorunumDegistir(false, "Çalışan bilgilerini buradan görüntüleyebilirsin.");
         noktaKontroluYap();
         departmanad.setText("Tüm Çalışanlar");
         calisanKartAlani.getChildren().clear();
+
         LinkedList<User> employees = userService.getAllEmployees();
+
         for (User emp : employees) {
-            // DEĞİŞEN KISIM: String yerine nesne gidiyor
             calisanKartEkle(emp);
         }
     }
 
     private void departmanYukle(String dAd) {
+        aktifDepartman = dAd;
+
+        if (aramaCubugu != null) {
+            aramaCubugu.clear();
+        }
+
         gorunumDegistir(false, dAd + " departmanı çalışanlarını görüntülüyorsun.");
         departmanad.setText(dAd);
         calisanKartAlani.getChildren().clear();
+
         LinkedList<User> employees = userService.getEmployeesByDepartment(dAd);
+
         for (User emp : employees) {
-            // DEĞİŞEN KISIM: String yerine nesne gidiyor
             calisanKartEkle(emp);
         }
     }
