@@ -173,7 +173,7 @@ public class CalendarPageController {
 
         double progress = totalTasksThisMonth > 0 ? (double) completedTasksThisMonth / totalTasksThisMonth : 0.0;
 
-// Arc saat yönünde dolsun diye negatif veriyoruz
+        //saat yönünde dolsun diye negatif veriyoruz
         overallProgressArc.setLength(-360 * progress);
 
         progressPercentLabel.setText("%" + Math.round(progress * 100));

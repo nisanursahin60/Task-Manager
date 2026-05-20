@@ -23,7 +23,6 @@ public class EmployeeAVLTree {
     }
 
     private Node root;
-
     private final Collator collator;
 
     public EmployeeAVLTree() {
@@ -92,7 +91,6 @@ public class EmployeeAVLTree {
         if (node == null) {
             return new Node(key, user);
         }
-
         int cmp = compare(key, node.key);
 
         if (cmp < 0) {
@@ -105,7 +103,6 @@ public class EmployeeAVLTree {
         }
 
         node.height = Math.max(height(node.left), height(node.right)) + 1;
-
         int balance = getBalance(node);
 
         if (balance > 1 && compare(key, node.left.key) < 0) {
@@ -143,6 +140,7 @@ public class EmployeeAVLTree {
         return result;
     }
 
+    //arama çubuğuna girilen isim ağaçta recursive olarak aranır
     private void searchByTraversal(Node node, String keyword, LinkedList<User> result, String departmentFilter) {
         if (node == null) return;
 

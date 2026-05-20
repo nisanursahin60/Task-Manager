@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -33,12 +32,10 @@ public class EmployeePageController {
 
     @FXML private Label yeniGorevNokta;
 
-    /** VERİ YAPISI 1: STACK — navigasyon geçmişi */
+    /** STACK - en son eklenen en başta gözüksün diye */
     private final Stack<String> viewHistory = new Stack<>();
 
-    /**
-     * VERİ YAPISI 2: HASHSET — yıldızlı görev title'larını O(1) ile tutar.
-     */
+    /** HASH SET - arama için */
     private final HashSet<String> starredTitles = new HashSet<>();
     private final Stack<TaskNode> starStack = new Stack<>();
 
@@ -92,10 +89,6 @@ public class EmployeePageController {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // MENÜ AKSİYONLARI
-    // -------------------------------------------------------------------------
-
     @FXML
     private void tumGorevleriGoster() {
         viewHistory.push(VIEW_TUM);
@@ -123,9 +116,7 @@ public class EmployeePageController {
             panelAciklamasi.setText("Son 7 günü kalan görevler görüntülenmektedir.");
         }
 
-        /**
-         * VERİ YAPISI 3: PRIORITYQUEUE (Min-Heap) — deadline'a göre sıralı
-         */
+        /** PRIORITY QUEUE — deadline'a göre sıralı */
         PriorityQueue<TaskNode> tumGorevler =
                 TaskService.getTasksForEmployee(currentUser.getUsername());
 
@@ -172,10 +163,10 @@ public class EmployeePageController {
 
         List<TaskNode> yeniGorevler = TaskService.getNewTasksForEmployee(currentUser.getUsername());
 
-        // Kullanıcı bu sekmeyi açtığında tüm görevleri "görüldü" say
+        //kullanıcı bu sekmeyi açtığında tüm görevleri "görüldü" say
         TaskService.markTasksAsSeenByEmployee(yeniGorevler, currentUser.getUsername());
 
-        // Nokta sönsün
+        //nokta sönsün
         refreshYeniNokta();
 
         kartlariEkranListeden(yeniGorevler, false);
@@ -198,14 +189,7 @@ public class EmployeePageController {
         kartlariEkranListeden(tamamlananlar, false);
     }
 
-    // -------------------------------------------------------------------------
-    // KARTLARI EKRANA DÖŞE — List<TaskNode> versiyonu
-    // -------------------------------------------------------------------------
-
-    /**
-     * VERİ YAPISI 4: LINKEDLIST — sıralı görevleri 3 sütuna dağıtmak için
-     * VERİ YAPISI 5: HASHMAP   — urgency grubu → badge rengi
-     */
+    /** HASH MAP - önemli görevlerin renklerini aramak için */
     private void kartlariEkranListeden(List<TaskNode> liste, boolean urgencyBadge) {
         gorevKartAlani.getChildren().clear();
 
@@ -253,10 +237,6 @@ public class EmployeePageController {
         gorevKartAlani.getChildren().addAll(sutun1, sutun2, sutun3);
     }
 
-    // -------------------------------------------------------------------------
-    // KARTLARI EKRANA DÖŞE — PriorityQueue versiyonu
-    // -------------------------------------------------------------------------
-
     private void kartlariEkrana(PriorityQueue<TaskNode> pq, boolean urgencyBadge) {
         gorevKartAlani.getChildren().clear();
 
@@ -272,6 +252,7 @@ public class EmployeePageController {
         urgencyColors.put("YAKLASAN", "#dc2626");
         urgencyColors.put("NORMAL",   "#16a34a");
 
+        /** LINKED LIST - öncelikli kuyruktan sırlarını bozmadan listeye alır */
         LinkedList<TaskNode> siraliGorevler = new LinkedList<>();
 
         while (!pq.isEmpty()) {
@@ -329,9 +310,8 @@ public class EmployeePageController {
     }
 
     // -------------------------------------------------------------------------
-    // KART TASARIMI
+    // KART TASARIMI (TEMİZLENMİŞ VE GÜNCELLENMİŞ SÜRÜM)
     // -------------------------------------------------------------------------
-
     private VBox kartTasarimiOlustur(TaskNode gorev, String badgeRenk, String urgencyKey) {
         VBox kart = new VBox();
         kart.getStyleClass().add("task-card");
@@ -465,17 +445,12 @@ public class EmployeePageController {
                 altBilgiSatiri
         );
 
-        // ---------------------------------------------------------------------
-        // BODY
-        // ---------------------------------------------------------------------
-
         VBox bodyContent = new VBox(12);
         bodyContent.setStyle("-fx-padding: 0 15 15 15;");
         bodyContent.setVisible(false);
         bodyContent.setManaged(false);
 
         VBox progBox = new VBox(5);
-
         HBox progTextSatiri = new HBox();
 
         Label progLabel = new Label("İlerleme");
@@ -508,9 +483,6 @@ public class EmployeePageController {
         detayLink.setMaxWidth(Double.MAX_VALUE);
         detayLink.setOnMouseClicked(e -> modalAc(gorev));
 
-        // ---------------------------------------------------------------------
-        // ADIMLAR LİSTESİ VE TİK HAFIZA KONTROLÜ
-        // ---------------------------------------------------------------------
         VBox adimlarKutusu = new VBox(10);
         adimlarKutusu.setStyle("-fx-padding: 0 5 0 0;");
 
@@ -623,7 +595,6 @@ public class EmployeePageController {
 
             tamamlaSatiri.getChildren().add(completedLabel);
 
-            // Görev bitmişse zaten %100 ve hepsi tikli kilitli
             pb.setProgress(1);
             yuzdeLabel.setText("%100");
 
@@ -635,7 +606,7 @@ public class EmployeePageController {
             completedLabel.setVisible(false);
             completedLabel.setManaged(false);
 
-            // Başlangıçta halihazırda var olan tiklere göre ilerlemeyi doğru hesapla
+            // Başlangıçta halihazırda var olan hafızadaki tiklere göre ilerlemeyi hesapla
             double ilkProgress = cbs.isEmpty() ? 0 : (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
             pb.setProgress(ilkProgress);
             yuzdeLabel.setText("%" + Math.round(ilkProgress * 100));
@@ -683,76 +654,12 @@ public class EmployeePageController {
                         altGorev.setDisable(false);
                         kilitIkonu.setText("🔓");
                     } else {
-                        // Zincirleme kapat metodunu çağırır
+                        // Zincirleme kapat yardımcı metodunu çağırır
                         zincirlemeKapat(cbs, adimlarKutusu, idx + 1, gorev.getSteps());
                     }
                 }
 
-                // Boş username ile completeTask çağrısı sadece tasks.json'ı kalıcı günceller
-                TaskService.completeTask(gorev, "");
-
-                // İlerleme çubuğunu ve "Görevi Tamamla" butonunu güncelle
-                double p = (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
-                pb.setProgress(p);
-                yuzdeLabel.setText("%" + Math.round(p * 100));
-
-                if (p == 1.0) {
-                    tamamlaButton.setDisable(false);
-                    tamamlaButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 1; -fx-cursor: hand;");
-                } else {
-                    tamamlaButton.setDisable(true);
-                    tamamlaButton.setStyle("-fx-background-color: #cbd5e1; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 0.6; -fx-cursor: default;");
-                }
-            }));
-        }
-
-        if (!buKullaniciTamamladi && cbs.isEmpty()) {
-            tamamlaButton.setDisable(false);
-            tamamlaButton.setStyle(
-                    "-fx-background-color: #2563eb;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-background-radius: 8;" +
-                            "-fx-padding: 8 14;" +
-                            "-fx-opacity: 1;" +
-                            "-fx-cursor: hand;"
-            );
-        }
-
-        // ---------------------------------------------------------------------
-        // ANLIK TİK AKSİYONU VE VERİTABANINA ANINDA KAYIT MANTIĞI
-        // ---------------------------------------------------------------------
-        if (!buKullaniciTamamladi) {
-            cbs.forEach(c -> c.setOnAction(e -> {
-                int idx = cbs.indexOf(c);
-                String orijinalAdim = gorev.getSteps().get(idx);
-
-                // Bellekteki adımı [DONE] olarak damgala veya kaldır
-                if (c.isSelected()) {
-                    if (!orijinalAdim.contains("[DONE]")) {
-                        gorev.getSteps().set(idx, orijinalAdim + " [DONE]");
-                    }
-                } else {
-                    gorev.getSteps().set(idx, orijinalAdim.replace("[DONE]", "").trim());
-                }
-
-                // Bağlı kilit mekanizması yönetimi
-                if (idx + 1 < cbs.size() && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
-                    CheckBox altGorev = cbs.get(idx + 1);
-                    HBox altSatir = (HBox) adimlarKutusu.getChildren().get(idx + 1);
-                    Label kilitIkonu = (Label) altSatir.getChildren().get(altSatir.getChildren().size() - 1);
-
-                    if (c.isSelected()) {
-                        altGorev.setDisable(false);
-                        kilitIkonu.setText("🔓");
-                    } else {
-                        // Zincirleme kapat metodunu çağırır
-                        zincirlemeKapat(cbs, adimlarKutusu, idx + 1, gorev.getSteps());
-                    }
-                }
-
-                // --- DÜZELTİLEN KRİTİK SATIR ---
-                // Boş username göndermek yerine veritabanını doğrudan zorunlu kaydediyoruz
+                // Veritabanını doğrudan ve zorunlu olarak JSON'a anlık kaydediyoruz
                 TaskService.zorunluKaydet();
 
                 // İlerleme çubuğunu ve "Görevi Tamamla" butonunu güncelle
@@ -772,15 +679,6 @@ public class EmployeePageController {
 
         tamamlaButton.setOnAction(e -> {
             if (gorev.isCompletedBy(currentUser.getUsername())) {
-                return;
-            }
-
-            Alert onay = new Alert(Alert.AlertType.CONFIRMATION);
-            onay.setTitle("Görevi Tamamla");
-            onay.setHeaderText(null);
-            onay.setContentText("\"" + gorev.getTitle() + "\" görevini tamamlamak istediğinizden emin misiniz?");
-
-            if (onay.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
                 return;
             }
 
@@ -834,7 +732,6 @@ public class EmployeePageController {
 
         return kart;
     }
-
     // -------------------------------------------------------------------------
     // YARDIMCI METODLAR
     // -------------------------------------------------------------------------

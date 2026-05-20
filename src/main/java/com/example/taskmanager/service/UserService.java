@@ -14,10 +14,10 @@ public class UserService {
 
     private static UserService instance;
 
-    //oturum açan kullanıcıyı takip eden Stack
+    /** STACK - oturum açan kullanıcıları takip eder */
     private final java.util.Stack<User> sessionStack = new java.util.Stack<>();
 
-    //tüm kullanıcılar LinkedList'te tutulur
+    /** LINKED LIST - kullanıcılar bağlı listede tutulur */
     private final java.util.LinkedList<User> userList = new java.util.LinkedList<>();
 
     private EmployeeAVLTree employeeAVLTree = new EmployeeAVLTree();
