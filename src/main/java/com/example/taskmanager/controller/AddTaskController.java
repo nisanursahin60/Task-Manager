@@ -28,8 +28,6 @@ public class AddTaskController {
     @FXML private TreeView<String> employeeTreeView;
     @FXML private TextField personelArama;
     @FXML private TextArea descriptionField;
-
-    // GÜNCELLENDİ: Artık tek bir label değil, alt alta dizeceğimiz bir VBox var
     @FXML private VBox secilenDosyalarKutusu;
     private final List<String> secilenDosyaYollari = new ArrayList<>();
 
@@ -149,7 +147,6 @@ public class AddTaskController {
         }
     }
 
-    // GÜNCELLENDİ: Dosya seçildiğinde adlarını listele ve tıklanabilir yap
     @FXML
     private void dosyaSec() {
         FileChooser fileChooser = new FileChooser();
@@ -159,25 +156,20 @@ public class AddTaskController {
 
         if (files != null && !files.isEmpty()) {
 
-            // Eğer liste ilk defa doluyorsa, o "Henüz dosya seçilmedi" yazısını temizle
             if (secilenDosyaYollari.isEmpty()) {
                 secilenDosyalarKutusu.getChildren().clear();
             }
 
             for (File file : files) {
-                // Aynı dosyayı iki kez eklemesini engellemek için küçük bir kontrol
                 if (!secilenDosyaYollari.contains(file.getAbsolutePath())) {
                     secilenDosyaYollari.add(file.getAbsolutePath());
 
-                    // Dosya ismini gösteren tıklanabilir yeşil metin oluştur
                     Label fileLabel = new Label("📎 " + file.getName());
-                    fileLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand;");
+                    fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand;");
 
-                    // Fare üstüne geldiğinde altını çizme efekti (Hover)
-                    fileLabel.setOnMouseEntered(e -> fileLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: true;"));
-                    fileLabel.setOnMouseExited(e -> fileLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: false;"));
+                    fileLabel.setOnMouseEntered(e -> fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: true;"));
+                    fileLabel.setOnMouseExited(e -> fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: false;"));
 
-                    // Tıklandığında dosyayı aç
                     fileLabel.setOnMouseClicked(e -> dosyayiAc(file));
 
                     secilenDosyalarKutusu.getChildren().add(fileLabel);
@@ -186,7 +178,6 @@ public class AddTaskController {
         }
     }
 
-    // YENİ: Bilgisayardaki dosyayı açan metot
     private void dosyayiAc(File file) {
         try {
             if (file.exists()) {
@@ -235,13 +226,10 @@ public class AddTaskController {
         stepsList.clear();
         stepInputField.clear();
         deadlinePicker.setValue(null);
-
-        // Form temizlenirken dosya listesi ekranını da sıfırla
         secilenDosyaYollari.clear();
         secilenDosyalarKutusu.getChildren().clear();
-
         Label emptyLabel = new Label("Henüz dosya seçilmedi");
-        emptyLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-style: italic; -fx-font-size: 11px;");
+        emptyLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-opacity: 0.6;");
         secilenDosyalarKutusu.getChildren().add(emptyLabel);
     }
 
