@@ -14,10 +14,10 @@ public class UserService {
 
     private static UserService instance;
 
-    // Oturum açan kullanıcıyı takip eden Stack
+    //oturum açan kullanıcıyı takip eden Stack
     private final java.util.Stack<User> sessionStack = new java.util.Stack<>();
 
-    // Tüm kullanıcılar LinkedList'te tutulur
+    //tüm kullanıcılar LinkedList'te tutulur
     private final java.util.LinkedList<User> userList = new java.util.LinkedList<>();
 
     private UserService() {
@@ -59,7 +59,7 @@ public class UserService {
         }
     }
 
-    private List<User> parseUsersFromJson(String json) {
+    private List<User> parseUsersFromJson(String json) { //json'dan kullanıcıları alır
         List<User> result = new ArrayList<>();
         int arrayStart = json.indexOf('[');
         int arrayEnd = json.lastIndexOf(']');
@@ -107,14 +107,13 @@ public class UserService {
             String fullName = extractValue(obj, "fullName");
             String department = extractValue(obj, "department");
 
-            // Title bilgisini de okuyoruz
             String title = extractValue(obj, "title");
 
             User.Role role = "MANAGER".equalsIgnoreCase(roleStr)
                     ? User.Role.MANAGER
                     : User.Role.EMPLOYEE;
 
-            // User nesnesini oluştururken title bilgisini ekliyoruz
+            //user nesnesini oluştururken title bilgisini ekliyoruz
             User user = new User(id, username, password, role, fullName, department);
             user.setTitle(title);
 
