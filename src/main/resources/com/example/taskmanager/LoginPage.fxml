@@ -41,7 +41,7 @@
                         </StackPane>
                         <VBox alignment="CENTER" spacing="10.0">
                             <children>
-                                <Label style="-fx-letter-spacing: 8;" text="CORPORATE" textFill="WHITE">
+                                <Label style="-fx-letter-spacing: 8;" text="VORTEX" textFill="WHITE">
                                     <font><Font name="System Bold" size="16.0"/></font>
                                 </Label>
                                 <Label style="-fx-letter-spacing: 2;" text="SOLUTIONS" textFill="#c8d6e5"/>
