@@ -164,15 +164,34 @@ public class AddTaskController {
                 if (!secilenDosyaYollari.contains(file.getAbsolutePath())) {
                     secilenDosyaYollari.add(file.getAbsolutePath());
 
+                    // Dosya ve silme butonunu tutacak küçük bir HBox
+                    HBox dosyaSatiri = new HBox(8);
+                    dosyaSatiri.setAlignment(Pos.CENTER_LEFT);
+
+                    // Beyaz, italik dosya adı
                     Label fileLabel = new Label("📎 " + file.getName());
                     fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand;");
-
-                    fileLabel.setOnMouseEntered(e -> fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: true;"));
-                    fileLabel.setOnMouseExited(e -> fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: false;"));
-
                     fileLabel.setOnMouseClicked(e -> dosyayiAc(file));
 
-                    secilenDosyalarKutusu.getChildren().add(fileLabel);
+                    // Silme butonu (Kırmızı küçük bir X)
+                    Label silBtn = new Label("      ✕");
+                    silBtn.setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold; -fx-cursor: hand;");
+
+                    // Silme mantığı
+                    silBtn.setOnMouseClicked(e -> {
+                        secilenDosyaYollari.remove(file.getAbsolutePath());
+                        secilenDosyalarKutusu.getChildren().remove(dosyaSatiri);
+
+                        // Liste tamamen boşaldıysa "Henüz dosya seçilmedi" yazısını geri getir
+                        if (secilenDosyaYollari.isEmpty()) {
+                            Label emptyLabel = new Label("Henüz dosya seçilmedi");
+                            emptyLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-opacity: 0.6;");
+                            secilenDosyalarKutusu.getChildren().add(emptyLabel);
+                        }
+                    });
+
+                    dosyaSatiri.getChildren().addAll(fileLabel, silBtn);
+                    secilenDosyalarKutusu.getChildren().add(dosyaSatiri);
                 }
             }
         }
