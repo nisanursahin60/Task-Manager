@@ -14,10 +14,7 @@
     "description": "Otel projesi için ağ altyapısının Packet Tracer üzerinde simüle edilmesi, VLAN atamalarının ve IP yönlendirmelerinin yapılması.",
     "starred": false,
     "createdAt": "2026-01-01T00:00",
-    "completedEmployees": [
-      "elif"
-    ],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "VERİTABANI OPTİMİZASYONU",
@@ -35,8 +32,7 @@
     "description": "Müşteri verilerinin tutulduğu tabloların indekslenmesi ve sistem sorgularının hızlandırılması işlemleri.",
     "starred": false,
     "createdAt": "2026-01-01T00:01",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "API ENTEGRASYONU",
@@ -54,8 +50,7 @@
     "description": "Üçüncü parti hava durumu ve döviz kurları API\u0027lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
     "starred": false,
     "createdAt": "2026-01-01T00:02",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
@@ -72,10 +67,7 @@
     "description": "Login sayfasındaki şifrelerin MD5 yerine SHA-256 ile şifrelenmesi ve hatalı girişlerde Captcha doğrulaması eklenmesi.",
     "starred": false,
     "createdAt": "2026-01-01T00:03",
-    "completedEmployees": [
-      "elif"
-    ],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
@@ -95,8 +87,7 @@
     "createdAt": "2026-01-01T00:04",
     "completedEmployees": [
       "elif"
-    ],
-    "seenBy": []
+    ]
   },
   {
     "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
@@ -113,8 +104,7 @@
     "description": "Sistemdeki mevcut ödeme altyapısına Iyzico 3D Secure entegrasyonunun yapılması ve test kartlarıyla başarılı ödeme akışının sağlanması.",
     "starred": false,
     "createdAt": "2026-01-01T00:05",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "SUNUCU GEÇİŞİ (MIGRATION)",
@@ -133,8 +123,7 @@
     "description": "Projenin mevcut yerel sunuculardan AWS EC2 bulut sunucularına taşınması ve domain yönlendirmelerinin DNS üzerinden yapılması.",
     "starred": false,
     "createdAt": "2026-01-01T00:06",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "YÖNETİCİ PANELİ LOG SİSTEMİ",
@@ -151,8 +140,7 @@
     "description": "Sistemdeki yöneticilerin hangi çalışana ne zaman görev atadığının veya sildiğinin kayıt altına alınacağı bir log tablosu oluşturulması.",
     "starred": false,
     "createdAt": "2026-01-01T00:07",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "E-POSTA BİLDİRİM SİSTEMİ",
@@ -173,8 +161,7 @@
     "completedEmployees": [
       "elif",
       "ayse"
-    ],
-    "seenBy": []
+    ]
   },
   {
     "title": "DOKÜMANTASYON GÜNCELLEMESİ",
@@ -191,8 +178,7 @@
     "description": "Dönem sonu teslimi için UML diyagramlarının güncellenmesi, Javadoc yorumlarının yazılması ve kullanım kılavuzunun hazırlanması.",
     "starred": false,
     "createdAt": "2026-01-01T00:09",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "ayşe",
@@ -208,8 +194,7 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-01-01T00:10",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "ayse",
@@ -223,8 +208,7 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-01-01T00:11",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "elifin gorev",
@@ -242,8 +226,7 @@
     "createdAt": "2026-05-12T15:32:26.455601300",
     "completedEmployees": [
       "elif"
-    ],
-    "seenBy": []
+    ]
   },
   {
     "title": "deneme",
@@ -260,8 +243,7 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-05-12T16:32:07.190114",
-    "completedEmployees": [],
-    "seenBy": []
+    "completedEmployees": []
   },
   {
     "title": "kart secme",
@@ -283,7 +265,6 @@
     "createdAt": "2026-05-18T22:51:53.968912",
     "completedEmployees": [
       "derya"
-    ],
-    "seenBy": []
+    ]
   }
 ]

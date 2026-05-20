@@ -18,7 +18,7 @@ public class TaskDetailPageController {
     @FXML private Label taskTitleLabel;
     @FXML private Label taskDescriptionLabel;
     @FXML private TextArea questionArea;
-    @FXML private VBox filesContainer; // FXML'den bağladığımız alan
+    @FXML private VBox filesContainer;
 
     private TaskNode currentTask;
 
@@ -35,14 +35,12 @@ public class TaskDetailPageController {
             taskDescriptionLabel.setText("Bu görev için yönetici tarafından herhangi bir detaylı açıklama eklenmemiştir.");
         }
 
-        // --- DİNAMİK DOSYA YÜKLEME KISMI ---
-        // FXML'de "Ekli Dosyalar" başlığı var, onun altını temizliyoruz ki üst üste binmesin
         if (filesContainer.getChildren().size() > 1) {
             filesContainer.getChildren().subList(1, filesContainer.getChildren().size()).clear();
         }
 
         if (task.getAttachedFiles() != null && !task.getAttachedFiles().isEmpty()) {
-            // Dosyalar varsa her biri için bir kutucuk oluştur
+            //dosyalar varsa her biri için bir kutucuk oluşturur
             for (String fileName : task.getAttachedFiles()) {
                 HBox dosyaKutusu = new HBox(10);
                 dosyaKutusu.setAlignment(Pos.CENTER_LEFT);
@@ -58,7 +56,7 @@ public class TaskDetailPageController {
                 filesContainer.getChildren().add(dosyaKutusu);
             }
         } else {
-            // Dosya yoksa bilgi ver
+            //dosya yoksa bilgi ver
             Label yokLabel = new Label("Bu göreve eklenmiş herhangi bir dosya bulunmuyor.");
             yokLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-style: italic;");
             filesContainer.getChildren().add(yokLabel);
@@ -75,25 +73,23 @@ public class TaskDetailPageController {
 
             UserService userService = UserService.getInstance();
 
-            // Kullanıcı bilgisini güvenli al
+            //kullanıcı bilgisini güvenli al
             String gonderenAdi = userService.getCurrentUser()
                     .map(user -> user.getFullName())
                     .orElse("Bilinmeyen Kullanıcı");
 
-            // Görev bilgisini kontrol et (Eğer currentTask null ise buton çalışmaz)
+            //eğer currentTask null ise buton çalışmaz
             if (currentTask == null) {
                 System.err.println("HATA: currentTask nesnesi null!");
                 return;
             }
 
-            // Mesajı oluştur
+            //mesajı oluştur
             TaskService.TaskMessage msg = new TaskService.TaskMessage(
                     gonderenAdi,
                     currentTask.getTitle(),
                     question
             );
-
-            // Mesajı ekle (Bu satırda hata çıkarsa catch bloğuna düşer)
             TaskService.addMessage(msg);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -105,7 +101,6 @@ public class TaskDetailPageController {
             questionArea.clear();
 
         } catch (Exception e) {
-            // Eğer buton çalışmıyorsa konsolda bu hata mesajını göreceksin:
             System.err.println("Mesaj gönderme sırasında hata oluştu: " + e.getMessage());
             e.printStackTrace();
         }

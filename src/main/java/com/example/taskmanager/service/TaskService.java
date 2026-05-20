@@ -5,7 +5,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -62,10 +61,6 @@ public class TaskService {
         loadTasksFromJson();
         loadMessagesFromJson();
     }
-
-    // -------------------------------------------------------------------------
-    // JSON YÜKLEME / KAYDETME
-    // -------------------------------------------------------------------------
 
     private static void loadTasksFromJson() {
         try {
@@ -138,10 +133,6 @@ public class TaskService {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // GÖREV İŞLEMLERİ
-    // -------------------------------------------------------------------------
-
     public static void addTask(TaskNode node) {
         if (node.getCreatedAt() == null) node.setCreatedAt(LocalDateTime.now());
         if (node.getCompletedEmployees() == null) node.setCompletedEmployees(new ArrayList<>());
@@ -164,15 +155,7 @@ public class TaskService {
         saveToJson();
     }
 
-    // -------------------------------------------------------------------------
-    // YENİ GÖREV / GÖRÜLDÜ İŞLEMLERİ
-    // -------------------------------------------------------------------------
-
-    /**
-     * Son 3 gün içinde atanmış ve belirtilen çalışanın henüz görmediği görevleri döner.
-     * Bu metot sadece SAYIM için kullanılır (kırmızı nokta kararı).
-     */
-    public static boolean hasUnseenNewTasksForEmployee(String username) {
+    public static boolean hasUnseenNewTasksForEmployee(String username) { //sonn 3 gün içinde eklenmiş ve henüz görülmemiş görevleri sayar
         LocalDateTime sinir = LocalDateTime.now().minusDays(3);
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
@@ -187,11 +170,7 @@ public class TaskService {
         return false;
     }
 
-    /**
-     * Son 3 gün içinde atanmış, tamamlanmamış görevleri döner.
-     * En yeni en üstte olacak şekilde sıralar.
-     */
-    public static List<TaskNode> getNewTasksForEmployee(String username) {
+    public static List<TaskNode> getNewTasksForEmployee(String username) { //bu görevlerin ne olduğunu alır
         LocalDateTime sinir = LocalDateTime.now().minusDays(3);
         List<TaskNode> result = new ArrayList<>();
 
@@ -215,10 +194,7 @@ public class TaskService {
         return result;
     }
 
-    /**
-     * Belirtilen çalışanı, verilen görev listesindeki tüm görevler için "gördü" olarak işaretler.
-     */
-    public static void markTasksAsSeenByEmployee(List<TaskNode> tasks, String username) {
+    public static void markTasksAsSeenByEmployee(List<TaskNode> tasks, String username) { //o listedeki tüm görevleri o çalışan için görüldü yapar
         boolean changed = false;
         for (TaskNode task : tasks) {
             if (!task.isSeenBy(username)) {
@@ -229,11 +205,7 @@ public class TaskService {
         if (changed) saveToJson();
     }
 
-    // -------------------------------------------------------------------------
-    // ÇALIŞAN GÖREV SORGULARI
-    // -------------------------------------------------------------------------
-
-    public static PriorityQueue<TaskNode> getTasksForEmployee(String username) {
+    public static PriorityQueue<TaskNode> getTasksForEmployee(String username) { //o kullanıcıya ait görevleri getirir
         PriorityQueue<TaskNode> employeeTasks = new PriorityQueue<>();
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
@@ -245,7 +217,7 @@ public class TaskService {
         return employeeTasks;
     }
 
-    public static List<TaskNode> getTasksForEmployeeByCreatedAt(String username) {
+    public static List<TaskNode> getTasksForEmployeeByCreatedAt(String username) { //görevin oluşturulduğu zamanı alır
         List<TaskNode> result = new ArrayList<>();
         for (TaskNode task : allTasks) {
             if (task.getAssignedEmployees() != null
@@ -297,9 +269,6 @@ public class TaskService {
     public static PriorityQueue<TaskNode> getPriorityQueue() { return priorityQueue; }
     public static List<TaskNode> getAllTasks() { return new ArrayList<>(allTasks); }
 
-    // -------------------------------------------------------------------------
-    // MESAJ İŞLEMLERİ
-    // -------------------------------------------------------------------------
 
     public static class TaskMessage {
         public String sender;

@@ -18,14 +18,8 @@ public class TaskNode implements Comparable<TaskNode> {
     private LocalDateTime createdAt;
 
     private List<String> completedEmployees = new ArrayList<>();
-
-    /**
-     * Görevi kimin gördüğünü takip eder.
-     * Bir çalışan "Yeni" sekmesine tıkladığında username buraya eklenir.
-     */
     private List<String> seenBy = new ArrayList<>();
 
-    // Ana constructor
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName, String description, List<String> attachedFiles) {
         this.title = title;
@@ -41,7 +35,7 @@ public class TaskNode implements Comparable<TaskNode> {
         this.seenBy = new ArrayList<>();
     }
 
-    // Geriye dönük uyumluluk constructor'ı
+    //geriye dönük uyumluluk constructor'ı
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName) {
         this(title, steps, assignedEmployees, deadline, managerName,
@@ -54,7 +48,6 @@ public class TaskNode implements Comparable<TaskNode> {
         return this.deadline.compareTo(other.deadline);
     }
 
-    // Getters
     public String getTitle()                        { return title; }
     public List<String> getSteps()                  { return steps; }
     public List<String> getAssignedEmployees()      { return assignedEmployees; }
@@ -75,21 +68,16 @@ public class TaskNode implements Comparable<TaskNode> {
         return completedEmployees != null && completedEmployees.contains(username);
     }
 
-    /** Bu görev bu kullanıcı tarafından daha önce "Yeni" sekmesinde görüldü mü? */
     public boolean isSeenBy(String username) {
         return seenBy != null && seenBy.contains(username);
     }
-
-    // Setters
     public void setDescription(String description)  { this.description = description; }
     public void setStarred(boolean starred)         { this.starred = starred; }
     public void setAttachedFiles(List<String> attachedFiles) { this.attachedFiles = attachedFiles; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
     public void setCompletedEmployees(List<String> completedEmployees) {
         this.completedEmployees = completedEmployees;
     }
-
     public void setSeenBy(List<String> seenBy) {
         this.seenBy = seenBy != null ? seenBy : new ArrayList<>();
     }

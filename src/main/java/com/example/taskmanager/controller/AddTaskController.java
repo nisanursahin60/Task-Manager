@@ -14,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
-import java.time.LocalDate;
 import java.util.*;
 
 public class AddTaskController {
@@ -205,44 +204,29 @@ public class AddTaskController {
         alert.showAndWait();
     }
 
-    // ==========================================
-    // EKLENEN KISIM: OTOMATİK SEÇİM MANTIĞI
-    // ==========================================
-
-    /**
-     * Yönetici sayfasından bir çalışana tıklandığında o çalışanın kullanıcı adını
-     * alıp TreeView üzerinde otomatik Check atan metot.
-     */
-    public void initSelectedUser(String username) {
+    public void initSelectedUser(String username) { //tıklanan kullanıcı seçili gelecek şekilde görev atama sayfasını açan metot
         if (username == null || username.isEmpty() || employeeTreeView.getRoot() == null) {
             return;
         }
         selectUserInTree(employeeTreeView.getRoot(), username);
     }
 
-    /**
-     * Ağaç yapısını recursive (özyinelemeli) olarak tarayan yardımcı metot.
-     */
-    private void selectUserInTree(TreeItem<String> item, String username) {
+    private void selectUserInTree(TreeItem<String> item, String username) { //ağacı rekürsif gezip kullanıcı bulan metot
         if (item instanceof CheckBoxTreeItem) {
             CheckBoxTreeItem<String> cbItem = (CheckBoxTreeItem<String>) item;
             String value = cbItem.getValue();
 
-            // Formatımız "İsim Soyisim (@kullaniciadi)" olduğu için eşleşmeyi kontrol ediyoruz
             if (value != null && value.contains("(@" + username + ")")) {
-                cbItem.setSelected(true); // Kutucuğu işaretle
-
-                // İşaretlenen elemanın görünmesi için bağlı olduğu üst kırılımları (departmanları) aşağı doğru açar
+                cbItem.setSelected(true);
                 TreeItem<String> parent = cbItem.getParent();
                 while (parent != null) {
                     parent.setExpanded(true);
                     parent = parent.getParent();
                 }
-                return; // Eşleşen kullanıcı bulunduğu için döngüden çık
+                return;
             }
         }
 
-        // Alt dalları taramaya devam et
         for (TreeItem<String> child : item.getChildren()) {
             selectUserInTree(child, username);
         }

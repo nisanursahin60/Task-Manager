@@ -10,10 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * JSON kütüphanesi kullanmadan users.json'ı okuyup parse eden servis.
- * Manuel string parse ile çalışır.
- */
 public class UserService {
 
     private static UserService instance;

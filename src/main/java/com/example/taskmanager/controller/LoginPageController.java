@@ -26,15 +26,11 @@ public class LoginPageController {
 
     @FXML
     public void initialize() {
-        // Hata mesajını başlangıçta gizle
         if (errorLabel != null) {
             errorLabel.setVisible(false);
         }
     }
 
-    /**
-     * Kullanıcı adı alanında Enter'a basıldığında şifre alanına odaklanır.
-     */
     @FXML
     private void onUsernameEnter() {
         passwordField.requestFocus();
@@ -45,14 +41,13 @@ public class LoginPageController {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
 
-        // Boş alan kontrolü
         if (username.isEmpty() || password.isEmpty()) {
             showError("Lütfen tüm alanları doldurun!");
             shakeField(username.isEmpty() ? usernameField : passwordField);
             return;
         }
 
-        // Kullanıcı doğrulama
+        //kullanıcı doğrulama
         Optional<User> result = userService.login(username, password);
 
         if (result.isEmpty()) {
@@ -67,7 +62,7 @@ public class LoginPageController {
         navigateToPage(user);
     }
 
-    private void navigateToPage(User user) {
+    private void navigateToPage(User user) { //kullanıcı tipine göre sayfa açılır
         try {
             String fxmlFile = user.isManager() ? "ManagerPage.fxml" : "EmployeePage.fxml";
             FXMLLoader loader = new FXMLLoader(
