@@ -508,6 +508,9 @@ public class EmployeePageController {
         detayLink.setMaxWidth(Double.MAX_VALUE);
         detayLink.setOnMouseClicked(e -> modalAc(gorev));
 
+        // ---------------------------------------------------------------------
+        // ADIMLAR LİSTESİ VE TİK HAFIZA KONTROLÜ
+        // ---------------------------------------------------------------------
         VBox adimlarKutusu = new VBox(10);
         adimlarKutusu.setStyle("-fx-padding: 0 5 0 0;");
 
@@ -519,8 +522,12 @@ public class EmployeePageController {
             String adimMetni = parts[0].trim();
             String adimTarihi = (parts.length > 1) ? parts[1].trim() : "";
 
+            // [DONE] ve [DEPENDENT] etiketlerini kontrol et
+            boolean isDone = adimMetni.contains("[DONE]");
             boolean isDep = adimMetni.startsWith("[DEPENDENT]");
-            String temizMetin = isDep ? adimMetni.replace("[DEPENDENT]", "") : adimMetni;
+
+            // Etiketleri temizleyip saf metni al
+            String temizMetin = adimMetni.replace("[DONE]", "").replace("[DEPENDENT]", "").trim();
 
             HBox adimSatiri = new HBox(5);
             adimSatiri.setAlignment(Pos.CENTER_LEFT);
@@ -529,6 +536,11 @@ public class EmployeePageController {
             cb.getStyleClass().add("task-check");
             cb.setWrapText(true);
             cb.setMaxWidth(160);
+
+            // Eğer veritabanında (JSON'da) önceden işaretlenmişse tikli başlat
+            if (isDone) {
+                cb.setSelected(true);
+            }
 
             cbs.add(cb);
 
@@ -540,14 +552,21 @@ public class EmployeePageController {
 
             if (isDep) {
                 adimSatiri.setStyle("-fx-padding: 0 0 0 15;");
-                cb.setDisable(true);
+
+                // Eğer bir önceki üst görev tamamlanmadıysa ve bu görev de DONE değilse kilitli kalsın
+                if (!isDone) {
+                    int suAnkiIdx = cbs.size() - 1;
+                    if (suAnkiIdx > 0 && !cbs.get(suAnkiIdx - 1).isSelected()) {
+                        cb.setDisable(true);
+                    }
+                }
 
                 adimSatiri.getChildren().addAll(
                         new Label("↳"),
                         cb,
                         stepSpacer,
                         stepDate,
-                        new Label("🔒")
+                        new Label(isDone ? "🔓" : "🔒")
                 );
             } else {
                 adimSatiri.getChildren().addAll(
@@ -578,7 +597,6 @@ public class EmployeePageController {
         // ---------------------------------------------------------------------
         // GÖREVİ TAMAMLA BUTONU / COMPLETED LABEL
         // ---------------------------------------------------------------------
-
         boolean buKullaniciTamamladi =
                 gorev.isCompletedBy(currentUser.getUsername());
 
@@ -605,6 +623,7 @@ public class EmployeePageController {
 
             tamamlaSatiri.getChildren().add(completedLabel);
 
+            // Görev bitmişse zaten %100 ve hepsi tikli kilitli
             pb.setProgress(1);
             yuzdeLabel.setText("%100");
 
@@ -612,23 +631,79 @@ public class EmployeePageController {
                 cb.setSelected(true);
                 cb.setDisable(true);
             }
-
         } else {
             completedLabel.setVisible(false);
             completedLabel.setManaged(false);
 
-            tamamlaButton.setDisable(true);
-            tamamlaButton.setStyle(
-                    "-fx-background-color: #cbd5e1;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-background-radius: 8;" +
-                            "-fx-padding: 8 14;" +
-                            "-fx-opacity: 0.6;" +
-                            "-fx-cursor: default;"
-            );
+            // Başlangıçta halihazırda var olan tiklere göre ilerlemeyi doğru hesapla
+            double ilkProgress = cbs.isEmpty() ? 0 : (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
+            pb.setProgress(ilkProgress);
+            yuzdeLabel.setText("%" + Math.round(ilkProgress * 100));
+
+            if (ilkProgress == 1.0) {
+                tamamlaButton.setDisable(false);
+                tamamlaButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 1; -fx-cursor: hand;");
+            } else {
+                tamamlaButton.setDisable(true);
+                tamamlaButton.setStyle("-fx-background-color: #cbd5e1; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 0.6; -fx-cursor: default;");
+            }
 
             tamamlaSatiri.getChildren().add(tamamlaButton);
+        }
+
+        if (!buKullaniciTamamladi && cbs.isEmpty()) {
+            tamamlaButton.setDisable(false);
+            tamamlaButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 1; -fx-cursor: hand;");
+        }
+
+        // ---------------------------------------------------------------------
+        // ANLIK TİK AKSİYONU VE VERİTABANINA ANINDA KAYIT MANTIĞI
+        // ---------------------------------------------------------------------
+        if (!buKullaniciTamamladi) {
+            cbs.forEach(c -> c.setOnAction(e -> {
+                int idx = cbs.indexOf(c);
+                String orijinalAdim = gorev.getSteps().get(idx);
+
+                // Bellekteki adımı [DONE] olarak damgala veya kaldır
+                if (c.isSelected()) {
+                    if (!orijinalAdim.contains("[DONE]")) {
+                        gorev.getSteps().set(idx, orijinalAdim + " [DONE]");
+                    }
+                } else {
+                    gorev.getSteps().set(idx, orijinalAdim.replace("[DONE]", "").trim());
+                }
+
+                // Bağlı kilit mekanizması yönetimi
+                if (idx + 1 < cbs.size() && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
+                    CheckBox altGorev = cbs.get(idx + 1);
+                    HBox altSatir = (HBox) adimlarKutusu.getChildren().get(idx + 1);
+                    Label kilitIkonu = (Label) altSatir.getChildren().get(altSatir.getChildren().size() - 1);
+
+                    if (c.isSelected()) {
+                        altGorev.setDisable(false);
+                        kilitIkonu.setText("🔓");
+                    } else {
+                        // Zincirleme kapat metodunu çağırır
+                        zincirlemeKapat(cbs, adimlarKutusu, idx + 1, gorev.getSteps());
+                    }
+                }
+
+                // Boş username ile completeTask çağrısı sadece tasks.json'ı kalıcı günceller
+                TaskService.completeTask(gorev, "");
+
+                // İlerleme çubuğunu ve "Görevi Tamamla" butonunu güncelle
+                double p = (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
+                pb.setProgress(p);
+                yuzdeLabel.setText("%" + Math.round(p * 100));
+
+                if (p == 1.0) {
+                    tamamlaButton.setDisable(false);
+                    tamamlaButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 1; -fx-cursor: hand;");
+                } else {
+                    tamamlaButton.setDisable(true);
+                    tamamlaButton.setStyle("-fx-background-color: #cbd5e1; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 0.6; -fx-cursor: default;");
+                }
+            }));
         }
 
         if (!buKullaniciTamamladi && cbs.isEmpty()) {
@@ -644,59 +719,53 @@ public class EmployeePageController {
             );
         }
 
+        // ---------------------------------------------------------------------
+        // ANLIK TİK AKSİYONU VE VERİTABANINA ANINDA KAYIT MANTIĞI
+        // ---------------------------------------------------------------------
         if (!buKullaniciTamamladi) {
             cbs.forEach(c -> c.setOnAction(e -> {
                 int idx = cbs.indexOf(c);
+                String orijinalAdim = gorev.getSteps().get(idx);
 
-                // --- TİK ATMA VE GERİ ALMA (KİLİT MANTIĞI) ---
+                // Bellekteki adımı [DONE] olarak damgala veya kaldır
+                if (c.isSelected()) {
+                    if (!orijinalAdim.contains("[DONE]")) {
+                        gorev.getSteps().set(idx, orijinalAdim + " [DONE]");
+                    }
+                } else {
+                    gorev.getSteps().set(idx, orijinalAdim.replace("[DONE]", "").trim());
+                }
+
+                // Bağlı kilit mekanizması yönetimi
                 if (idx + 1 < cbs.size() && gorev.getSteps().get(idx + 1).contains("[DEPENDENT]")) {
                     CheckBox altGorev = cbs.get(idx + 1);
                     HBox altSatir = (HBox) adimlarKutusu.getChildren().get(idx + 1);
-
-                    // Satırın en sonundaki eleman kilit ikonudur (🔒 veya 🔓)
                     Label kilitIkonu = (Label) altSatir.getChildren().get(altSatir.getChildren().size() - 1);
 
                     if (c.isSelected()) {
-                        // Üst görev seçildiyse: Bir altındaki bağlı görevin kilidini aç
                         altGorev.setDisable(false);
                         kilitIkonu.setText("🔓");
                     } else {
-                        // Üst görevin tiki kaldırıldıysa: Altındaki tüm bağlı görevleri zincirleme kapat ve kilitle
+                        // Zincirleme kapat metodunu çağırır
                         zincirlemeKapat(cbs, adimlarKutusu, idx + 1, gorev.getSteps());
                     }
                 }
 
-                // İlerleme çubuğunu (ProgressBar) ve yüzdelik durumları anlık güncelle
-                double p = (double) cbs.stream()
-                        .filter(CheckBox::isSelected)
-                        .count() / cbs.size();
+                // --- DÜZELTİLEN KRİTİK SATIR ---
+                // Boş username göndermek yerine veritabanını doğrudan zorunlu kaydediyoruz
+                TaskService.zorunluKaydet();
 
+                // İlerleme çubuğunu ve "Görevi Tamamla" butonunu güncelle
+                double p = (double) cbs.stream().filter(CheckBox::isSelected).count() / cbs.size();
                 pb.setProgress(p);
                 yuzdeLabel.setText("%" + Math.round(p * 100));
 
-                // İlerleme durumuna göre "Görevi Tamamla" butonunu aktif/deaktif et
                 if (p == 1.0) {
                     tamamlaButton.setDisable(false);
-                    tamamlaButton.setStyle(
-                            "-fx-background-color: #2563eb;" +
-                                    "-fx-text-fill: white;" +
-                                    "-fx-font-weight: bold;" +
-                                    "-fx-background-radius: 8;" +
-                                    "-fx-padding: 8 14;" +
-                                    "-fx-opacity: 1;" +
-                                    "-fx-cursor: hand;"
-                    );
+                    tamamlaButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 1; -fx-cursor: hand;");
                 } else {
                     tamamlaButton.setDisable(true);
-                    tamamlaButton.setStyle(
-                            "-fx-background-color: #cbd5e1;" +
-                                    "-fx-text-fill: white;" +
-                                    "-fx-font-weight: bold;" +
-                                    "-fx-background-radius: 8;" +
-                                    "-fx-padding: 8 14;" +
-                                    "-fx-opacity: 0.6;" +
-                                    "-fx-cursor: default;"
-                    );
+                    tamamlaButton.setStyle("-fx-background-color: #cbd5e1; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 14; -fx-opacity: 0.6; -fx-cursor: default;");
                 }
             }));
         }
@@ -776,19 +845,19 @@ public class EmployeePageController {
     private void zincirlemeKapat(List<CheckBox> cbs, VBox adimlarKutusu, int index, List<String> steps) {
         if (index >= cbs.size()) return;
 
-        // Şu anki alt görevin tikini kaldır ve deaktif et
         CheckBox mevcutAlt = cbs.get(index);
         mevcutAlt.setSelected(false);
         mevcutAlt.setDisable(true);
 
-        // Kilit ikonunu tekrar kapalıya (🔒) çevir
+        String orijinalAdim = steps.get(index);
+        steps.set(index, orijinalAdim.replace("[DONE]", "").trim());
+
         HBox satir = (HBox) adimlarKutusu.getChildren().get(index);
         if (satir != null && !satir.getChildren().isEmpty()) {
             Label kilitIkonu = (Label) satir.getChildren().get(satir.getChildren().size() - 1);
             kilitIkonu.setText("🔒");
         }
 
-        // Eğer bir sonraki adım da [DEPENDENT] yapısındaysa zinciri bozmadan kapatmaya devam et
         if (index + 1 < cbs.size() && steps.get(index + 1).contains("[DEPENDENT]")) {
             zincirlemeKapat(cbs, adimlarKutusu, index + 1, steps);
         }

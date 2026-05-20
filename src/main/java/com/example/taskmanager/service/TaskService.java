@@ -304,4 +304,8 @@ public class TaskService {
         hasNewMessages = false;
         saveMessagesToJson();
     }
+    // TaskService.java dosyasının içine, en alta ekle:
+    public static void zorunluKaydet() {
+        saveToJson();
+    }
 }

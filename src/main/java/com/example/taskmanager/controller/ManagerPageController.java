@@ -254,8 +254,8 @@ public class ManagerPageController {
             String adimMetni = parts[0].trim();
 
             boolean isDep = adimMetni.startsWith("[DEPENDENT]");
-            // Yönetici arayüzünde "[DEPENDENT]" yazısını gizliyoruz
-            String temizMetin = isDep ? adimMetni.replace("[DEPENDENT]", "").trim() : adimMetni;
+            // Yönetici ekranında hem DEPENDENT hem de DONE etiketlerini temizle
+            String temizMetin = adimMetni.replace("[DEPENDENT]", "").replace("[DONE]", "").trim();
 
             HBox adimSatiri = new HBox(5);
             adimSatiri.setAlignment(Pos.CENTER_LEFT);
