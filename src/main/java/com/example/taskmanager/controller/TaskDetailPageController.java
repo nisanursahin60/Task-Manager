@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import java.awt.Desktop;
+import java.io.File;
 
 public class TaskDetailPageController {
 
@@ -40,26 +42,53 @@ public class TaskDetailPageController {
         }
 
         if (task.getAttachedFiles() != null && !task.getAttachedFiles().isEmpty()) {
-            //dosyalar varsa her biri için bir kutucuk oluşturur
-            for (String fileName : task.getAttachedFiles()) {
+            // Dosyalar varsa her biri için bir kutucuk oluşturur
+            for (String filePath : task.getAttachedFiles()) {
+
+                // YENİ: Dosya yolundan bir File nesnesi oluşturuyoruz ki hem adını alabilelim hem de açabilelim
+                File file = new File(filePath);
+
                 HBox dosyaKutusu = new HBox(10);
                 dosyaKutusu.setAlignment(Pos.CENTER_LEFT);
-                dosyaKutusu.setStyle("-fx-background-color: white; -fx-padding: 12 18; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+                // YENİ: Kutuya tıklandığını belli etmek için fareyi el (hand) ikonuna çeviriyoruz
+                dosyaKutusu.setStyle("-fx-background-color: white; -fx-padding: 12 18; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4); -fx-cursor: hand;");
 
                 Label ikon = new Label("📄");
                 ikon.setStyle("-fx-font-size: 22px;");
 
-                Label isimLabel = new Label(fileName);
-                isimLabel.setStyle("-fx-text-fill: #1d4ed8; -fx-cursor: hand; -fx-font-weight: bold;");
+                // YENİ: Uzun dizin yolunu değil, sadece dosyanın adını (örn: rapor.pdf) göster
+                Label isimLabel = new Label(file.getName());
+                isimLabel.setStyle("-fx-text-fill: #1d4ed8; -fx-font-weight: bold;");
+
+                // YENİ: Tüm beyaz kutucuğa tıklama özelliği kazandırıyoruz
+                dosyaKutusu.setOnMouseClicked(e -> dosyayiAc(file));
 
                 dosyaKutusu.getChildren().addAll(ikon, isimLabel);
                 filesContainer.getChildren().add(dosyaKutusu);
             }
         } else {
-            //dosya yoksa bilgi ver
+            // Dosya yoksa bilgi ver
             Label yokLabel = new Label("Bu göreve eklenmiş herhangi bir dosya bulunmuyor.");
             yokLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-style: italic;");
             filesContainer.getChildren().add(yokLabel);
+        }
+    }
+
+    // YENİ: Tıklanan dosyayı bilgisayarın varsayılan uygulamasıyla (PDF okuyucu, Word vb.) açan sihirli metot
+    private void dosyayiAc(File file) {
+        try {
+            if (file.exists()) {
+                Desktop.getDesktop().open(file);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Hata");
+                alert.setHeaderText("Dosya Bulunamadı");
+                alert.setContentText("Bu dosya bilgisayardan silinmiş veya yeri değiştirilmiş olabilir.\nAranan Yol: " + file.getAbsolutePath());
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            System.err.println("Dosya açılamadı: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -73,18 +102,15 @@ public class TaskDetailPageController {
 
             UserService userService = UserService.getInstance();
 
-            //kullanıcı bilgisini güvenli al
             String gonderenAdi = userService.getCurrentUser()
                     .map(user -> user.getFullName())
                     .orElse("Bilinmeyen Kullanıcı");
 
-            //eğer currentTask null ise buton çalışmaz
             if (currentTask == null) {
                 System.err.println("HATA: currentTask nesnesi null!");
                 return;
             }
 
-            //mesajı oluştur
             TaskService.TaskMessage msg = new TaskService.TaskMessage(
                     gonderenAdi,
                     currentTask.getTitle(),

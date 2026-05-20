@@ -13,7 +13,10 @@ import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import java.awt.Desktop;
+import java.io.File;
 import java.util.*;
 
 public class AddTaskController {
@@ -25,6 +28,10 @@ public class AddTaskController {
     @FXML private TreeView<String> employeeTreeView;
     @FXML private TextField personelArama;
     @FXML private TextArea descriptionField;
+
+    // GÜNCELLENDİ: Artık tek bir label değil, alt alta dizeceğimiz bir VBox var
+    @FXML private VBox secilenDosyalarKutusu;
+    private final List<String> secilenDosyaYollari = new ArrayList<>();
 
     private final ObservableList<String> stepsList = FXCollections.observableArrayList();
     private final UserService userService = UserService.getInstance();
@@ -142,6 +149,56 @@ public class AddTaskController {
         }
     }
 
+    // GÜNCELLENDİ: Dosya seçildiğinde adlarını listele ve tıklanabilir yap
+    @FXML
+    private void dosyaSec() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Göreve Dosya Ekle");
+
+        List<File> files = fileChooser.showOpenMultipleDialog(null);
+
+        if (files != null && !files.isEmpty()) {
+
+            // Eğer liste ilk defa doluyorsa, o "Henüz dosya seçilmedi" yazısını temizle
+            if (secilenDosyaYollari.isEmpty()) {
+                secilenDosyalarKutusu.getChildren().clear();
+            }
+
+            for (File file : files) {
+                // Aynı dosyayı iki kez eklemesini engellemek için küçük bir kontrol
+                if (!secilenDosyaYollari.contains(file.getAbsolutePath())) {
+                    secilenDosyaYollari.add(file.getAbsolutePath());
+
+                    // Dosya ismini gösteren tıklanabilir yeşil metin oluştur
+                    Label fileLabel = new Label("📎 " + file.getName());
+                    fileLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand;");
+
+                    // Fare üstüne geldiğinde altını çizme efekti (Hover)
+                    fileLabel.setOnMouseEntered(e -> fileLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: true;"));
+                    fileLabel.setOnMouseExited(e -> fileLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 11px; -fx-cursor: hand; -fx-underline: false;"));
+
+                    // Tıklandığında dosyayı aç
+                    fileLabel.setOnMouseClicked(e -> dosyayiAc(file));
+
+                    secilenDosyalarKutusu.getChildren().add(fileLabel);
+                }
+            }
+        }
+    }
+
+    // YENİ: Bilgisayardaki dosyayı açan metot
+    private void dosyayiAc(File file) {
+        try {
+            if (file.exists()) {
+                Desktop.getDesktop().open(file);
+            } else {
+                showAlert("Hata", "Dosya bulunamadı! Yol: " + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            System.err.println("Dosya açılamadı: " + e.getMessage());
+        }
+    }
+
     @FXML
     private void handleSave() {
         if (titleField.getText().isEmpty() || deadlinePicker.getValue() == null) {
@@ -164,7 +221,7 @@ public class AddTaskController {
                 deadlinePicker.getValue(),
                 userService.getCurrentUser().map(User::getFullName).orElse("Yönetici"),
                 descriptionField.getText().trim(),
-                new ArrayList<>()
+                new ArrayList<>(secilenDosyaYollari)
         );
 
         TaskService.addTask(newNode);
@@ -178,6 +235,14 @@ public class AddTaskController {
         stepsList.clear();
         stepInputField.clear();
         deadlinePicker.setValue(null);
+
+        // Form temizlenirken dosya listesi ekranını da sıfırla
+        secilenDosyaYollari.clear();
+        secilenDosyalarKutusu.getChildren().clear();
+
+        Label emptyLabel = new Label("Henüz dosya seçilmedi");
+        emptyLabel.setStyle("-fx-text-fill: #94a3b8; -fx-font-style: italic; -fx-font-size: 11px;");
+        secilenDosyalarKutusu.getChildren().add(emptyLabel);
     }
 
     private void findSelectedUsernames(TreeItem<String> item, List<String> list) {
@@ -204,20 +269,21 @@ public class AddTaskController {
         alert.showAndWait();
     }
 
-    public void initSelectedUser(String username) { //tıklanan kullanıcı seçili gelecek şekilde görev atama sayfasını açan metot
+    public void initSelectedUser(String username) {
         if (username == null || username.isEmpty() || employeeTreeView.getRoot() == null) {
             return;
         }
         selectUserInTree(employeeTreeView.getRoot(), username);
     }
 
-    private void selectUserInTree(TreeItem<String> item, String username) { //ağacı rekürsif gezip kullanıcı bulan metot
+    private void selectUserInTree(TreeItem<String> item, String username) {
         if (item instanceof CheckBoxTreeItem) {
             CheckBoxTreeItem<String> cbItem = (CheckBoxTreeItem<String>) item;
             String value = cbItem.getValue();
 
             if (value != null && value.contains("(@" + username + ")")) {
                 cbItem.setSelected(true);
+
                 TreeItem<String> parent = cbItem.getParent();
                 while (parent != null) {
                     parent.setExpanded(true);

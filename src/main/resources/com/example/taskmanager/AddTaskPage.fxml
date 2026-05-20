@@ -31,6 +31,17 @@
                         </VBox>
 
                         <VBox spacing="5">
+                            <Label text="Dosya Ekleyin" styleClass="small-text"/>
+                            <HBox spacing="10" alignment="TOP_LEFT">
+                                <Button text="📎 Seç" onAction="#dosyaSec" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 10; -fx-background-radius: 4;"/>
+
+                                <VBox fx:id="secilenDosyalarKutusu" spacing="3">
+                                    <Label text="Henüz dosya seçilmedi" style="-fx-text-fill: #94a3b8; -fx-font-style: italic; -fx-font-size: 11px;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="5">
                             <Label text="Son Teslim Tarihi" styleClass="small-text" />
                             <DatePicker fx:id="deadlinePicker" maxWidth="1.7976931348623157E308" />
                         </VBox>
