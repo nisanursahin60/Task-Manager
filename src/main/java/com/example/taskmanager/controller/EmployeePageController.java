@@ -691,6 +691,15 @@ public class EmployeePageController {
                 return;
             }
 
+            Alert onay = new Alert(Alert.AlertType.CONFIRMATION);
+            onay.setTitle("Görevi Tamamla");
+            onay.setHeaderText(null);
+            onay.setContentText("\"" + gorev.getTitle() + "\" görevini tamamlamak istediğinizden emin misiniz?");
+
+            if (onay.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+                return;
+            }
+
             TaskService.completeTask(gorev, currentUser.getUsername());
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
