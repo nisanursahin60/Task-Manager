@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text; // YENİ: Taşmayı önlemek için ekledik
+import javafx.scene.shape.Arc;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -31,7 +32,7 @@ public class CalendarPageController {
 
     @FXML private Label totalTasksLabel;
     @FXML private Label completedTasksLabel;
-    @FXML private ProgressIndicator overallProgress;
+    @FXML private Arc overallProgressArc;
     @FXML private Label progressPercentLabel;
     @FXML private VBox approachingTasksContainer;
 
@@ -171,7 +172,10 @@ public class CalendarPageController {
         completedTasksLabel.setText(String.valueOf(completedTasksThisMonth));
 
         double progress = totalTasksThisMonth > 0 ? (double) completedTasksThisMonth / totalTasksThisMonth : 0.0;
-        overallProgress.setProgress(progress);
+
+// Arc saat yönünde dolsun diye negatif veriyoruz
+        overallProgressArc.setLength(-360 * progress);
+
         progressPercentLabel.setText("%" + Math.round(progress * 100));
     }
 
