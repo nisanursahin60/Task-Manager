@@ -80,11 +80,18 @@
                             <Label text="Tamamlananlar" styleClass="menu-text" style="-fx-text-fill: white;"/>
                         </HBox>
 
-                        <HBox spacing="10" styleClass="sub-menu-item" onMouseClicked="#takvimSayfasiniAc" alignment="CENTER_LEFT">
-                            <Label text="Takvimim" styleClass="menu-text" style="-fx-text-fill: white;"/>
-                        </HBox>
-
                     </VBox>
+                </VBox>
+
+                <VBox spacing="8">
+                    <VBox.margin>
+                        <Insets top="12.0" />
+                    </VBox.margin>
+
+                    <HBox spacing="8" styleClass="menu-item" onMouseClicked="#takvimSayfasiniAc" alignment="CENTER_LEFT">
+                        <Label text="▸" styleClass="arrow"/>
+                        <Label text="Takvimim" styleClass="menu-text" style="-fx-text-fill: white;"/>
+                    </HBox>
                 </VBox>
 
                 <Region VBox.vgrow="ALWAYS"/>
