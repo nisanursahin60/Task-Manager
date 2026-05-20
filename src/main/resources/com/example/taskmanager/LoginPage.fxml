@@ -13,6 +13,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="600.0" prefWidth="900.0" stylesheets="@style.css"
             xmlns="http://javafx.com/javafx/21"
@@ -27,25 +33,47 @@
                 <!-- SOL PANEL -->
                 <VBox alignment="CENTER" prefWidth="380.0" spacing="30.0" styleClass="side-panel">
                     <children>
-                        <StackPane maxHeight="150.0" maxWidth="150.0">
+                        <StackPane maxHeight="150.0" maxWidth="150.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
                             <children>
                                 <Circle fill="#ffffff1a" radius="75.0" stroke="WHITE"
                                         strokeType="INSIDE" strokeWidth="1.5"
                                         style="-fx-stroke-dash-array: 10;"/>
+
                                 <Circle fill="#ffffff26" radius="60.0" stroke="WHITE"
                                         strokeType="INSIDE" strokeWidth="2.5"/>
-                                <Label text="LOGO" textFill="WHITE">
-                                    <font><Font name="System Bold" size="28.0"/></font>
-                                </Label>
+
+                                <ImageView fx:id="vortexSolutionsLogo" fitHeight="115.0" fitWidth="115.0"
+                                           pickOnBounds="true" preserveRatio="false">
+                                    <image>
+                                        <Image url="@images/logo.png" />
+                                    </image>
+                                    <clip>
+                                        <Circle radius="57.5" centerX="57.5" centerY="57.5" />
+                                    </clip>
+                                </ImageView>
                             </children>
                         </StackPane>
-                        <VBox alignment="CENTER" spacing="10.0">
+                        <VBox alignment="CENTER" spacing="12.0">
                             <children>
-                                <Label style="-fx-letter-spacing: 8;" text="VORTEX" textFill="WHITE">
-                                    <font><Font name="System Bold" size="16.0"/></font>
+                                <Label text="VORTEX" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="30.0"/>
+                                    </font>
+                                    <style>
+                                        -fx-font-weight: 900;
+                                    </style>
                                 </Label>
-                                <Label style="-fx-letter-spacing: 2;" text="SOLUTIONS" textFill="#c8d6e5"/>
-                                <Separator maxWidth="50.0" style="-fx-opacity: 0.3;"/>
+
+                                <Label text="SOLUTIONS" textFill="#e2e8f0">
+                                    <font>
+                                        <Font name="System Bold" size="16.0"/>
+                                    </font>
+                                    <style>
+                                        -fx-font-weight: bold;
+                                    </style>
+                                </Label>
+
+                                <Separator maxWidth="80.0" style="-fx-opacity: 0.3; -fx-padding: 8 0 0 0;"/>
                             </children>
                         </VBox>
                     </children>
