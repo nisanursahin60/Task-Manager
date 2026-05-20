@@ -18,6 +18,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane prefHeight="630.0" prefWidth="850.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.taskmanager.controller.CalendarPageController">
     <children>
@@ -45,44 +46,65 @@
                     <Region style="-fx-background-color: #334155; -fx-pref-height: 1; -fx-max-height: 1;"/>
                 </VBox>
 
-                <StackPane prefHeight="150" prefWidth="150" alignment="CENTER">
 
-                    <!-- Dış koyu halka -->
-                    <Circle radius="58" fill="transparent" stroke="#0f172a" strokeWidth="14" opacity="0.55"/>
+                <StackPane prefHeight="150.0" prefWidth="150.0" alignment="CENTER">
 
-                    <!-- Arka plan halka -->
-                    <Circle radius="58" fill="transparent" stroke="#334155" strokeWidth="14" opacity="0.45"/>
+                    <Pane prefWidth="140.0" prefHeight="140.0"
+                          minWidth="140.0" minHeight="140.0"
+                          maxWidth="140.0" maxHeight="140.0">
 
-                    <!-- İlerleme yayı -->
-                    <Arc fx:id="overallProgressArc"
-                         radiusX="58" radiusY="58"
-                         startAngle="90"
-                         length="0"
-                         fill="transparent"
-                         strokeWidth="14"
-                         type="OPEN"
-                         strokeLineCap="ROUND">
-                        <stroke>
-                            <LinearGradient startX="0.0" startY="1.0" endX="1.0" endY="0.0" cycleMethod="NO_CYCLE">
-                                <stops>
-                                    <Stop offset="0.0" color="#5eead4"/>
-                                    <Stop offset="0.55" color="#d1d5db"/>
-                                    <Stop offset="1.0" color="#fb7185"/>
-                                </stops>
-                            </LinearGradient>
-                        </stroke>
-                    </Arc>
+                        <children>
+                            <!-- dış koyu halka -->
+                            <Circle centerX="70.0" centerY="70.0"
+                                    radius="58.0"
+                                    fill="transparent"
+                                    stroke="#0f172a"
+                                    strokeWidth="14.0"
+                                    opacity="0.55"/>
 
-                    <!-- Ortadaki iç daire -->
-                    <Circle radius="42" fill="#233247"/>
+                            <!-- arka plan halka -->
+                            <Circle centerX="70.0" centerY="70.0"
+                                    radius="58.0"
+                                    fill="transparent"
+                                    stroke="#334155"
+                                    strokeWidth="14.0"
+                                    opacity="0.45"/>
 
-                    <!-- Ortadaki yazılar -->
-                    <VBox alignment="CENTER" spacing="2">
+                            <!-- ilerleme yayı -->
+                            <Arc fx:id="overallProgressArc"
+                                 centerX="70.0" centerY="70.0"
+                                 radiusX="58.0" radiusY="58.0"
+                                 startAngle="90.0"
+                                 length="0.0"
+                                 fill="transparent"
+                                 strokeWidth="14.0"
+                                 type="OPEN"
+                                 strokeLineCap="ROUND">
+                                <stroke>
+                                    <LinearGradient startX="0.0" startY="1.0" endX="1.0" endY="0.0" cycleMethod="NO_CYCLE">
+                                        <stops>
+                                            <Stop offset="0.0" color="#5eead4"/>
+                                            <Stop offset="0.55" color="#d1d5db"/>
+                                            <Stop offset="1.0" color="#fb7185"/>
+                                        </stops>
+                                    </LinearGradient>
+                                </stroke>
+                            </Arc>
+
+                            <!-- iç daire -->
+                            <Circle centerX="70.0" centerY="70.0"
+                                    radius="42.0"
+                                    fill="#233247"/>
+                        </children>
+                    </Pane>
+
+                    <!-- ortadaki yazı -->
+                    <VBox alignment="CENTER" spacing="2" mouseTransparent="true">
                         <Label fx:id="progressPercentLabel"
                                text="0%"
                                style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
                         <Label text="COMPLETE"
-                               style="-fx-text-fill: #cbd5e1; -fx-font-size: 11px; -fx-font-weight: normal;"/>
+                               style="-fx-text-fill: #cbd5e1; -fx-font-size: 11px;"/>
                     </VBox>
                 </StackPane>
 
