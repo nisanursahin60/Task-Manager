@@ -80,6 +80,7 @@ public class CalendarPageController {
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 7; col++) {
                 VBox dayCell = new VBox(4);
+                dayCell.setMinHeight(75);
                 dayCell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                 dayCell.setPadding(new Insets(5));
                 GridPane.setVgrow(dayCell, Priority.ALWAYS);
