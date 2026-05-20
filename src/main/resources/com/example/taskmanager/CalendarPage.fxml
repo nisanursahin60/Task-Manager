@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="540.0" prefWidth="850.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.taskmanager.controller.CalendarPageController">
+    <children>
+        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <VBox minWidth="200.0" maxWidth="200.0" spacing="15.0" style="-fx-background-color: #1e293b;">
+                <padding>
+                    <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+                </padding>
+
+                <Label text="AYLIK İSTATİSTİK" style="-fx-text-fill: #94a3b8; -fx-font-weight: bold; -fx-font-size: 12px;"/>
+
+                <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER">
+                        <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="totalTasksLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                            <Label text="Toplam" style="-fx-text-fill: #94a3b8; -fx-font-size: 10px;"/>
+                        </VBox>
+                        <Region style="-fx-background-color: #64748b; -fx-pref-width: 1; -fx-max-width: 1;"/>
+                        <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="completedTasksLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                            <Label text="Tamamlanan" style="-fx-text-fill: #94a3b8; -fx-font-size: 10px;"/>
+                        </VBox>
+                    </HBox>
+                    <Region style="-fx-background-color: #334155; -fx-pref-height: 1; -fx-max-height: 1;"/>
+                </VBox>
+
+                <StackPane prefHeight="90" alignment="CENTER">
+                    <ProgressIndicator progress="1.0" prefWidth="80" prefHeight="80" style="-fx-progress-color: #334155; -fx-background-color: transparent;"/>
+                    <ProgressIndicator fx:id="overallProgress" progress="0.0" prefWidth="80" prefHeight="80" style="-fx-progress-color: #3b82f6; -fx-background-color: transparent;"/>
+                    <VBox alignment="CENTER" style="-fx-background-color: #1e293b; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60; -fx-background-radius: 30;">
+                        <Label fx:id="progressPercentLabel" text="\%0" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    </VBox>
+                </StackPane>
+
+                <Label text="YAKLAŞAN GÖREVLER" style="-fx-text-fill: #94a3b8; -fx-font-weight: bold; -fx-font-size: 11px;"/>
+                <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" VBox.vgrow="ALWAYS" hbarPolicy="NEVER" vbarPolicy="NEVER">
+                    <VBox fx:id="approachingTasksContainer" spacing="10"/>
+                </ScrollPane>
+            </VBox>
+
+            <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #ffffff;" spacing="10">
+                <padding>
+                    <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                </padding>
+
+                <BorderPane>
+                    <left>
+                        <Label fx:id="monthYearLabel" text="MAYIS 2026" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" BorderPane.alignment="CENTER"/>
+                    </left>
+                    <right>
+                        <HBox spacing="8" alignment="CENTER" BorderPane.alignment="CENTER">
+                            <Button text="&lt;" onAction="#previousMonth" style="-fx-background-color: transparent; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-cursor: hand; -fx-font-size: 12px; -fx-padding: 3 8;"/>
+                            <Button text="&gt;" onAction="#nextMonth" style="-fx-background-color: transparent; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-cursor: hand; -fx-font-size: 12px; -fx-padding: 3 8;"/>
+                        </HBox>
+                    </right>
+                </BorderPane>
+
+                <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                    </columnConstraints>
+                    <Label text="Pzt" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="0"/>
+                    <Label text="Sal" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="1"/>
+                    <Label text="Çar" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="2"/>
+                    <Label text="Per" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="3"/>
+                    <Label text="Cum" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="4"/>
+                    <Label text="Cmt" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="5"/>
+                    <Label text="Paz" style="-fx-font-weight: bold; -fx-text-fill: #64748b; -fx-font-size: 12px;" GridPane.columnIndex="6"/>
+                </GridPane>
+
+                <GridPane fx:id="calendarGrid" style="-fx-border-color: #cbd5e1; -fx-border-width: 1 0 0 1;" VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints percentHeight="16.66" vgrow="ALWAYS"/>
+                        <RowConstraints percentHeight="16.66" vgrow="ALWAYS"/>
+                        <RowConstraints percentHeight="16.66" vgrow="ALWAYS"/>
+                        <RowConstraints percentHeight="16.66" vgrow="ALWAYS"/>
+                        <RowConstraints percentHeight="16.66" vgrow="ALWAYS"/>
+                        <RowConstraints percentHeight="16.66" vgrow="ALWAYS"/>
+                    </rowConstraints>
+                </GridPane>
+
+            </VBox>
+        </HBox>
+    </children>
+</AnchorPane>

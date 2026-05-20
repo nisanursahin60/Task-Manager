@@ -792,7 +792,34 @@ public class EmployeePageController {
             ex.printStackTrace();
         }
     }
+    @FXML
+    private void takvimSayfasiniAc() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/CalendarPage.fxml"));
+            AnchorPane takvimSayfasi = loader.load();
 
+            CalendarPageController controller = loader.getController();
+            controller.initWithUser(currentUser);
+            if (panelBaslik != null) panelBaslik.setVisible(false);
+
+            //anchorPane.getChildren().setAll(takvimSayfasi);
+
+            gorevKartAlani.getChildren().clear();
+            HBox.setHgrow(takvimSayfasi, Priority.ALWAYS);
+            gorevKartAlani.getChildren().add(takvimSayfasi);
+
+            if (panelBaslik != null) {
+                panelBaslik.setText("Aylık Takvim Görünümü");
+                panelBaslik.setVisible(true);
+            }
+
+            viewHistory.push("Aylık Takvim Görünümü");
+
+        } catch (Exception e) {
+            System.err.println("Takvim açılırken hata: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     @FXML
     private void cikisYap() {
         try {
