@@ -64,22 +64,11 @@ public class ManagerPageController {
     private void filtreleVeGoster(String arananKelime) {
         calisanKartAlani.getChildren().clear();
 
-        LinkedList<User> aranacakListe;
+        LinkedList<User> sonucListesi =
+                userService.searchEmployeesWithAVL(arananKelime, aktifDepartman);
 
-        if (aktifDepartman == null) {
-            aranacakListe = userService.getAllEmployees();
-        } else {
-            aranacakListe = userService.getEmployeesByDepartment(aktifDepartman);
-        }
-
-        String arama = arananKelime == null ? "" : arananKelime.toLowerCase();
-
-        for (User emp : aranacakListe) {
-            if (emp.getFullName().toLowerCase().contains(arama)
-                    || emp.getUsername().toLowerCase().contains(arama)
-                    || emp.getDepartment().toLowerCase().contains(arama)) {
-                calisanKartEkle(emp);
-            }
+        for (User emp : sonucListesi) {
+            calisanKartEkle(emp);
         }
     }
 

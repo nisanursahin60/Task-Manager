@@ -20,6 +20,8 @@ public class UserService {
     //tüm kullanıcılar LinkedList'te tutulur
     private final java.util.LinkedList<User> userList = new java.util.LinkedList<>();
 
+    private EmployeeAVLTree employeeAVLTree = new EmployeeAVLTree();
+
     private UserService() {
         loadUsers();
     }
@@ -50,6 +52,7 @@ public class UserService {
             String json = sb.toString();
             List<User> parsed = parseUsersFromJson(json);
             userList.addAll(parsed);
+            buildEmployeeAVLTree();
 
             System.out.println("✅ " + userList.size() + " kullanıcı yüklendi.");
 
@@ -57,6 +60,20 @@ public class UserService {
             System.err.println("JSON okuma hatası: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void buildEmployeeAVLTree() {
+        employeeAVLTree = new EmployeeAVLTree();
+
+        for (User user : userList) {
+            if (!user.isManager()) {
+                employeeAVLTree.insert(user);
+            }
+        }
+    }
+
+    public java.util.LinkedList<User> searchEmployeesWithAVL(String keyword, String departmentFilter) {
+        return employeeAVLTree.search(keyword, departmentFilter);
     }
 
     private List<User> parseUsersFromJson(String json) { //json'dan kullanıcıları alır
