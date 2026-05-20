@@ -38,8 +38,10 @@
 
                 <VBox spacing="8">
                     <HBox spacing="8" styleClass="menu-item" onMouseClicked="#tumGorevleriGoster">
-                        <Label text="▾" styleClass="arrow"/>
-                        <Label text="Görevlerim" styleClass="menu-text"/>
+                        <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                            <Image url="@images/task.png" />
+                        </ImageView>
+                        <Label text="Görevlerim" styleClass="menu-text" style="-fx-text-fill: white;"/>
                     </HBox>
 
                     <VBox spacing="6" styleClass="sub-menu">
@@ -89,7 +91,9 @@
                     </VBox.margin>
 
                     <HBox spacing="8" styleClass="menu-item" onMouseClicked="#takvimSayfasiniAc" alignment="CENTER_LEFT">
-                        <Label text="▸" styleClass="arrow"/>
+                        <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                            <Image url="@images/calendar.png" />
+                        </ImageView>
                         <Label text="Takvimim" styleClass="menu-text" style="-fx-text-fill: white;"/>
                     </HBox>
                 </VBox>
