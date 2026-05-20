@@ -108,23 +108,19 @@ public class EmployeeAVLTree {
 
         int balance = getBalance(node);
 
-        // Left Left
         if (balance > 1 && compare(key, node.left.key) < 0) {
             return rightRotate(node);
         }
 
-        // Right Right
         if (balance < -1 && compare(key, node.right.key) > 0) {
             return leftRotate(node);
         }
 
-        // Left Right
         if (balance > 1 && compare(key, node.left.key) > 0) {
             node.left = leftRotate(node.left);
             return rightRotate(node);
         }
 
-        // Right Left
         if (balance < -1 && compare(key, node.right.key) < 0) {
             node.right = rightRotate(node.right);
             return leftRotate(node);

@@ -25,6 +25,7 @@ public class EmployeePageController {
 
     @FXML private Label profilAdLabel;
     @FXML private Label profilRolLabel;
+    @FXML private Label panelAciklamasi;
     @FXML private Label avatarLabel;
 
     private final UserService userService = UserService.getInstance();
@@ -102,7 +103,9 @@ public class EmployeePageController {
         if (panelBaslik != null) {
             panelBaslik.setText(VIEW_TUM);
         }
-
+        if (panelAciklamasi != null) {
+            panelAciklamasi.setText("Tamamladığın adımları işaretlemeyi unutma.");
+        }
         List<TaskNode> sirali =
                 TaskService.getTasksForEmployeeByCreatedAt(currentUser.getUsername());
 
@@ -115,6 +118,9 @@ public class EmployeePageController {
 
         if (panelBaslik != null) {
             panelBaslik.setText(VIEW_YAKLASAN);
+        }
+        if (panelAciklamasi != null) {
+            panelAciklamasi.setText("Son 7 günü kalan görevler görüntülenmektedir.");
         }
 
         /**
@@ -146,6 +152,9 @@ public class EmployeePageController {
         if (panelBaslik != null) {
             panelBaslik.setText(VIEW_YILDIZLI);
         }
+        if (panelAciklamasi != null) {
+            panelAciklamasi.setText("Yıldızlı işaretlenen görevler görüntülenmektedir.");
+        }
 
         PriorityQueue<TaskNode> starred =
                 TaskService.getStarredTasksForEmployee(currentUser.getUsername());
@@ -157,6 +166,9 @@ public class EmployeePageController {
     private void yeniGorevler() {
         viewHistory.push(VIEW_YENI);
         if (panelBaslik != null) panelBaslik.setText(VIEW_YENI);
+        if (panelAciklamasi != null) { // Eklendi
+            panelAciklamasi.setText("Yönetici tarafından son 3 gün içinde atanan görevler görüntülenmektedir.");
+        }
 
         List<TaskNode> yeniGorevler = TaskService.getNewTasksForEmployee(currentUser.getUsername());
 
@@ -175,6 +187,9 @@ public class EmployeePageController {
 
         if (panelBaslik != null) {
             panelBaslik.setText(VIEW_TAMAMLANAN);
+        }
+        if (panelAciklamasi != null) { // Eklendi
+            panelAciklamasi.setText("Tamamlanıp ve arşive kaldırılan görevler görüntülenmektedir.");
         }
 
         List<TaskNode> tamamlananlar =
@@ -810,6 +825,9 @@ public class EmployeePageController {
             CalendarPageController controller = loader.getController();
             controller.initWithUser(currentUser);
             if (panelBaslik != null) panelBaslik.setVisible(false);
+            if (panelAciklamasi != null) {
+                panelAciklamasi.setText("Görevlerinin son teslim tarihlerini takvim üzerinden takip edebilirsin.");
+            }
 
             //anchorPane.getChildren().setAll(takvimSayfasi);
 

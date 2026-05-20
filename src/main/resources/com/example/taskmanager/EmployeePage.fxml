@@ -111,7 +111,7 @@
             <VBox fx:id="mainPanel" spacing="22" styleClass="main-panel" HBox.hgrow="ALWAYS">
                 <VBox spacing="6">
                     <Label fx:id="panelBaslik" text="TÜM GÖREVLERİM" styleClass="page-title"/>
-                    <Label text="Tamamladığın adımları işaretlemeyi unutma." styleClass="page-subtitle"/>
+                    <Label fx:id="panelAciklamasi" text="Tamamladığın adımları işaretlemeyi unutma." styleClass="page-subtitle"/>
                 </VBox>
 
                 <ScrollPane fitToWidth="true" styleClass="scroll-pane-clean">
