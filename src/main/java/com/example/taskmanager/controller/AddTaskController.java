@@ -45,6 +45,23 @@ public class AddTaskController {
             filterEmployeeTree(newValue);
         });
 
+        // --- YENİ: Alt Adım (Sub-step) Seçim Dinleyicisi ---
+        stepsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                stepInputField.setPromptText("Seçilen adıma alt adım ekle...");
+            } else {
+                stepInputField.setPromptText("Yeni bir ana adım yaz...");
+            }
+        });
+
+        // Boşluğa tıklanınca seçimi kaldır
+        stepsListView.setOnMouseClicked(e -> {
+            if (e.getTarget() instanceof ListView) {
+                stepsListView.getSelectionModel().clearSelection();
+            }
+        });
+        // ----------------------------------------------------
+
         stepsListView.setCellFactory(param -> new ListCell<String>() {
             private final HBox container = new HBox();
             private final Label stepText = new Label();
@@ -63,6 +80,7 @@ public class AddTaskController {
                     String item = getItem();
                     if (item != null) {
                         stepsList.remove(item);
+                        stepsListView.getSelectionModel().clearSelection(); // Silindikten sonra seçimi bırak
                         reorderSteps();
                     }
                 });
@@ -74,7 +92,15 @@ public class AddTaskController {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    stepText.setText(item);
+                    // --- YENİ: Alt adımlar için görsel girinti ve temiz metin gösterimi ---
+                    if (item.startsWith("[DEPENDENT]")) {
+                        String clean = item.replace("[DEPENDENT]", "").trim();
+                        stepText.setText(clean);
+                        container.setStyle("-fx-padding: 0 0 0 25;"); // Sol taraftan boşluk bırak (Girinti)
+                    } else {
+                        stepText.setText(item);
+                        container.setStyle("-fx-padding: 0;"); // Ana adımsa girinti yok
+                    }
                     setGraphic(container);
                 }
             }
@@ -128,27 +154,50 @@ public class AddTaskController {
     private void handleAddStep() {
         String stepText = stepInputField.getText().trim();
         if (!stepText.isEmpty()) {
-            stepsList.add(stepText);
+            int selectedIdx = stepsListView.getSelectionModel().getSelectedIndex();
+
+            // Eğer bir adım seçiliyse, onun altına "Alt Adım" olarak ekle
+            if (selectedIdx >= 0) {
+                stepsList.add(selectedIdx + 1, "[DEPENDENT] " + stepText);
+                stepsListView.getSelectionModel().clearSelection(); // Ekledikten sonra seçimi bırak
+            } else {
+                // Seçili değilse normal ana adım olarak sona ekle
+                stepsList.add(stepText);
+            }
+
             reorderSteps();
             stepInputField.clear();
         }
     }
-
     private void reorderSteps() {
         List<String> currentTexts = new ArrayList<>();
+        List<Boolean> isDependentList = new ArrayList<>();
 
         for (String s : stepsList) {
-            String cleanText = s.replaceAll("^\\d+\\.\\s*", "");
+            boolean isDep = s.startsWith("[DEPENDENT]");
+            String cleanText = s.replace("[DEPENDENT]", "")
+                    .replace("•", "")
+                    .replaceAll("^\\d+\\.\\s*", "")
+                    .trim();
+
             currentTexts.add(cleanText);
+            isDependentList.add(isDep);
         }
 
         stepsList.clear();
 
+        int mainStepCounter = 1;
         for (int i = 0; i < currentTexts.size(); i++) {
-            stepsList.add((i + 1) + ". " + currentTexts.get(i));
+            if (isDependentList.get(i)) {
+
+                stepsList.add("[DEPENDENT] • " + currentTexts.get(i));
+            } else {
+
+                stepsList.add(mainStepCounter + ". " + currentTexts.get(i));
+                mainStepCounter++;
+            }
         }
     }
-
     @FXML
     private void dosyaSec() {
         FileChooser fileChooser = new FileChooser();
@@ -205,6 +254,7 @@ public class AddTaskController {
             System.err.println("Dosya açılamadı: " + e.getMessage());
         }
     }
+
     @FXML
     private void handleSave() {
         if (titleField.getText().isEmpty() || deadlinePicker.getValue() == null) {
@@ -232,9 +282,7 @@ public class AddTaskController {
 
             TaskService.markTasksAsUnseenForEmployees(editingTaskId);
             showAlert("Başarılı", "Görev güncellendi ve çalışanlara bildirim gönderildi.");
-
             pencereyiKapat();
-
         } else {
             TaskNode newNode = new TaskNode(
                     titleField.getText(),
@@ -248,14 +296,15 @@ public class AddTaskController {
 
             TaskService.addTask(newNode);
             showAlert("Başarılı", "Görev başarıyla eklendi.");
-
             pencereyiKapat();
         }
     }
+
     private void pencereyiKapat() {
         javafx.stage.Stage stage = (javafx.stage.Stage) kaydetButonu.getScene().getWindow();
         stage.close();
     }
+
     private void clearForm() {
         titleField.clear();
         descriptionField.clear();
@@ -332,6 +381,7 @@ public class AddTaskController {
         titleField.setText(task.getTitle());
         titleField.setDisable(true);
         titleField.setStyle("-fx-opacity: 1; -fx-background-color: #e2e8f0; -fx-text-fill: #475569; -fx-background-radius: 4;");
+
         descriptionField.setText(task.getDescription());
         deadlinePicker.setValue(task.getDeadline());
 

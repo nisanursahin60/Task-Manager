@@ -1,5 +1,6 @@
 [
   {
+    "id": "da3d9709-b469-41f8-889a-9cd80f01cbbb",
     "title": "OTEL AĞ TASARIMI",
     "steps": [
       "VLAN Yapılandırması",
@@ -14,9 +15,11 @@
     "description": "Otel projesi için ağ altyapısının Packet Tracer üzerinde simüle edilmesi, VLAN atamalarının ve IP yönlendirmelerinin yapılması.",
     "starred": false,
     "createdAt": "2026-01-01T00:00",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "0d01a1e0-1813-4a92-98b8-daab1da14372",
     "title": "VERİTABANI OPTİMİZASYONU",
     "steps": [
       "Mevcut sorguların analizi",
@@ -32,9 +35,11 @@
     "description": "Müşteri verilerinin tutulduğu tabloların indekslenmesi ve sistem sorgularının hızlandırılması işlemleri.",
     "starred": false,
     "createdAt": "2026-01-01T00:01",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "9c7d4132-0ae1-4c50-8d1c-96174cfc2d6e",
     "title": "API ENTEGRASYONU",
     "steps": [
       "API anahtarlarının alınması",
@@ -50,9 +55,11 @@
     "description": "Üçüncü parti hava durumu ve döviz kurları API\u0027lerinin sisteme entegre edilmesi ve dönen JSON verilerinin parse edilmesi.",
     "starred": false,
     "createdAt": "2026-01-01T00:02",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "16e62396-2128-46a1-9191-fddd3706cf82",
     "title": "KULLANICI GİRİŞ SİSTEMİ GÜVENLİĞİ",
     "steps": [
       "SHA-256 algoritmasının entegrasyonu",
@@ -67,9 +74,13 @@
     "description": "Login sayfasındaki şifrelerin MD5 yerine SHA-256 ile şifrelenmesi ve hatalı girişlerde Captcha doğrulaması eklenmesi.",
     "starred": false,
     "createdAt": "2026-01-01T00:03",
-    "completedEmployees": []
+    "completedEmployees": [
+      "elif"
+    ],
+    "seenBy": []
   },
   {
+    "id": "4617acb7-35ed-4c5f-bc6d-21ac541c5eb4",
     "title": "MOBİL UYUMLULUK (RESPONSIVE) TESTLERİ",
     "steps": [
       "iPhone ve Android ekranlarında test",
@@ -87,9 +98,11 @@
     "createdAt": "2026-01-01T00:04",
     "completedEmployees": [
       "elif"
-    ]
+    ],
+    "seenBy": []
   },
   {
+    "id": "fb293df9-8a19-47b3-bb8b-a440a163b71c",
     "title": "ÖDEME SİSTEMİ GÜNCELLEMESİ",
     "steps": [
       "Iyzico Sandbox ortamının kurulması",
@@ -104,9 +117,11 @@
     "description": "Sistemdeki mevcut ödeme altyapısına Iyzico 3D Secure entegrasyonunun yapılması ve test kartlarıyla başarılı ödeme akışının sağlanması.",
     "starred": false,
     "createdAt": "2026-01-01T00:05",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "c3328fe1-761d-4a04-9d34-98aa7b3eff97",
     "title": "SUNUCU GEÇİŞİ (MIGRATION)",
     "steps": [
       "AWS EC2 instance oluşturulması",
@@ -123,9 +138,11 @@
     "description": "Projenin mevcut yerel sunuculardan AWS EC2 bulut sunucularına taşınması ve domain yönlendirmelerinin DNS üzerinden yapılması.",
     "starred": false,
     "createdAt": "2026-01-01T00:06",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "24c0e729-22f8-484b-aab6-1a341385317e",
     "title": "YÖNETİCİ PANELİ LOG SİSTEMİ",
     "steps": [
       "Log tablosunun veritabanına eklenmesi",
@@ -140,9 +157,11 @@
     "description": "Sistemdeki yöneticilerin hangi çalışana ne zaman görev atadığının veya sildiğinin kayıt altına alınacağı bir log tablosu oluşturulması.",
     "starred": false,
     "createdAt": "2026-01-01T00:07",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "99ac597d-230d-46ab-899c-5b7307c6b29f",
     "title": "E-POSTA BİLDİRİM SİSTEMİ",
     "steps": [
       "SMTP sunucu ayarlarının yapılması",
@@ -161,9 +180,11 @@
     "completedEmployees": [
       "elif",
       "ayse"
-    ]
+    ],
+    "seenBy": []
   },
   {
+    "id": "06c20c2e-0398-42a6-a802-fa06a825e75b",
     "title": "DOKÜMANTASYON GÜNCELLEMESİ",
     "steps": [
       "Sınıf (Class) diyagramlarının çizilmesi",
@@ -178,9 +199,11 @@
     "description": "Dönem sonu teslimi için UML diyagramlarının güncellenmesi, Javadoc yorumlarının yazılması ve kullanım kılavuzunun hazırlanması.",
     "starred": false,
     "createdAt": "2026-01-01T00:09",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "4842b02a-92b3-4f93-bfa8-5fed02aa84b3",
     "title": "ayşe",
     "steps": [
       "1. adım"
@@ -194,9 +217,11 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-01-01T00:10",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "64edc389-8c3d-428c-8f7c-23567d7bdab3",
     "title": "ayse",
     "steps": [],
     "assignedEmployees": [
@@ -208,9 +233,11 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-01-01T00:11",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "30fc8381-7673-4a12-b7fa-dd60bac23452",
     "title": "elifin gorev",
     "steps": [
       "1. adım"
@@ -226,9 +253,11 @@
     "createdAt": "2026-05-12T15:32:26.455601300",
     "completedEmployees": [
       "elif"
-    ]
+    ],
+    "seenBy": []
   },
   {
+    "id": "10226e51-131d-4a32-a5f2-8c8484737728",
     "title": "deneme",
     "steps": [
       "1. ilk adım",
@@ -243,9 +272,11 @@
     "starred": false,
     "attachedFiles": [],
     "createdAt": "2026-05-12T16:32:07.190114",
-    "completedEmployees": []
+    "completedEmployees": [],
+    "seenBy": []
   },
   {
+    "id": "05416b84-ed24-4e68-aff5-ebf82c3fe2b8",
     "title": "kart secme",
     "steps": [
       "1. gizemi sec",
@@ -265,6 +296,205 @@
     "createdAt": "2026-05-18T22:51:53.968912",
     "completedEmployees": [
       "derya"
+    ],
+    "seenBy": []
+  },
+  {
+    "id": "1189b198-f54b-4bb8-9c49-865ec6d2f005",
+    "title": "dosya ",
+    "steps": [
+      "1. adım4"
+    ],
+    "assignedEmployees": [
+      "mehmet",
+      "elif",
+      "kerem",
+      "buse",
+      "berk",
+      "umut"
+    ],
+    "deadline": "2026-05-29",
+    "managerName": "Ahmet Yıldız",
+    "description": "açıklama2",
+    "starred": false,
+    "attachedFiles": [
+      "C:\\Users\\Lenovo\\Pictures\\Screenshots\\Ekran görüntüsü 2026-05-20 151032.png"
+    ],
+    "createdAt": "2026-05-20T15:36:00.131903900",
+    "completedEmployees": [],
+    "seenBy": [
+      "elif",
+      "mehmet"
+    ]
+  },
+  {
+    "id": "0d540b74-fd5f-45bb-b027-11ad8cb768e2",
+    "title": "dosyagorevdeneme",
+    "steps": [],
+    "assignedEmployees": [
+      "mehmet",
+      "elif",
+      "kerem",
+      "buse",
+      "berk",
+      "umut"
+    ],
+    "deadline": "2026-05-23",
+    "managerName": "Ahmet Yıldız",
+    "description": "mkf",
+    "starred": false,
+    "attachedFiles": [
+      "C:\\Users\\Lenovo\\Pictures\\Screenshots\\Ekran görüntüsü 2026-05-20 151032.png"
+    ],
+    "createdAt": "2026-05-20T16:18:10.473841700",
+    "completedEmployees": [],
+    "seenBy": [
+      "elif"
+    ]
+  },
+  {
+    "id": "906c661a-1a89-4b6f-b35a-b9af13496581",
+    "title": "testupdate",
+    "steps": [
+      "1. jfkjf"
+    ],
+    "assignedEmployees": [
+      "mehmet",
+      "elif",
+      "kerem",
+      "buse",
+      "berk",
+      "umut"
+    ],
+    "deadline": "2027-04-30",
+    "managerName": "Ahmet Yıldız",
+    "description": ".",
+    "starred": false,
+    "attachedFiles": [
+      "C:\\Users\\Lenovo\\Pictures\\Screenshots\\Ekran görüntüsü 2026-05-20 163352.png"
+    ],
+    "createdAt": "2026-05-20T17:13:16.812400400",
+    "completedEmployees": [],
+    "seenBy": [
+      "elif",
+      "mehmet"
+    ]
+  },
+  {
+    "id": "4e7623e7-508f-4d15-9c4c-b06aa6501023",
+    "title": ".",
+    "steps": [],
+    "assignedEmployees": [
+      "mehmet"
+    ],
+    "deadline": "2026-05-23",
+    "managerName": "Ahmet Yıldız",
+    "description": "açıklama",
+    "starred": false,
+    "attachedFiles": [
+      "C:\\Users\\Lenovo\\Pictures\\Screenshots\\Ekran görüntüsü 2026-05-20 163352.png"
+    ],
+    "createdAt": "2026-05-20T17:25:54.628554300",
+    "completedEmployees": [],
+    "seenBy": [
+      "mehmet"
+    ]
+  },
+  {
+    "id": "5301f163-c65a-40a0-8832-78d9a257af05",
+    "title": "..",
+    "steps": [
+      "1. dd"
+    ],
+    "assignedEmployees": [
+      "mehmet",
+      "elif",
+      "kerem",
+      "buse",
+      "berk",
+      "umut"
+    ],
+    "deadline": "2026-05-26",
+    "managerName": "Ahmet Yıldız",
+    "description": "jdkd",
+    "starred": false,
+    "attachedFiles": [
+      "C:\\Users\\Lenovo\\Pictures\\Screenshots\\Ekran görüntüsü 2026-05-20 151118.png"
+    ],
+    "createdAt": "2026-05-20T17:29:54.065215300",
+    "completedEmployees": [],
+    "seenBy": [
+      "elif",
+      "mehmet"
+    ]
+  },
+  {
+    "id": "fd196b97-a618-4271-a85b-7b94cb2854b7",
+    "title": "update",
+    "steps": [
+      "1. ıdcsjdjk",
+      "2. oeode"
+    ],
+    "assignedEmployees": [
+      "mehmet",
+      "elif",
+      "kerem",
+      "buse",
+      "berk",
+      "umut"
+    ],
+    "deadline": "2027-05-15",
+    "managerName": "Ahmet Yıldız",
+    "description": "açıklama",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-05-20T17:36:06.074128600",
+    "completedEmployees": [],
+    "seenBy": [
+      "elif",
+      "mehmet"
+    ]
+  },
+  {
+    "id": "191c517b-b6c4-4ea1-b524-a37268b90d77",
+    "title": "kapanmadeneme",
+    "steps": [
+      "1. test adım"
+    ],
+    "assignedEmployees": [
+      "burak"
+    ],
+    "deadline": "2026-05-22",
+    "managerName": "Ahmet Yıldız",
+    "description": "deneme kapanma test",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-05-21T15:59:46.583591500",
+    "completedEmployees": [],
+    "seenBy": []
+  },
+  {
+    "id": "352612f0-2967-4bf7-9bb8-3b47c3753893",
+    "title": "kahve",
+    "steps": [
+      "1. kahve içeye başla [TAMAMLANDI]",
+      "[DEPENDENT] • süt at [TAMAMLANDI]",
+      "[DEPENDENT] • şeker at",
+      "2. tuz at",
+      "[DEPENDENT] • atma"
+    ],
+    "assignedEmployees": [
+      "elif"
+    ],
+    "deadline": "2026-05-31",
+    "managerName": "Ahmet Yıldız",
+    "description": "kahve iç",
+    "starred": false,
+    "attachedFiles": [],
+    "createdAt": "2026-05-21T16:28:43.303628300",
+    "completedEmployees": [],
+    "seenBy": [
+      "elif"
     ]
   }
 ]

@@ -276,7 +276,7 @@ public class ManagerPageController {
             String adimMetni = parts[0].trim();
 
             boolean isDep = adimMetni.startsWith("[DEPENDENT]");
-            String temizMetin = adimMetni.replace("[DEPENDENT]", "").replace("[DONE]", "").trim();
+            String temizMetin = adimMetni.replace("[DEPENDENT]", "").replace("[TAMAMLANDI]", "").trim();
 
             HBox adimSatiri = new HBox(5);
             adimSatiri.setAlignment(Pos.CENTER_LEFT);

@@ -494,12 +494,10 @@ public class EmployeePageController {
             String adimMetni = parts[0].trim();
             String adimTarihi = (parts.length > 1) ? parts[1].trim() : "";
 
-            // [DONE] ve [DEPENDENT] etiketlerini kontrol et
-            boolean isDone = adimMetni.contains("[DONE]");
+            boolean isDone = adimMetni.contains("[TAMAMLANDI]");
             boolean isDep = adimMetni.startsWith("[DEPENDENT]");
 
-            // Etiketleri temizleyip saf metni al
-            String temizMetin = adimMetni.replace("[DONE]", "").replace("[DEPENDENT]", "").trim();
+            String temizMetin = adimMetni.replace("[TAMAMLANDI]", "").replace("[DEPENDENT]", "").trim();
 
             HBox adimSatiri = new HBox(5);
             adimSatiri.setAlignment(Pos.CENTER_LEFT);
@@ -635,13 +633,12 @@ public class EmployeePageController {
                 int idx = cbs.indexOf(c);
                 String orijinalAdim = gorev.getSteps().get(idx);
 
-                // Bellekteki adımı [DONE] olarak damgala veya kaldır
                 if (c.isSelected()) {
-                    if (!orijinalAdim.contains("[DONE]")) {
-                        gorev.getSteps().set(idx, orijinalAdim + " [DONE]");
+                    if (!orijinalAdim.contains("[TAMAMLANDI]")) {
+                        gorev.getSteps().set(idx, orijinalAdim + " [TAMAMLANDI]");
                     }
                 } else {
-                    gorev.getSteps().set(idx, orijinalAdim.replace("[DONE]", "").trim());
+                    gorev.getSteps().set(idx, orijinalAdim.replace("[TAMAMLANDI]", "").trim());
                 }
 
                 // Bağlı kilit mekanizması yönetimi
@@ -747,7 +744,7 @@ public class EmployeePageController {
         mevcutAlt.setDisable(true);
 
         String orijinalAdim = steps.get(index);
-        steps.set(index, orijinalAdim.replace("[DONE]", "").trim());
+        steps.set(index, orijinalAdim.replace("[TAMAMLANDI]", "").trim());
 
         HBox satir = (HBox) adimlarKutusu.getChildren().get(index);
         if (satir != null && !satir.getChildren().isEmpty()) {
