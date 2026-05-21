@@ -90,4 +90,7 @@ public class TaskNode implements Comparable<TaskNode> {
     public void setSeenBy(List<String> seenBy) {
         this.seenBy = seenBy != null ? seenBy : new ArrayList<>();
     }
+    public void setAssignedEmployees(List<String> assignedEmployees) {
+        this.assignedEmployees = assignedEmployees;
+    }
 }

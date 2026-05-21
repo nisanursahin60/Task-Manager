@@ -307,27 +307,24 @@ public class TaskService {
         hasNewMessages = false;
         saveMessagesToJson();
     }
-    // TaskService.java dosyasının içine, en alta ekle:
+
     public static void zorunluKaydet() {
         saveToJson();
     }
-    // 1. Görevi ID'si ile bulup güncelleyen metot
-    public static void updateTask(String id, String newDescription, List<String> newSteps, LocalDate newDeadline, List<String> newFiles) {
+
+    public static void updateTask(String id, String newDescription, List<String> newSteps, LocalDate newDeadline, List<String> newFiles, List<String> newAssigned) {
         for (TaskNode task : allTasks) {
             if (task.getId() != null && task.getId().equals(id)) {
                 task.setDescription(newDescription);
                 task.setSteps(newSteps);
                 task.setDeadline(newDeadline);
                 task.setAttachedFiles(newFiles);
-                // Güncelleme yapıldı, JSON'a kaydediyoruz
+                task.setAssignedEmployees(newAssigned);
                 saveToJson();
                 return;
             }
         }
     }
-
-    // 2. Bir görev güncellendiğinde, o göreve atanan herkesin "seenBy" listesinden adını siliyoruz.
-    // Böylece o çalışan uygulamayı açtığında, güncellenen görev "yeni" olarak tekrar kırmızı nokta ile işaretlenecek.
     public static void markTasksAsUnseenForEmployees(String taskId) {
         for (TaskNode task : allTasks) {
             if (task.getId() != null && task.getId().equals(taskId)) {

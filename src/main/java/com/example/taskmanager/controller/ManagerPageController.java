@@ -227,34 +227,31 @@ public class ManagerPageController {
             baslikLabel.setStyle("-fx-font-size: " + yeniFontBoyutu + "px; -fx-padding: 5 0 0 0;");
         }
 
-        // Başlığın sonuna genişleyebilen boşluk ekliyoruz
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
         baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, sp);
 
-        // --- GARANTİLİ VE BELİRGİN DÜZENLEME BUTONU MANTIĞI ---
         boolean isNewTask = false;
         if (gorev.getCreatedAt() != null) {
-            // Tam 24 saat kontrolü - Şaşma ihtimali yok
+
             isNewTask = gorev.getCreatedAt().isAfter(LocalDateTime.now().minusHours(24));
         }
 
         if (isNewTask) {
-            // İkon kaybolmasın diye şık ve kutulu bir buton tasarımı
-            Label kalemBtn = new Label("✏️ Düzenle");
-            kalemBtn.setStyle("-fx-text-fill: #1d4ed8; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #eff6ff; -fx-padding: 4 8; -fx-background-radius: 6;");
+            Label kalemBtn = new Label("🖋 Düzenle");
+            kalemBtn.setStyle("-fx-text-fill: #475569; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #f1f5f9; -fx-padding: 4 8; -fx-background-radius: 6;");
 
-            kalemBtn.setOnMouseEntered(e -> kalemBtn.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #1d4ed8; -fx-padding: 4 8; -fx-background-radius: 6;"));
-            kalemBtn.setOnMouseExited(e -> kalemBtn.setStyle("-fx-text-fill: #1d4ed8; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #eff6ff; -fx-padding: 4 8; -fx-background-radius: 6;"));
+            kalemBtn.setOnMouseEntered(e -> kalemBtn.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #475569; -fx-padding: 4 8; -fx-background-radius: 6;"));
+            kalemBtn.setOnMouseExited(e -> kalemBtn.setStyle("-fx-text-fill: #475569; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #f1f5f9; -fx-padding: 4 8; -fx-background-radius: 6;"));
 
             kalemBtn.setOnMouseClicked(e -> {
-                e.consume(); // Kartın genişlemesini engeller
+                e.consume();
                 gorevDuzenlePaneliAc(gorev);
             });
-            // En sağ köşeye ekle
+
             baslikSatiri.getChildren().add(kalemBtn);
         }
-        // -----------------------------------------------------
+
 
         HBox altBilgi = new HBox();
         altBilgi.setAlignment(Pos.CENTER_LEFT);

@@ -46,7 +46,7 @@
                             <DatePicker fx:id="deadlinePicker" maxWidth="1.7976931348623157E308" />
                         </VBox>
 
-                        <Button onAction="#handleSave" maxWidth="1.7976931348623157E308" prefHeight="45.0" style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-font-weight: bold;" text="EKLE" />
+                        <Button fx:id="kaydetButonu" onAction="#handleSave" maxWidth="1.7976931348623157E308" prefHeight="45.0" style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-font-weight: bold;" text="EKLE" />
                     </children>
                     <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
                 </VBox>

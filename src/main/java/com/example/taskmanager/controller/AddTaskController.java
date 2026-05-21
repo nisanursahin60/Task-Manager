@@ -29,6 +29,7 @@ public class AddTaskController {
     @FXML private TextField personelArama;
     @FXML private TextArea descriptionField;
     @FXML private VBox secilenDosyalarKutusu;
+    @FXML private Button kaydetButonu;
     private final List<String> secilenDosyaYollari = new ArrayList<>();
     private final ObservableList<String> stepsList = FXCollections.observableArrayList();
     private final UserService userService = UserService.getInstance();
@@ -204,7 +205,6 @@ public class AddTaskController {
             System.err.println("Dosya açılamadı: " + e.getMessage());
         }
     }
-
     @FXML
     private void handleSave() {
         if (titleField.getText().isEmpty() || deadlinePicker.getValue() == null) {
@@ -219,14 +219,23 @@ public class AddTaskController {
             showAlert("Uyarı", "Lütfen görevin atanacağı çalışanları seçin.");
             return;
         }
+
         if (isEditing) {
-            // TaskService içinde bu ID'ye sahip görevi bul ve verilerini güncelle
-            TaskService.updateTask(editingTaskId, descriptionField.getText(), stepsList, deadlinePicker.getValue(), secilenDosyaYollari);
-            // Bildirim noktasını tetiklemek için çalışanların "seen" durumunu sıfırla
+            TaskService.updateTask(
+                    editingTaskId,
+                    descriptionField.getText(),
+                    new ArrayList<>(stepsList),
+                    deadlinePicker.getValue(),
+                    new ArrayList<>(secilenDosyaYollari),
+                    new ArrayList<>(selectedUsernames)
+            );
+
             TaskService.markTasksAsUnseenForEmployees(editingTaskId);
             showAlert("Başarılı", "Görev güncellendi ve çalışanlara bildirim gönderildi.");
-        }
-        else {
+
+            pencereyiKapat();
+
+        } else {
             TaskNode newNode = new TaskNode(
                     titleField.getText(),
                     new ArrayList<>(stepsList),
@@ -239,10 +248,14 @@ public class AddTaskController {
 
             TaskService.addTask(newNode);
             showAlert("Başarılı", "Görev başarıyla eklendi.");
-            clearForm();
+
+            pencereyiKapat();
         }
     }
-
+    private void pencereyiKapat() {
+        javafx.stage.Stage stage = (javafx.stage.Stage) kaydetButonu.getScene().getWindow();
+        stage.close();
+    }
     private void clearForm() {
         titleField.clear();
         descriptionField.clear();
@@ -308,13 +321,17 @@ public class AddTaskController {
             selectUserInTree(child, username);
         }
     }
+
     public void loadTaskForEdit(TaskNode task) {
         this.isEditing = true;
         this.editingTaskId = task.getId();
+        if (kaydetButonu != null) {
+            kaydetButonu.setText("GÜNCELLE");
+        }
 
         titleField.setText(task.getTitle());
         titleField.setDisable(true);
-
+        titleField.setStyle("-fx-opacity: 1; -fx-background-color: #e2e8f0; -fx-text-fill: #475569; -fx-background-radius: 4;");
         descriptionField.setText(task.getDescription());
         deadlinePicker.setValue(task.getDeadline());
 
@@ -327,6 +344,11 @@ public class AddTaskController {
                 File file = new File(path);
                 secilenDosyaYollari.add(path);
                 dosyaKutusunaEkle(file);
+            }
+        }
+        if (task.getAssignedEmployees() != null) {
+            for (String username : task.getAssignedEmployees()) {
+                initSelectedUser(username);
             }
         }
     }
