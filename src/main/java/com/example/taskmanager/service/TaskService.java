@@ -88,6 +88,9 @@ public class TaskService {
                     if (task.getSeenBy() == null) {
                         task.setSeenBy(new ArrayList<>());
                     }
+                    if (task.getId() == null) {
+                        task.setId(java.util.UUID.randomUUID().toString());
+                    }
                 }
                 priorityQueue.addAll(allTasks);
                 System.out.println("✅ " + allTasks.size() + " adet görev JSON'dan yüklendi.");
@@ -307,5 +310,31 @@ public class TaskService {
     // TaskService.java dosyasının içine, en alta ekle:
     public static void zorunluKaydet() {
         saveToJson();
+    }
+    // 1. Görevi ID'si ile bulup güncelleyen metot
+    public static void updateTask(String id, String newDescription, List<String> newSteps, LocalDate newDeadline, List<String> newFiles) {
+        for (TaskNode task : allTasks) {
+            if (task.getId() != null && task.getId().equals(id)) {
+                task.setDescription(newDescription);
+                task.setSteps(newSteps);
+                task.setDeadline(newDeadline);
+                task.setAttachedFiles(newFiles);
+                // Güncelleme yapıldı, JSON'a kaydediyoruz
+                saveToJson();
+                return;
+            }
+        }
+    }
+
+    // 2. Bir görev güncellendiğinde, o göreve atanan herkesin "seenBy" listesinden adını siliyoruz.
+    // Böylece o çalışan uygulamayı açtığında, güncellenen görev "yeni" olarak tekrar kırmızı nokta ile işaretlenecek.
+    public static void markTasksAsUnseenForEmployees(String taskId) {
+        for (TaskNode task : allTasks) {
+            if (task.getId() != null && task.getId().equals(taskId)) {
+                task.getSeenBy().clear(); // Herkes için "yeni" durumuna getir
+                saveToJson();
+                return;
+            }
+        }
     }
 }

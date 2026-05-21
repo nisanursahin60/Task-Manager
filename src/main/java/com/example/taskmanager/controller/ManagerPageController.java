@@ -17,6 +17,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.List;
@@ -144,13 +146,12 @@ public class ManagerPageController {
     @FXML private void pazarlamaGoster() { departmanYukle("Pazarlama"); }
     @FXML private void destekGoster() { departmanYukle("Destek"); }
 
-    // DEĞİŞEN METOT: Parametre String'lerden User nesnesine çevrildi ve tıklama eklendi
     private void calisanKartEkle(User emp) {
         VBox kart = new VBox(10);
         kart.setAlignment(Pos.CENTER);
         kart.getStyleClass().add("employee-card");
         kart.setPrefSize(150, 180);
-        kart.setStyle("-fx-cursor: hand;"); // Kartın üstüne gelince el işareti çıksın
+        kart.setStyle("-fx-cursor: hand;");
 
         StackPane avatar = new StackPane();
         avatar.getStyleClass().add("avatar-circle");
@@ -165,7 +166,6 @@ public class ManagerPageController {
 
         kart.getChildren().addAll(avatar, isimLabel, bilgiLabel);
 
-        // EKLENEN KISIM: Karta tıklanınca görev ekleme sayfasını bu kullanıcı seçili olacak şekilde açar
         kart.setOnMouseClicked(event -> {
             gorevEklePaneliAcParametreli(emp.getUsername());
         });
@@ -227,8 +227,34 @@ public class ManagerPageController {
             baslikLabel.setStyle("-fx-font-size: " + yeniFontBoyutu + "px; -fx-padding: 5 0 0 0;");
         }
 
-        Region sp = new Region(); HBox.setHgrow(sp, Priority.ALWAYS);
+        // Başlığın sonuna genişleyebilen boşluk ekliyoruz
+        Region sp = new Region();
+        HBox.setHgrow(sp, Priority.ALWAYS);
         baslikSatiri.getChildren().addAll(okIkonu, baslikLabel, sp);
+
+        // --- GARANTİLİ VE BELİRGİN DÜZENLEME BUTONU MANTIĞI ---
+        boolean isNewTask = false;
+        if (gorev.getCreatedAt() != null) {
+            // Tam 24 saat kontrolü - Şaşma ihtimali yok
+            isNewTask = gorev.getCreatedAt().isAfter(LocalDateTime.now().minusHours(24));
+        }
+
+        if (isNewTask) {
+            // İkon kaybolmasın diye şık ve kutulu bir buton tasarımı
+            Label kalemBtn = new Label("✏️ Düzenle");
+            kalemBtn.setStyle("-fx-text-fill: #1d4ed8; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #eff6ff; -fx-padding: 4 8; -fx-background-radius: 6;");
+
+            kalemBtn.setOnMouseEntered(e -> kalemBtn.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #1d4ed8; -fx-padding: 4 8; -fx-background-radius: 6;"));
+            kalemBtn.setOnMouseExited(e -> kalemBtn.setStyle("-fx-text-fill: #1d4ed8; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 11px; -fx-background-color: #eff6ff; -fx-padding: 4 8; -fx-background-radius: 6;"));
+
+            kalemBtn.setOnMouseClicked(e -> {
+                e.consume(); // Kartın genişlemesini engeller
+                gorevDuzenlePaneliAc(gorev);
+            });
+            // En sağ köşeye ekle
+            baslikSatiri.getChildren().add(kalemBtn);
+        }
+        // -----------------------------------------------------
 
         HBox altBilgi = new HBox();
         altBilgi.setAlignment(Pos.CENTER_LEFT);
@@ -249,12 +275,10 @@ public class ManagerPageController {
 
         VBox adimlar = new VBox(8);
         for (String stepRaw : gorev.getSteps()) {
-            // Tarih ve metin ayırma işlemi
             String[] parts = stepRaw.split("\\|");
             String adimMetni = parts[0].trim();
 
             boolean isDep = adimMetni.startsWith("[DEPENDENT]");
-            // Yönetici ekranında hem DEPENDENT hem de DONE etiketlerini temizle
             String temizMetin = adimMetni.replace("[DEPENDENT]", "").replace("[DONE]", "").trim();
 
             HBox adimSatiri = new HBox(5);
@@ -262,10 +286,9 @@ public class ManagerPageController {
 
             CheckBox cb = new CheckBox(temizMetin);
             cb.getStyleClass().add("task-check");
-            cb.setDisable(true); // Yönetici sadece izler
+            cb.setDisable(true);
 
             if (isDep) {
-                // Çalışandaki gibi girintili ve kilit emojili tasarım
                 adimSatiri.setStyle("-fx-padding: 0 0 0 15;");
                 Label altOk = new Label("↳");
                 Label kilit = new Label("🔒");
@@ -293,6 +316,25 @@ public class ManagerPageController {
         return kart;
     }
 
+    private void gorevDuzenlePaneliAc(TaskNode task) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/AddTaskPage.fxml"));
+            Parent root = loader.load();
+
+            AddTaskController controller = loader.getController();
+            controller.loadTaskForEdit(task);
+
+            Stage stage = new Stage();
+            stage.setTitle("Görevi Güncelle");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            stage.setOnHidden(e -> atananGorevleriGoster()); // Kapanınca listeyi yenile
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private String basHarfleriAl(String ad) {
         if (ad == null || ad.isEmpty()) return "?";
         String[] parcalar = ad.split("\\s+");
@@ -308,13 +350,11 @@ public class ManagerPageController {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // DEĞİŞEN METOT: Üstteki düz "Görev Ekle" butonuna basınca parametresiz (boş) paneli açar
     @FXML
     private void gorevEklePaneliAc() {
         gorevEklePaneliAcParametreli(null);
     }
 
-    // EKLENEN METOT: Karta tıklandığında çalışan asıl yeni pencere açma mantığı
     private void gorevEklePaneliAcParametreli(String targetUsername) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/taskmanager/AddTaskPage.fxml"));
@@ -328,6 +368,10 @@ public class ManagerPageController {
             Stage stage = new Stage();
             stage.setTitle("Yeni Görev Ekle");
             stage.setScene(new Scene(root));
+
+            // ÇOK ÖNEMLİ EKLENTİ: Sen görev ekleyip pencereyi kapattığında ekran anında yenilensin!
+            stage.setOnHidden(e -> atananGorevleriGoster());
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -336,7 +380,7 @@ public class ManagerPageController {
 
     @FXML
     private void sorulanSorulariGoster() {
-        gorunumDegistir(true, "Çalışanlerden gelen soruları ve geri bildirimleri yönetebilirsin.");
+        gorunumDegistir(true, "Çalışanlardan gelen soruları ve geri bildirimleri yönetebilirsin.");
         departmanad.setText("Gelen Sorular");
 
         TaskService.markAllMessagesAsRead();

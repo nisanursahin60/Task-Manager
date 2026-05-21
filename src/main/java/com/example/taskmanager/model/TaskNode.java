@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID; // YENİ: ID için gerekli
 
 public class TaskNode implements Comparable<TaskNode> {
 
+    // YENİ: Benzersiz kimlik
+    private String id;
     private String title;
     private List<String> steps;
     private List<String> assignedEmployees;
@@ -22,6 +25,8 @@ public class TaskNode implements Comparable<TaskNode> {
 
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName, String description, List<String> attachedFiles) {
+        // YENİ: Her yeni nesne oluşturulduğunda benzersiz bir ID ata
+        this.id = UUID.randomUUID().toString();
         this.title = title;
         this.steps = steps;
         this.assignedEmployees = assignedEmployees;
@@ -35,7 +40,6 @@ public class TaskNode implements Comparable<TaskNode> {
         this.seenBy = new ArrayList<>();
     }
 
-    //geriye dönük uyumluluk constructor'ı
     public TaskNode(String title, List<String> steps, List<String> assignedEmployees,
                     LocalDate deadline, String managerName) {
         this(title, steps, assignedEmployees, deadline, managerName,
@@ -47,7 +51,8 @@ public class TaskNode implements Comparable<TaskNode> {
         if (this.deadline == null || other.deadline == null) return 0;
         return this.deadline.compareTo(other.deadline);
     }
-
+    public String getId()                           { return id; }
+    public void setId(String id)                    { this.id = id; }
     public String getTitle()                        { return title; }
     public List<String> getSteps()                  { return steps; }
     public List<String> getAssignedEmployees()      { return assignedEmployees; }
@@ -71,8 +76,12 @@ public class TaskNode implements Comparable<TaskNode> {
     public boolean isSeenBy(String username) {
         return seenBy != null && seenBy.contains(username);
     }
+
+    public void setTitle(String title)              { this.title = title; }
     public void setDescription(String description)  { this.description = description; }
     public void setStarred(boolean starred)         { this.starred = starred; }
+    public void setSteps(List<String> steps)        { this.steps = steps; }
+    public void setDeadline(LocalDate deadline)     { this.deadline = deadline; }
     public void setAttachedFiles(List<String> attachedFiles) { this.attachedFiles = attachedFiles; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public void setCompletedEmployees(List<String> completedEmployees) {

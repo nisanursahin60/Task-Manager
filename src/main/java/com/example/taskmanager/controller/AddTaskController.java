@@ -30,9 +30,10 @@ public class AddTaskController {
     @FXML private TextArea descriptionField;
     @FXML private VBox secilenDosyalarKutusu;
     private final List<String> secilenDosyaYollari = new ArrayList<>();
-
     private final ObservableList<String> stepsList = FXCollections.observableArrayList();
     private final UserService userService = UserService.getInstance();
+    private boolean isEditing = false;
+    private String editingTaskId = null;
 
     @FXML
     public void initialize() {
@@ -164,25 +165,20 @@ public class AddTaskController {
                 if (!secilenDosyaYollari.contains(file.getAbsolutePath())) {
                     secilenDosyaYollari.add(file.getAbsolutePath());
 
-                    // Dosya ve silme butonunu tutacak küçük bir HBox
                     HBox dosyaSatiri = new HBox(8);
                     dosyaSatiri.setAlignment(Pos.CENTER_LEFT);
 
-                    // Beyaz, italik dosya adı
                     Label fileLabel = new Label("📎 " + file.getName());
                     fileLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-cursor: hand;");
                     fileLabel.setOnMouseClicked(e -> dosyayiAc(file));
 
-                    // Silme butonu (Kırmızı küçük bir X)
                     Label silBtn = new Label("      ✕");
                     silBtn.setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold; -fx-cursor: hand;");
 
-                    // Silme mantığı
                     silBtn.setOnMouseClicked(e -> {
                         secilenDosyaYollari.remove(file.getAbsolutePath());
                         secilenDosyalarKutusu.getChildren().remove(dosyaSatiri);
 
-                        // Liste tamamen boşaldıysa "Henüz dosya seçilmedi" yazısını geri getir
                         if (secilenDosyaYollari.isEmpty()) {
                             Label emptyLabel = new Label("Henüz dosya seçilmedi");
                             emptyLabel.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-font-size: 11px; -fx-opacity: 0.6;");
@@ -223,20 +219,28 @@ public class AddTaskController {
             showAlert("Uyarı", "Lütfen görevin atanacağı çalışanları seçin.");
             return;
         }
+        if (isEditing) {
+            // TaskService içinde bu ID'ye sahip görevi bul ve verilerini güncelle
+            TaskService.updateTask(editingTaskId, descriptionField.getText(), stepsList, deadlinePicker.getValue(), secilenDosyaYollari);
+            // Bildirim noktasını tetiklemek için çalışanların "seen" durumunu sıfırla
+            TaskService.markTasksAsUnseenForEmployees(editingTaskId);
+            showAlert("Başarılı", "Görev güncellendi ve çalışanlara bildirim gönderildi.");
+        }
+        else {
+            TaskNode newNode = new TaskNode(
+                    titleField.getText(),
+                    new ArrayList<>(stepsList),
+                    selectedUsernames,
+                    deadlinePicker.getValue(),
+                    userService.getCurrentUser().map(User::getFullName).orElse("Yönetici"),
+                    descriptionField.getText().trim(),
+                    new ArrayList<>(secilenDosyaYollari)
+            );
 
-        TaskNode newNode = new TaskNode(
-                titleField.getText(),
-                new ArrayList<>(stepsList),
-                selectedUsernames,
-                deadlinePicker.getValue(),
-                userService.getCurrentUser().map(User::getFullName).orElse("Yönetici"),
-                descriptionField.getText().trim(),
-                new ArrayList<>(secilenDosyaYollari)
-        );
-
-        TaskService.addTask(newNode);
-        showAlert("Başarılı", "Görev başarıyla eklendi.");
-        clearForm();
+            TaskService.addTask(newNode);
+            showAlert("Başarılı", "Görev başarıyla eklendi.");
+            clearForm();
+        }
     }
 
     private void clearForm() {
@@ -303,5 +307,41 @@ public class AddTaskController {
         for (TreeItem<String> child : item.getChildren()) {
             selectUserInTree(child, username);
         }
+    }
+    public void loadTaskForEdit(TaskNode task) {
+        this.isEditing = true;
+        this.editingTaskId = task.getId();
+
+        titleField.setText(task.getTitle());
+        titleField.setDisable(true);
+
+        descriptionField.setText(task.getDescription());
+        deadlinePicker.setValue(task.getDeadline());
+
+        stepsList.setAll(task.getSteps());
+        secilenDosyaYollari.clear();
+        secilenDosyalarKutusu.getChildren().clear();
+
+        if (task.getAttachedFiles() != null) {
+            for (String path : task.getAttachedFiles()) {
+                File file = new File(path);
+                secilenDosyaYollari.add(path);
+                dosyaKutusunaEkle(file);
+            }
+        }
+    }
+
+    private void dosyaKutusunaEkle(File file) {
+        HBox row = new HBox(8);
+        Label lbl = new Label("📎 " + file.getName());
+        lbl.setStyle("-fx-text-fill: white; -fx-font-style: italic; -fx-cursor: hand;");
+        Label del = new Label("      ✕");
+        del.setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold; -fx-cursor: hand;");
+        del.setOnMouseClicked(e -> {
+            secilenDosyaYollari.remove(file.getAbsolutePath());
+            secilenDosyalarKutusu.getChildren().remove(row);
+        });
+        row.getChildren().addAll(lbl, del);
+        secilenDosyalarKutusu.getChildren().add(row);
     }
 }
